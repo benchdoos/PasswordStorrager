@@ -10,4 +10,17 @@ public class StringUtils {
             return folder + File.separator;
         }
     }
+
+    public static String parseUrl(String value) {
+        if (!value.isEmpty()) {
+            if (value.length() > 7) {
+                if (!value.contains("http://")) {
+                    value = "http://" + value;
+                }
+            } else {
+                value = "http://" + value;
+            }
+        }
+        return value;
+    }
 }

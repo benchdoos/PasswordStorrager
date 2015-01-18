@@ -1,6 +1,7 @@
 package edu.passwordStorrager.gui;
 
 import edu.passwordStorrager.objects.Record;
+import edu.passwordStorrager.utils.StringUtils;
 import edu.passwordStorrager.xmlManager.XmlParser;
 
 import javax.swing.*;
@@ -40,22 +41,6 @@ public class MainForm extends JFrame {
     private DefaultTableModel tableModel;
 
     public MainForm(ArrayList<Record> recordArrayList) {
-        /*try {
-            if (recordArrayList != null) {
-                if (recordArrayList.size() > 0) {
-                    this.recordArrayList = recordArrayList;
-                    initComponents();
-                } else {
-                    throw new RuntimeException();
-                }
-            } else {
-                throw new RuntimeException();
-            }
-        } catch (RuntimeException e) {
-            //TODO throw notif here
-            System.err.println("Storage file is empty");
-        }*/
-
         this.recordArrayList = recordArrayList;
         initComponents();
     }
@@ -135,13 +120,12 @@ public class MainForm extends JFrame {
                         } else {
                             java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
                             try {
-                                desktop.browse(URI.create(parseUrl((String) table1.getModel().getValueAt(row, 0))));
+                                desktop.browse(URI.create(StringUtils.parseUrl((String) table1.getModel().getValueAt(row, 0))));
                             } catch (IOException e) {
-                                System.out.println("Can not open in browser: " + parseUrl((String) table1.getModel().getValueAt(row, 0)));
+                                System.out.println("Can not open in browser: " + StringUtils.parseUrl((String) table1.getModel().getValueAt(row, 0)));
                             }
                         }
                     }
-
                 }
             }
         };
@@ -405,20 +389,12 @@ public class MainForm extends JFrame {
         table1.getTableHeader().setReorderingAllowed(false); //to prevent column dragging(moving)
 
         table1.setComponentPopupMenu(popupMenu);
+        table1.setSurrendersFocusOnKeystroke(true);
 
         setStatus("Количество записей: " + table1.getModel().getRowCount(), STATUS_MESSAGE);
     }
 
-    private String parseUrl(String value) {
-        if (value.length() > 7) {
-            if (!value.contains("http://")) {
-                value = "http://" + value;
-            }
-        } else {
-            value = "http://" + value;
-        }
-        return value;
-    }
+
 
     private void copyToClipboard(String value) {
         System.out.println("copy [" + value + "]");
@@ -456,4 +432,5 @@ public class MainForm extends JFrame {
             return editModeJRadioButtonMenuItem.isSelected();
         }
     }
+
 }
