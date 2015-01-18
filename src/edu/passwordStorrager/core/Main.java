@@ -20,15 +20,15 @@ public class Main {
 
 
     Main() {
-        macOSHandler();
+        if (isMac) {
+            macOSHandler();
+        }
         Main.key = new Key();
         if (PropertiesManager.exists()) {
             new AuthorizeDialog();
         } else {
             new FirstLaunchDialog();
         }
-        //new AuthorizeDialog();
-        //new Encryption();
     }
 
     public static void main(String[] args) {
@@ -43,15 +43,13 @@ public class Main {
     }
 
     private void macOSHandler() {
-        if (System.getProperty("os.name").toLowerCase().equals("mac os x")) {
-            System.setProperty("apple.laf.useScreenMenuBar", "true");
-            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "PasswordStorrager");
-            System.setProperty("apple.awt.fileDialogForDirectories", "true");
-            try {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } catch (ClassNotFoundException | InstantiationException | UnsupportedLookAndFeelException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
+        System.setProperty("apple.laf.useScreenMenuBar", "true");
+        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "PasswordStorrager");
+        System.setProperty("apple.awt.fileDialogForDirectories", "true");
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | InstantiationException | UnsupportedLookAndFeelException | IllegalAccessException e) {
+            e.printStackTrace();
         }
     }
 }
