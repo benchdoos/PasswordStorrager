@@ -5,7 +5,7 @@ Store your passwords in secure
 - MAC OS X (in development)
 
 ### TODO LIST:
-- [TODO-List](TODOLIST.txt)  - List of what should be done next (global)
-- [FIX-List](FIXLIST.txt) -  List of what should be fixed next
+- [TODO-List](TODOLIST.md)  - List of what should be done next (global)
+- [FIX-List](FIXLIST.md) -  List of what should be fixed next
 
 
