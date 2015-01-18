@@ -21,7 +21,7 @@ public class Main {
 
     Main() {
         if (isMac) {
-            macOSHandler();
+            macOsHandler();
         }
         Main.key = new Key();
         if (PropertiesManager.exists()) {
@@ -35,14 +35,16 @@ public class Main {
         new Main();
     }
 
-    private void macOSHandler() {
-        System.setProperty("apple.laf.useScreenMenuBar", "true");
-        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "PasswordStorrager");
-        System.setProperty("apple.awt.fileDialogForDirectories", "true");
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException | UnsupportedLookAndFeelException | IllegalAccessException e) {
-            e.printStackTrace();
+    private void macOsHandler() {
+        if (isMac) {
+            System.setProperty("apple.laf.useScreenMenuBar", "true");
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "PasswordStorrager");
+            System.setProperty("apple.awt.fileDialogForDirectories", "true");
+            try {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch (ClassNotFoundException | InstantiationException | UnsupportedLookAndFeelException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
