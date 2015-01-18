@@ -71,4 +71,11 @@ public class PropertiesManager {
     public static boolean isCorrect() {
         return Main.properties.containsKey("Key");
     }
+
+    public static void showProperties(Properties properties) {
+        for (String key : properties.stringPropertyNames()) {
+            String value = properties.getProperty(key);
+            System.out.println(key + " => " + value);
+        }
+    }
 }

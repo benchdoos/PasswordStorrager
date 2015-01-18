@@ -74,7 +74,7 @@ public class AuthorizeDialog extends JDialog {
         if (PropertiesManager.exists()) {
             Main.properties = PropertiesManager.loadProperties();
             if (PropertiesManager.isCorrect()) {
-                Main.showProperties(Main.properties);
+                PropertiesManager.showProperties(Main.properties);
                 System.out.println("Password is correct");
                 //TODO send notification here.
                 new Encryption(new File(Main.properties.getProperty(PropertiesManager.KEY_NAME) + DefaultValues.DEFAULT_KEY_FILE));

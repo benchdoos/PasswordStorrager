@@ -35,13 +35,6 @@ public class Main {
         new Main();
     }
 
-    public static void showProperties(Properties properties) {
-        for (String key : properties.stringPropertyNames()) {
-            String value = properties.getProperty(key);
-            System.out.println(key + " => " + value);
-        }
-    }
-
     private void macOSHandler() {
         System.setProperty("apple.laf.useScreenMenuBar", "true");
         System.setProperty("com.apple.mrj.application.apple.menu.about.name", "PasswordStorrager");
