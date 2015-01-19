@@ -15,14 +15,15 @@ public class Main {
     public static final boolean IS_WINDOWS = OS_NAME.toLowerCase().equals("windows");
 
 
-    public static Key key;
+    public static Key key = new Key();
     public static Properties properties = new Properties();
 
 
     Main() {
+
+        printOSParameters();
         checkIfOsIsSupported();
-        
-        Main.key = new Key();
+
 
         new PropertiesManager(); //MUST BE CALLED
 
@@ -31,6 +32,19 @@ public class Main {
         } else {
             new FirstLaunchDialog();
         }
+    }
+
+    private void printOSParameters() {
+        System.out.println("==========================System=========================");
+        System.out.println("System:");
+        System.out.println("\tOS: " + OS_NAME + " v." + system.getProperty("os.version") + " arch: " + system.getProperty("os.arch"));
+        System.out.println("Java:");
+        System.out.println("\tJava version: " + system.getProperty("java.specification.version") + "(" + system.getProperty("java.version") + ")");
+        System.out.println("\t" + system.getProperty("java.runtime.name") + " v." + system.getProperty("java.vm.version"));
+        System.out.println("User:");
+        System.out.println("\tName: " + system.getProperty("user.name") + " Home: " + USER_HOME);
+        System.out.println("\tTime zone: " + system.getProperty("user.timezone") + " (" + system.getProperty("user.country") + ") language: " + system.getProperty("user.language"));
+        System.out.println("=========================================================");
     }
 
     public static void main(String[] args) {
@@ -42,7 +56,6 @@ public class Main {
             macOsHandler();
         } else if (IS_WINDOWS) {
             //osHandler here
-            System.out.println("Windows");
             throw new UnsupportedOperationException("This OS is not supported yet : " + OS_NAME);
         } else {
             throw new UnsupportedOperationException("This OS is not supported yet : " + OS_NAME);

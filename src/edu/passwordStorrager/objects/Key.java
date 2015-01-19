@@ -13,18 +13,18 @@ public class Key {
     public static final String dropBoxAcc = "ACC_DropBox";
     public static final String dropBoxPwd = "PWD_DropBox";
     public static final String ENC_Value = "ENC";
-    String ENC = "";
-    String[] iCloud = new String[2];
-    String[] mega = new String[2];
-    String[] dropBox = new String[2];
+    private String ENC = "";
+    private String[] iCloud = new String[2];
+    private String[] mega = new String[2];
+    private String[] dropBox = new String[2];
     private boolean isFinal = false;
     private boolean isEncrypted = false;
 
 
     public Key() {
-        setICloud("", "");
-        setMega("", "");
-        setDropBox("", "");
+        this.setICloud("", "");
+        this.setMega("", "");
+        this.setDropBox("", "");
     }
 
     public String getENC() {

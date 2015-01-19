@@ -2,11 +2,24 @@ package edu.passwordStorrager.utils;
 
 import edu.passwordStorrager.core.Main;
 
+import java.io.File;
 import java.io.IOException;
 
 public class FileUtils {
 
 
+    /**
+     * Set File on file system hidden.
+     * @param file <code>File</code> that needs to be hidden.
+     */
+    public static void setFileHidden(File file) {
+        setFileHidden(file.getAbsolutePath());
+    }
+
+    /**
+     * Set <code>File</code> on file system hidden.
+     * @param filePath Path to <code>File</code> that needs to be hidden.
+     */
     public static void setFileHidden(String filePath) {
         try {
             if (Main.IS_MAC) {

@@ -43,10 +43,9 @@ public class MainForm extends JFrame {
     private JMenuItem copyLoginItem;
     private JMenuItem copyPasswordItem;
     private JPanel panel1;
-    private JScrollPane jScrollPane1;
-    private JTable table1;
+    private JScrollPane scrollPane;
+    private JTable table;
     private JPanel statusPanel;
-    private DefaultTableModel tableModel;
 
     public MainForm(ArrayList<Record> recordArrayList) {
         this.recordArrayList = recordArrayList;
@@ -114,7 +113,7 @@ public class MainForm extends JFrame {
 
         initPopUp();
 
-        initList();
+        loadList();
 
         pack();
     }
@@ -135,24 +134,24 @@ public class MainForm extends JFrame {
                 Point p = me.getPoint();
                 int row = table.rowAtPoint(p);
                 if (me.getClickCount() == 2 && me.getButton() == MouseEvent.BUTTON1) {
-                    if (table1.getSelectedRow() >= 0) {
-                        if (table1.getSelectedColumn() == table.getColumn(SITE_COLUMN_NAME).getModelIndex()) {
+                    if (MainForm.this.table.getSelectedRow() >= 0) {
+                        if (MainForm.this.table.getSelectedColumn() == table.getColumn(SITE_COLUMN_NAME).getModelIndex()) {
                             java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
                             try {
-                                desktop.browse(URI.create(StringUtils.parseUrl((String) table1.getModel().getValueAt(row, table.getColumn(SITE_COLUMN_NAME).getModelIndex()))));
+                                desktop.browse(URI.create(StringUtils.parseUrl((String) MainForm.this.table.getModel().getValueAt(row, table.getColumn(SITE_COLUMN_NAME).getModelIndex()))));
                             } catch (IOException e) {
-                                System.out.println("Can not open in browser: " + StringUtils.parseUrl((String) table1.getModel().getValueAt(row, 0)));
+                                System.out.println("Can not open in browser: " + StringUtils.parseUrl((String) MainForm.this.table.getModel().getValueAt(row, 0)));
                             }
                         } else {
-                            copyToClipboard((String) table1.getModel().getValueAt(row, table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex()));
+                            copyToClipboard((String) MainForm.this.table.getModel().getValueAt(row, table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex()));
                         }
                     }
                 }
             }
         };
-        table1.addMouseListener(copyMouseListener);
+        table.addMouseListener(copyMouseListener);
 
-        table1.addKeyListener(new KeyListener() {
+        table.addKeyListener(new KeyListener() {
 
             @Override
             public void keyTyped(KeyEvent e) {
@@ -162,8 +161,8 @@ public class MainForm extends JFrame {
             public void keyPressed(KeyEvent e) {
                 if (editModeJRadioButtonMenuItem.isSelected()) {
                     if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.META_DOWN_MASK) != 0)) {
-                        /*if (table1.getSelectedRow() != -1) {
-                            copyToClipboard((String) table1.getModel().getValueAt(table1.getSelectedRow(), 2));
+                        /*if (table.getSelectedRow() != -1) {
+                            copyToClipboard((String) table.getModel().getValueAt(table.getSelectedRow(), 2));
                         }*/
                     }
                 }
@@ -173,7 +172,7 @@ public class MainForm extends JFrame {
             public void keyReleased(KeyEvent e) {
             }
         });
-        /*jScrollPane1.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+        /*scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
             public void adjustmentValueChanged(AdjustmentEvent e) {
                 e.getAdjustable().setValue(e.getAdjustable().getMaximum());
             }
@@ -206,7 +205,7 @@ public class MainForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 recordArrayList = new XmlParser().parseRecords();
-                initList();
+                loadList();
             }
         });
         fileJMenu.add(openItem);
@@ -228,7 +227,15 @@ public class MainForm extends JFrame {
         settingsItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new SettingsDialog();
+                new SettingsDialog(){
+
+                    @Override
+                    public void onOK() {
+                        this.saveSettings();
+                        setStatus("Настройки сохранены", STATUS_SUCCESS);
+                        this.dispose();
+                    }
+                };
             }
         });
         fileJMenu.add(settingsItem);
@@ -242,7 +249,7 @@ public class MainForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!editModeJRadioButtonMenuItem.isSelected()) {
-                    table1.getCellEditor().cancelCellEditing();
+                    table.getCellEditor().cancelCellEditing();
                 }
             }
         });
@@ -264,7 +271,7 @@ public class MainForm extends JFrame {
         deleteItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                deleteSelectedRow();
+                deleteSelectedRecord();
             }
         });
         editJMenu.add(deleteItem);
@@ -308,24 +315,6 @@ public class MainForm extends JFrame {
         setJMenuBar(jMenuBar1);
     }
 
-
-    private void saveStorage() {
-        int rows = table1.getRowCount();
-        System.out.println("rows to save:" + rows);
-        recordArrayList = new ArrayList<Record>(rows);
-        for (int i = 0; i < rows; i++) {
-            Record record = new Record();
-            record.setSite((String) table1.getModel().getValueAt(i, 0));
-            record.setLogin((String) table1.getModel().getValueAt(i, 1));
-            record.setPassword((String) table1.getModel().getValueAt(i, 2));
-            recordArrayList.add(record);
-        }
-        editModeJRadioButtonMenuItem.setSelected(false);
-        new XmlParser().saveRecords(recordArrayList);
-        initList();
-        setStatus("Сохранено", STATUS_SUCCESS);
-    }
-
     private void initPopUp() {
         popupMenu = new JPopupMenu();
         JMenuItem menuItemAdd = new JMenuItem("Добавить");
@@ -341,78 +330,32 @@ public class MainForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                copyToClipboard((String) table1.getModel().getValueAt(table1.getSelectedRow(), 0));
+                copyToClipboard((String) table.getModel().getValueAt(table.getSelectedRow(), 0));
 
             }
         });
         menuItemCopyLogin.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (table1.getSelectedRow() != -1) {
-                    copyToClipboard((String) table1.getModel().getValueAt(table1.getSelectedRow(), 1));
+                if (table.getSelectedRow() != -1) {
+                    copyToClipboard((String) table.getModel().getValueAt(table.getSelectedRow(), 1));
                 }
             }
         });
 
     }
 
-    private void initList() {
-        //Record[] recordsList = recordArrayList.toArray(new Record[recordArrayList.size()]);
-        tableModel = createTableModel(recordArrayList);
-        table1.setModel(tableModel);
-        table1.setRowHeight(20);
-
-        TableColumn number = table1.getColumnModel().getColumn(0);
-        number.setHeaderValue(NUMBER_COLUMN_NAME);
-        number.setMinWidth(20);
-        //number.setWidth(20);
-        number.setMaxWidth(40);
-        number.setPreferredWidth(number.getPreferredWidth());
-        number.sizeWidthToFit();
-
-        //number.setResizable(false);
-
-        TableColumn site = table1.getColumnModel().getColumn(1);
-        site.setHeaderValue(SITE_COLUMN_NAME);
-        site.setWidth(150);
-        site.setResizable(false);
-
-        TableColumn login = table1.getColumnModel().getColumn(2);
-        login.setHeaderValue(LOGIN_COLUMN_NAME);
-        login.setWidth(150);
-        login.setResizable(false);
-
-        TableColumn password = table1.getColumnModel().getColumn(3);
-        password.setHeaderValue(PASSWORD_COLUMN_NAME);
-        password.setResizable(false);
-
-        table1.getColumn(NUMBER_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField(NUMBER_COLUMN_NAME)));
-        table1.getColumn(SITE_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField("field")));
-        table1.getColumn(LOGIN_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField("field")));
-        table1.getColumn(PASSWORD_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField("field")));
-
-        resizeTableColumns();
-
-        table1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        table1.setDragEnabled(false);
-        table1.getTableHeader().setReorderingAllowed(false); //to prevent column dragging(moving)
-
-        table1.setComponentPopupMenu(popupMenu);
-        table1.setSurrendersFocusOnKeystroke(true);
-
-        setStatus("Количество записей: " + table1.getModel().getRowCount(), STATUS_MESSAGE);
-    }
 
     private void resizeTableColumns() {
-        /*for (int column = 0; column < table1.getColumnCount(); column++) {
-            TableColumn tableColumn = table1.getColumnModel().getColumn(column);
+        /*for (int column = 0; column < table.getColumnCount(); column++) {
+            TableColumn tableColumn = table.getColumnModel().getColumn(column);
             int preferredWidth = tableColumn.getMinWidth();
             int maxWidth = tableColumn.getMaxWidth();
 
-            for (int row = 0; row < table1.getRowCount(); row++) {
-                TableCellRenderer cellRenderer = table1.getCellRenderer(row, column);
-                Component c = table1.prepareRenderer(cellRenderer, row, column);
-                int width = c.getPreferredSize().width + table1.getIntercellSpacing().width;
+            for (int row = 0; row < table.getRowCount(); row++) {
+                TableCellRenderer cellRenderer = table.getCellRenderer(row, column);
+                Component c = table.prepareRenderer(cellRenderer, row, column);
+                int width = c.getPreferredSize().width + table.getIntercellSpacing().width;
                 preferredWidth = Math.max(preferredWidth, width);
 
                 //  We've exceeded the maximum width, no need to check other rows
@@ -425,14 +368,14 @@ public class MainForm extends JFrame {
 
             tableColumn.setPreferredWidth(preferredWidth);
         }*/
-        TableColumn tableColumn = table1.getColumn(NUMBER_COLUMN_NAME);
-        int column  = table1.getColumn(NUMBER_COLUMN_NAME).getModelIndex();
+        TableColumn tableColumn = table.getColumn(NUMBER_COLUMN_NAME);
+        int column = table.getColumn(NUMBER_COLUMN_NAME).getModelIndex();
         int preferredWidth = tableColumn.getMinWidth();
         int maxWidth = tableColumn.getMaxWidth();
-        for (int row = 0; row < table1.getRowCount(); row++) {
-            TableCellRenderer cellRenderer = table1.getCellRenderer(row, column);
-            Component c = table1.prepareRenderer(cellRenderer, row, column);
-            int width = c.getPreferredSize().width + table1.getIntercellSpacing().width;
+        for (int row = 0; row < table.getRowCount(); row++) {
+            TableCellRenderer cellRenderer = table.getCellRenderer(row, column);
+            Component c = table.prepareRenderer(cellRenderer, row, column);
+            int width = c.getPreferredSize().width + table.getIntercellSpacing().width;
             preferredWidth = Math.max(preferredWidth, width);
 
             //  We've exceeded the maximum width, no need to check other rows
@@ -447,34 +390,96 @@ public class MainForm extends JFrame {
 
 
     private void copySelectedCell(int column) {
-        if (table1.getSelectedRow() >= 0) {
-            System.out.println("{{{" + table1.getColumn("Сайт").getModelIndex());
-            copyToClipboard((String) table1.getModel().getValueAt(table1.getSelectedRow(), column));
+        if (table.getSelectedRow() >= 0) {
+            System.out.println("{{{" + table.getColumn("Сайт").getModelIndex());
+            copyToClipboard((String) table.getModel().getValueAt(table.getSelectedRow(), column));
         }
+    }
+
+    private void loadList() {
+        //Record[] recordsList = recordArrayList.toArray(new Record[recordArrayList.size()]);
+        table.setModel(createTableModel(recordArrayList));
+        table.setRowHeight(20);
+
+        TableColumn number = table.getColumnModel().getColumn(0);
+        number.setHeaderValue(NUMBER_COLUMN_NAME);
+        number.setMinWidth(20);
+        //number.setWidth(20);
+        number.setMaxWidth(40);
+        number.setPreferredWidth(number.getPreferredWidth());
+        number.sizeWidthToFit();
+
+        //number.setResizable(false);
+
+        TableColumn site = table.getColumnModel().getColumn(1);
+        site.setHeaderValue(SITE_COLUMN_NAME);
+        site.setWidth(150);
+        site.setResizable(false);
+
+        TableColumn login = table.getColumnModel().getColumn(2);
+        login.setHeaderValue(LOGIN_COLUMN_NAME);
+        login.setWidth(150);
+        login.setResizable(false);
+
+        TableColumn password = table.getColumnModel().getColumn(3);
+        password.setHeaderValue(PASSWORD_COLUMN_NAME);
+        password.setResizable(false);
+
+        table.getColumn(NUMBER_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField(NUMBER_COLUMN_NAME)));
+        table.getColumn(SITE_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField("field")));
+        table.getColumn(LOGIN_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField("field")));
+        table.getColumn(PASSWORD_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField("field")));
+
+        resizeTableColumns();
+
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.setDragEnabled(false);
+        table.getTableHeader().setReorderingAllowed(false); //to prevent column dragging(moving)
+
+        table.setComponentPopupMenu(popupMenu);
+        table.setSurrendersFocusOnKeystroke(true);
+
+        setStatus("Количество записей: " + table.getModel().getRowCount(), STATUS_MESSAGE);
+    }
+
+    private void saveStorage() {
+        int rows = table.getRowCount();
+        System.out.println("rows to save:" + rows);
+        recordArrayList = new ArrayList<Record>(rows);
+        for (int i = 0; i < rows; i++) {
+            Record record = new Record();
+            record.setSite((String) table.getModel().getValueAt(i, table.getColumn(SITE_COLUMN_NAME).getModelIndex()));
+            record.setLogin((String) table.getModel().getValueAt(i, table.getColumn(LOGIN_COLUMN_NAME).getModelIndex()));
+            record.setPassword((String) table.getModel().getValueAt(i, table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex()));
+            recordArrayList.add(record);
+        }
+        editModeJRadioButtonMenuItem.setSelected(false);
+        new XmlParser().saveRecords(recordArrayList);
+        loadList();
+        setStatus("Сохранено", STATUS_SUCCESS);
     }
 
     private void addNewRecord() {
         recordArrayList.add(new Record());
-        initList();
+        loadList();
         editModeJRadioButtonMenuItem.setSelected(true);
-        table1.clearSelection();
-        table1.setRowSelectionInterval(tableModel.getRowCount() - 1, tableModel.getRowCount() - 1);
-        jScrollPane1.getVerticalScrollBar().setValue(jScrollPane1.getVerticalScrollBar().getMaximum());
-        System.out.println("{[{[++" + jScrollPane1.getVerticalScrollBar().getMaximum());
+        table.clearSelection();
+        table.setRowSelectionInterval(table.getModel().getRowCount() - 1, table.getModel().getRowCount() - 1);
+        scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
     }
 
-    private void deleteSelectedRow() {
-        int index = table1.getSelectedRow();
+    private void deleteSelectedRecord() {
+        int index = table.getSelectedRow();
         if (index >= 0) {
             recordArrayList.remove(index);
-            initList();
-            table1.clearSelection();
+            loadList();
+            table.clearSelection();
 
             if (index >= 0 && recordArrayList.size() > 0) {
                 if (index < recordArrayList.size()) {
-                    table1.setRowSelectionInterval(index, index);
+                    table.setRowSelectionInterval(index, index);
                 } else {
-                    table1.setRowSelectionInterval(recordArrayList.size() - 1, recordArrayList.size() - 1);
+                    table.setRowSelectionInterval(recordArrayList.size() - 1, recordArrayList.size() - 1);
                 }
             }
         }
@@ -486,9 +491,10 @@ public class MainForm extends JFrame {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(stringSelection, null);
     }
-
-
+    
+    
     private DefaultTableModel createTableModel(ArrayList<Record> recordArrayList) {
+        DefaultTableModel tableModel = new DefaultTableModel();
         String[] number = new String[recordArrayList.size()];
         String[] siteData = new String[recordArrayList.size()];
         String[] loginData = new String[recordArrayList.size()];
@@ -501,7 +507,6 @@ public class MainForm extends JFrame {
             pwdData[i] = recordArrayList.get(i).getPassword();
         }
 
-        tableModel = new DefaultTableModel();
         tableModel.addColumn(NUMBER_COLUMN_NAME, number);
         tableModel.addColumn(SITE_COLUMN_NAME, siteData);
         tableModel.addColumn(LOGIN_COLUMN_NAME, loginData);

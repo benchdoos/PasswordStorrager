@@ -1,11 +1,12 @@
 package edu.passwordStorrager.utils;
 
-import edu.passwordStorrager.protector.Protector;
 import edu.passwordStorrager.objects.Key;
 import edu.passwordStorrager.protector.Encryption;
+import edu.passwordStorrager.protector.Protector;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Properties;
 
@@ -29,19 +30,34 @@ public class KeyUtils {
 
     public static Key loadKeyFile(String filePath) throws Throwable {
         Key key = new Key();
-        Properties properties = new Properties();
-        System.out.println("LOADING CUSTOM KEY FILE");
+        if(isKeyCorrect(filePath)) {
+            System.out.println("Loading custom key file : " + filePath);
+            Properties properties = new Properties();
 
-        properties.load(Encryption.decrypt(filePath));
+            properties.load(Encryption.decrypt(filePath));
 
-        key.setENC(properties.getProperty(Key.ENC_Value));
-        key.setICloud(properties.getProperty(Key.iCloudAcc), properties.getProperty(Key.iCloudPwd));
-        key.setMega(properties.getProperty(Key.megaAcc), properties.getProperty(Key.megaPwd));
-        key.setDropBox(properties.getProperty(Key.dropBoxAcc), properties.getProperty(Key.dropBoxPwd));
-        key.setEncrypted(true);
+            key.setENC(properties.getProperty(Key.ENC_Value));
+            key.setICloud(properties.getProperty(Key.iCloudAcc), properties.getProperty(Key.iCloudPwd));
+            key.setMega(properties.getProperty(Key.megaAcc), properties.getProperty(Key.megaPwd));
+            key.setDropBox(properties.getProperty(Key.dropBoxAcc), properties.getProperty(Key.dropBoxPwd));
+            key.setEncrypted(true);
 
-        System.out.println(key);
-        return key;
+            System.out.println(key);
+            return key;
+        } else {
+            throw new java.security.InvalidKeyException("Key is not correct / can not be decoded");
+        }
+    }
+
+    private static boolean isKeyCorrect(String filePath) throws Throwable {
+        if(new File(filePath).exists()) {
+            Properties properties = new Properties();
+            properties.load(Encryption.decrypt(filePath));
+            return properties.getProperty(Key.ENC_Value) != null;
+        } else {
+            return false;
+        }
+        
     }
 
     private static Properties loadICloudParams(Properties properties, Key key) {

@@ -1,9 +1,9 @@
 package edu.passwordStorrager.gui;
 
 import edu.passwordStorrager.core.Main;
-import edu.passwordStorrager.protector.Protector;
 import edu.passwordStorrager.core.PropertiesManager;
 import edu.passwordStorrager.objects.Key;
+import edu.passwordStorrager.protector.Protector;
 import edu.passwordStorrager.protector.Values;
 import edu.passwordStorrager.utils.KeyUtils;
 import edu.passwordStorrager.utils.StringUtils;
@@ -16,7 +16,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
-public class SettingsDialog extends JDialog {
+public abstract class SettingsDialog extends JDialog {
 
     String iCloudLogin = "";
     String iCloudPassword = "";
@@ -114,13 +114,16 @@ public class SettingsDialog extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 String login = "", password = "";
                 if (iCloudLogin.isEmpty()) {
-                    if (Main.key != null && !Main.key.getICloudLogin().isEmpty()) {
+                 if(Main.key != null){
+                     System.out.println(Main.key);
+                    if (!Main.key.getICloudLogin().isEmpty()) {
                         try {
                             login = Protector.decrypt(Main.key.getICloudLogin());
                             password = Protector.decrypt(Main.key.getICloudPassword());
                         } catch (GeneralSecurityException | IOException ignored) {
                         }
                     }
+                }
                 } else {
                     login = iCloudLogin;
                     password = iCloudPassword;
@@ -201,10 +204,34 @@ public class SettingsDialog extends JDialog {
 
     }
 
-    private void onOK() {
+    abstract public void onOK();/* {
 
+        saveSettings();
+
+        dispose();
+    }*/
+
+    public void saveSettings() {
         Key key = new Key();
+        key = createKey(key);
 
+        pushSettings(key);
+    }
+
+    private void pushSettings(Key key) {
+        String keyFilePath = Main.properties.getProperty(PropertiesManager.KEY_NAME) + Values.DEFAULT_KEY_FILE_NAME;
+        try {
+            key.encrypt();
+            key.setENC(Main.key.getENC());
+            KeyUtils.createKeyFile(key, keyFilePath);
+            Main.key = KeyUtils.loadKeyFile(keyFilePath);
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+            System.err.println("Can not create file: " + keyFilePath);
+        }
+    }
+
+    private Key createKey(Key key) {
         if (validPath(keyField.getText()) && validPath(storageField.getText())) {
             PropertiesManager.changeProperties(StringUtils.fixFolder(keyField.getText()), StringUtils.fixFolder(storageField.getText()));
             Main.properties = PropertiesManager.loadProperties();
@@ -221,28 +248,17 @@ public class SettingsDialog extends JDialog {
             key.setMega(megaLogin, megaPassword);
         } else {
             if (!Main.key.getMegaLogin().isEmpty() && !Main.key.getMegaPassword().isEmpty()) {
-                key.setICloud(Main.key.getMegaLogin(), Main.key.getMegaPassword());
+                key.setMega(Main.key.getMegaLogin(), Main.key.getMegaPassword());
             }
         }
         if (!dropBoxLogin.isEmpty() && !dropBoxPassword.isEmpty()) {
             key.setDropBox(dropBoxLogin, dropBoxPassword);
         } else {
             if (!Main.key.getDropBoxLogin().isEmpty() && !Main.key.getDropBoxPassword().isEmpty()) {
-                key.setICloud(Main.key.getDropBoxLogin(), Main.key.getDropBoxPassword());
+                key.setDropBox(Main.key.getDropBoxLogin(), Main.key.getDropBoxPassword());
             }
         }
-        String keyFilePath = Main.properties.getProperty(PropertiesManager.KEY_NAME) + Values.DEFAULT_KEY_FILE_NAME;
-        try {
-            key.encrypt();
-            key.setENC(Main.key.getENC());
-            KeyUtils.createKeyFile(key, keyFilePath);
-            Main.key = KeyUtils.loadKeyFile(keyFilePath);
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-            System.err.println("Can not create file: " + keyFilePath);
-        }
-
-        dispose();
+        return key;
     }
 
     private void onCancel() {

@@ -95,7 +95,7 @@ public class PropertiesManager {
         System.out.println("Properties[");
         for (String key : properties.stringPropertyNames()) {
             String value = properties.getProperty(key);
-            System.out.println(key + " => " + value);
+            System.out.println("\t"+key + " => " + value);
         }
         System.out.println("]");
     }
