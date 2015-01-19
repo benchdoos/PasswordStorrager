@@ -153,8 +153,9 @@ public class FirstLaunchDialog extends JDialog {
         });
 
         pack();
-        setLocation(Toolkit.getDefaultToolkit().getScreenSize().width / 2 - (getWidth() / 2),
-                Toolkit.getDefaultToolkit().getScreenSize().height / 2 - (getHeight() / 2));
+        int width = (Toolkit.getDefaultToolkit().getScreenSize().width / 2) - (this.getWidth() / 2);
+        int height = (Toolkit.getDefaultToolkit().getScreenSize().height / 2) - (this.getHeight() / 2);
+        setLocation(width, height);
         setVisible(true);
     }
 

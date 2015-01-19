@@ -1,9 +1,8 @@
 package edu.passwordStorrager.gui;
 
 import edu.passwordStorrager.core.Main;
-import edu.passwordStorrager.protector.Protector;
-import edu.passwordStorrager.core.PropertiesManager;
 import edu.passwordStorrager.protector.Encryption;
+import edu.passwordStorrager.protector.Protector;
 import edu.passwordStorrager.protector.Values;
 import edu.passwordStorrager.xmlManager.XmlParser;
 
@@ -12,6 +11,9 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
+
+import static edu.passwordStorrager.core.PropertiesManager.*;
+import static edu.passwordStorrager.utils.FileUtils.exists;
 
 public class AuthorizeDialog extends JDialog {
     private JPanel contentPane;
@@ -71,14 +73,14 @@ public class AuthorizeDialog extends JDialog {
         String hexedPassword = Protector.hexPassword(Protector.hexPassword(new String(passwordField.getPassword())));
         Protector.PASSWORD = hexedPassword.toCharArray();
 
-        if (PropertiesManager.exists()) {
-            Main.properties = PropertiesManager.loadProperties();
-            if (PropertiesManager.isCorrect()) {
-                PropertiesManager.showProperties(Main.properties);
+        if (exists(propertiesFilePath)) {
+            Main.properties = loadProperties(propertiesFilePath);
+            if (isCorrect()) {
+                showProperties(Main.properties);
                 //TODO send notification here.
                 System.out.println("Password is correct");
 
-                Encryption.extractKey(new File(Main.properties.getProperty(PropertiesManager.KEY_NAME) + Values.DEFAULT_KEY_FILE_NAME));
+                Encryption.extractKey(new File(Main.properties.getProperty(KEY_NAME) + Values.DEFAULT_KEY_FILE_NAME));
                 new MainForm(new XmlParser().parseRecords()).setVisible(true);
             } else {
                 //TODO send notification here.

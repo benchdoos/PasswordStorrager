@@ -11,8 +11,9 @@ public class PropertiesManager {
     public static final String STORAGE_NAME = "Storage";
     public static final String KEY_NAME = "Key";
     
-    private static String folder;
-    private static String destination;
+    public static String folder;
+    public static String propertiesFilePath;
+    public static String framePropertiesFilePath;
 
     public PropertiesManager() {
         if (Main.IS_MAC) {
@@ -22,10 +23,11 @@ public class PropertiesManager {
         } else {
             throw new UnsupportedOperationException("This OS is not supported yet");
         }
-        destination = folder + Values.DEFAULT_PROPERTIES_FILE_NAME;
+        propertiesFilePath = folder + Values.DEFAULT_PROPERTIES_FILE_NAME;
+        framePropertiesFilePath = folder + Values.DEFAULT_FRAME_PROPERTIES_FILE_NAME;
     }
 
-    static private void createProperties(String keyPath, String storagePath) {
+    private static void createProperties(String keyPath, String storagePath) {
         createFolderDirectory();
         try {
             Main.properties.setProperty(STORAGE_NAME, storagePath);
@@ -35,13 +37,17 @@ public class PropertiesManager {
             Main.properties.store(byteArrayOutputStream, "");
             byte prop[] = byteArrayOutputStream.toByteArray();
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(prop);
-            Protector.encrypt(byteArrayInputStream, new FileOutputStream(destination));
+            Protector.encrypt(byteArrayInputStream, new FileOutputStream(propertiesFilePath));
 
         } catch (IOException e) {
-            System.err.println("Can not create File: " + destination);
+            System.err.println("Can not create File: " + propertiesFilePath);
         } catch (Throwable throwable) {
-            System.err.println("Can not create encrypted File: " + destination);
+            System.err.println("Can not create encrypted File: " + propertiesFilePath);
         }
+    }
+    
+    public static void saveProperties(Properties properties, String filePath) throws IOException {
+        properties.store(new FileOutputStream(filePath),"");
     }
 
     private static void createFolderDirectory() {
@@ -60,10 +66,10 @@ public class PropertiesManager {
         }
     }
 
-    public static Properties loadProperties() {
+    public static Properties loadProperties(String propertiesPath) {
         try {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            Protector.decrypt(new FileInputStream(destination), byteArrayOutputStream);
+            Protector.decrypt(new FileInputStream(propertiesPath), byteArrayOutputStream);
 
             byte data[] = byteArrayOutputStream.toByteArray();
 
@@ -71,9 +77,9 @@ public class PropertiesManager {
             properties.load(new ByteArrayInputStream(data));
             return properties;
         } catch (IOException e) {
-            System.err.println("Can not load File: " + destination);
+            System.err.println("Can not load File: " + propertiesPath);
         } catch (Throwable throwable) {
-            System.err.println("Can not decrypt File: " + destination);
+            System.err.println("Can not decrypt File: " + propertiesPath);
         }
         return null;
     }
@@ -83,9 +89,7 @@ public class PropertiesManager {
 
     }
 
-    public static boolean exists() {
-        return (Main.IS_MAC || Main.IS_WINDOWS) && new File(destination).exists();
-    }
+
 
     public static boolean isCorrect() {
         return Main.properties.containsKey(KEY_NAME);

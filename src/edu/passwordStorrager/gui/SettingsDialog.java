@@ -5,6 +5,7 @@ import edu.passwordStorrager.core.PropertiesManager;
 import edu.passwordStorrager.objects.Key;
 import edu.passwordStorrager.protector.Protector;
 import edu.passwordStorrager.protector.Values;
+import edu.passwordStorrager.utils.FrameUtils;
 import edu.passwordStorrager.utils.KeyUtils;
 import edu.passwordStorrager.utils.StringUtils;
 
@@ -16,6 +17,10 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
+
+import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
+import static edu.passwordStorrager.utils.FrameUtils.getFrameLocation;
+import static edu.passwordStorrager.utils.FrameUtils.getFrameSize;
 
 public abstract class SettingsDialog extends JDialog {
 
@@ -41,6 +46,17 @@ public abstract class SettingsDialog extends JDialog {
 
     public SettingsDialog() {
         setResizable(false);
+        setMinimumSize(new Dimension(380,320));
+
+        setPreferredSize(getFrameSize(getCurrentClassName()));
+        setLocation(getFrameLocation(getCurrentClassName()));
+
+        addWindowListener(new WindowAdapter() {
+            public void windowClosed(WindowEvent e) {
+                FrameUtils.setFrameLocation(getClass().getEnclosingClass().getName(), getLocation());
+                //FrameUtils.setFrameSize(getClass().getEnclosingClass().getName(), getSize());
+            }
+        });
 
         storageField.setText(Main.properties.getProperty("Storage"));
         keyField.setText(Main.properties.getProperty("Key"));
@@ -238,7 +254,7 @@ public abstract class SettingsDialog extends JDialog {
         //TODO divide this into two checks and methods
         if (StringUtils.validPath(keyField.getText()) && StringUtils.validPath(storageField.getText())) {
             PropertiesManager.changeProperties(StringUtils.fixFolder(keyField.getText()), StringUtils.fixFolder(storageField.getText()));
-            Main.properties = PropertiesManager.loadProperties();
+            Main.properties = PropertiesManager.loadProperties(PropertiesManager.propertiesFilePath);
         }
 
         if (isICloudChanged) {
@@ -266,7 +282,6 @@ public abstract class SettingsDialog extends JDialog {
     }
 
     private void onCancel() {
-// add your code here if necessary
         dispose();
     }
 

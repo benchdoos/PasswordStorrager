@@ -36,4 +36,8 @@ public class FileUtils {
             System.err.println("Can not make file hidden");
         }
     }
+
+    public static boolean exists(String filePath) {
+        return (Main.IS_MAC || Main.IS_WINDOWS) && new File(filePath).exists();
+    }
 }

@@ -1,6 +1,7 @@
 package edu.passwordStorrager.gui;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 
 public abstract class AccountEnterDialog extends JDialog {
@@ -15,6 +16,8 @@ public abstract class AccountEnterDialog extends JDialog {
         setTitle(windowName);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
+        setResizable(false);
+        
 
         textField1.setText(login);
         passwordField1.setText(password);
@@ -47,6 +50,11 @@ public abstract class AccountEnterDialog extends JDialog {
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         pack();
+
+        int width = (Toolkit.getDefaultToolkit().getScreenSize().width / 2) - (this.getWidth() / 2);
+        int height = (Toolkit.getDefaultToolkit().getScreenSize().height / 2) - (this.getHeight() / 2);
+        setLocation(width, height);
+        
         setVisible(true);
     }
 

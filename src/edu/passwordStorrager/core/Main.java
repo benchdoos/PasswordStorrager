@@ -5,7 +5,11 @@ import edu.passwordStorrager.gui.FirstLaunchDialog;
 import edu.passwordStorrager.objects.Key;
 
 import javax.swing.*;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Properties;
+
+import static edu.passwordStorrager.utils.FileUtils.exists;
 
 public class Main {
     public static final Properties system = System.getProperties();
@@ -17,17 +21,28 @@ public class Main {
 
     public static Key key = new Key();
     public static Properties properties = new Properties();
+    public static Properties frames = new Properties();
 
 
     Main() {
-
+        new PropertiesManager(); //MUST BE CALLED
+        
         printOSParameters();
         checkIfOsIsSupported();
 
-
-        new PropertiesManager(); //MUST BE CALLED
-
-        if (PropertiesManager.exists()) {
+        if (exists(PropertiesManager.framePropertiesFilePath)) {
+            Main.frames = new Properties();
+            try {
+                Main.frames.load(new FileInputStream(PropertiesManager.framePropertiesFilePath));
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.err.println("Can not load Frames properties");
+            }
+        }else {
+            Main.frames = new Properties();
+        }
+        
+        if (exists(PropertiesManager.propertiesFilePath)) {
             new AuthorizeDialog();
         } else {
             new FirstLaunchDialog();

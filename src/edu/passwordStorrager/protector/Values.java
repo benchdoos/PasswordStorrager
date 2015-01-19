@@ -8,6 +8,7 @@ public interface Values {
     String DEFAULT_PROPERTIES_FILE_NAME = "storage.properties";
     String DEFAULT_KEY_FILE_NAME = ".key";
     String DEFAULT_STORAGE_FILE_NAME = "storage";
+    String DEFAULT_FRAME_PROPERTIES_FILE_NAME = "frames.properties";
 
     String DEFAULT_MAC_PROPERTIES_FILE_FOLDER = Main.USER_HOME + File.separator + "Library" + File.separator +
             "Application Support" + File.separator + "PasswordStorrager" + File.separator;

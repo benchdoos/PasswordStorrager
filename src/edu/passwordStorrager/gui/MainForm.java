@@ -1,6 +1,7 @@
 package edu.passwordStorrager.gui;
 
 import edu.passwordStorrager.objects.Record;
+import edu.passwordStorrager.utils.FrameUtils;
 import edu.passwordStorrager.utils.StringUtils;
 import edu.passwordStorrager.xmlManager.XmlParser;
 
@@ -16,6 +17,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.EventObject;
+
+import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
+import static edu.passwordStorrager.utils.FrameUtils.getFrameLocation;
+import static edu.passwordStorrager.utils.FrameUtils.getFrameSize;
 
 public class MainForm extends JFrame {
     public static final int STATUS_MESSAGE = 1, STATUS_ERROR = -1, STATUS_SUCCESS = 2;
@@ -100,10 +105,20 @@ public class MainForm extends JFrame {
         setContentPane(panel1);
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        //setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(600, 430));
-        setPreferredSize(new java.awt.Dimension(600, 430));
-        //setResizable(false);
-        setSize(new java.awt.Dimension(600, 430));
+        setPreferredSize(getFrameSize(getCurrentClassName()));
+        setLocation(getFrameLocation(getCurrentClassName()));
+
+
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                FrameUtils.setFrameLocation(getClass().getEnclosingClass().getName(),getLocation());
+                FrameUtils.setFrameSize(getClass().getEnclosingClass().getName(),getSize());
+                dispose();
+            }
+        });
+
 
         initTableListeners();
 
