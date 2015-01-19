@@ -30,7 +30,13 @@ public class KeyUtils {
 
     public static Key loadKeyFile(String filePath) throws Throwable {
         Key key = new Key();
-        if(isKeyCorrect(filePath)) {
+        boolean isCorrect= false;
+        try {
+            isCorrect = isKeyCorrect(filePath);
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+        if(isCorrect) {
             System.out.println("Loading custom key file : " + filePath);
             Properties properties = new Properties();
 

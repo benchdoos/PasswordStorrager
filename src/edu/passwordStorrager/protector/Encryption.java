@@ -25,6 +25,7 @@ public class Encryption {
                 Main.key = KeyUtils.loadKeyFile(file.getAbsolutePath());
                 System.out.println(Main.key);
             } catch (Throwable throwable) {
+                throwable.printStackTrace();
                 System.err.println("Can not load file: " + file.getAbsolutePath());
             }
         } else {

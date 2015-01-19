@@ -23,4 +23,8 @@ public class StringUtils {
         }
         return value;
     }
+
+    public static boolean validPath(String path) {
+        return new File(path).exists() && new File(path).isDirectory();
+    }
 }

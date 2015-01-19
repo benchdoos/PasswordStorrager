@@ -17,7 +17,6 @@ public class Key {
     private String[] iCloud = new String[2];
     private String[] mega = new String[2];
     private String[] dropBox = new String[2];
-    private boolean isFinal = false;
     private boolean isEncrypted = false;
 
 
@@ -31,21 +30,17 @@ public class Key {
         return ENC;
     }
 
+    /**
+     * Set Encryption key.
+     * @param ENC Encryption Key. <pre>Warning!</pre> Key should be already encrypted.
+     */
     public void setENC(String ENC) {
-        if (!isFinal) {
-            this.ENC = ENC;
-        } else {
-            throw new RuntimeException("Key can not be transformed");
-        }
+        this.ENC = ENC;
     }
 
     public void setICloud(String login, String password) {
-        if (!isFinal) {
-            this.iCloud[0] = login;
-            this.iCloud[1] = password;
-        } else {
-            throw new RuntimeException("Key can not be transformed");
-        }
+        this.iCloud[0] = login;
+        this.iCloud[1] = password;
     }
 
     public String getICloudLogin() {
@@ -53,11 +48,7 @@ public class Key {
     }
 
     public void setICloudLogin(String login) {
-        if (!isFinal) {
-            this.iCloud[0] = login;
-        } else {
-            throw new RuntimeException("Key can not be transformed");
-        }
+        this.iCloud[0] = login;
     }
 
     public String getICloudPassword() {
@@ -65,21 +56,13 @@ public class Key {
     }
 
     public void setICloudPassword(String password) {
-        if (!isFinal) {
-            this.iCloud[1] = password;
-        } else {
-            throw new RuntimeException("Key can not be transformed");
-        }
+        this.iCloud[1] = password;
     }
 
 
     public void setMega(String login, String password) {
-        if (!isFinal) {
-            this.mega[0] = login;
-            this.mega[1] = password;
-        } else {
-            throw new RuntimeException("Key can not be transformed");
-        }
+        this.mega[0] = login;
+        this.mega[1] = password;
     }
 
     public String getMegaLogin() {
@@ -87,11 +70,7 @@ public class Key {
     }
 
     public void setMegaLogin(String login) {
-        if (!isFinal) {
-            this.mega[0] = login;
-        } else {
-            throw new RuntimeException("Key can not be transformed");
-        }
+        this.mega[0] = login;
     }
 
     public String getMegaPassword() {
@@ -99,21 +78,15 @@ public class Key {
     }
 
     public void setMegaPassword(String password) {
-        if (!isFinal) {
-            this.mega[1] = password;
-        } else {
-            throw new RuntimeException("Key can not be transformed");
-        }
+        this.mega[1] = password;
     }
 
 
     public void setDropBox(String login, String password) {
-        if (!isFinal) {
-            this.dropBox[0] = login;
-            this.dropBox[1] = password;
-        } else {
-            throw new RuntimeException("Key can not be transformed");
-        }
+
+        this.dropBox[0] = login;
+        this.dropBox[1] = password;
+
     }
 
     public String getDropBoxLogin() {
@@ -121,11 +94,9 @@ public class Key {
     }
 
     public void setDropBoxLogin(String login) {
-        if (!isFinal) {
-            this.dropBox[0] = login;
-        } else {
-            throw new RuntimeException("Key can not be transformed");
-        }
+
+        this.dropBox[0] = login;
+
     }
 
     public String getDropBoxPassword() {
@@ -133,32 +104,19 @@ public class Key {
     }
 
     public void setDropBoxPassword(String password) {
-        if (!isFinal) {
-            this.dropBox[1] = password;
-        } else {
-            throw new RuntimeException("Key can not be transformed");
-        }
+        this.dropBox[1] = password;
     }
 
-    public void finalise() {
-        isFinal = true;
-    }
 
     public void encrypt() throws GeneralSecurityException, UnsupportedEncodingException {
-        if (!isFinal) {
-            if (!isEncrypted) {
-                isEncrypted = true;
-
-                this.ENC = Protector.hexPassword(Protector.hexPassword(ENC));
-                this.iCloud[0] = Protector.encrypt(this.iCloud[0]);
-                this.iCloud[1] = Protector.encrypt(this.iCloud[1]);
-                this.mega[0] = Protector.encrypt(this.mega[0]);
-                this.mega[1] = Protector.encrypt(this.mega[1]);
-                this.dropBox[0] = Protector.encrypt(this.dropBox[0]);
-                this.dropBox[1] = Protector.encrypt(this.dropBox[1]);
-            }
-        } else {
-            throw new RuntimeException("Key can not be transformed");
+        if (!isEncrypted) {
+            isEncrypted = true;
+            this.iCloud[0] = Protector.encrypt(this.iCloud[0]);
+            this.iCloud[1] = Protector.encrypt(this.iCloud[1]);
+            this.mega[0] = Protector.encrypt(this.mega[0]);
+            this.mega[1] = Protector.encrypt(this.mega[1]);
+            this.dropBox[0] = Protector.encrypt(this.dropBox[0]);
+            this.dropBox[1] = Protector.encrypt(this.dropBox[1]);
         }
     }
 
@@ -170,9 +128,6 @@ public class Key {
         this.isEncrypted = isEncrypted;
     }
 
-    public boolean isFinal() {
-        return isFinal;
-    }
 
     @Override
     public String toString() {
@@ -184,7 +139,7 @@ public class Key {
                 Key.megaPwd + " : " + getMegaPassword() + "\n\t" +
                 Key.dropBoxAcc + " : " + getDropBoxLogin() + "\n\t" +
                 Key.dropBoxPwd + " : " + getDropBoxPassword() + "\n" +
-                "] finalised: " + isFinal() + ", encrypted: " + isEncrypted() + ";";
+                "] encrypted: " + isEncrypted() + ";";
     }
 
 }

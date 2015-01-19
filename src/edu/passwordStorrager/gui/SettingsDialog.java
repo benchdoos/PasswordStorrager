@@ -204,12 +204,7 @@ public abstract class SettingsDialog extends JDialog {
 
     }
 
-    abstract public void onOK();/* {
-
-        saveSettings();
-
-        dispose();
-    }*/
+    abstract public void onOK();
 
     public void saveSettings() {
         Key key = new Key();
@@ -232,7 +227,7 @@ public abstract class SettingsDialog extends JDialog {
     }
 
     private Key createKey(Key key) {
-        if (validPath(keyField.getText()) && validPath(storageField.getText())) {
+        if (StringUtils.validPath(keyField.getText()) && StringUtils.validPath(storageField.getText())) {
             PropertiesManager.changeProperties(StringUtils.fixFolder(keyField.getText()), StringUtils.fixFolder(storageField.getText()));
             Main.properties = PropertiesManager.loadProperties();
         }
@@ -266,7 +261,4 @@ public abstract class SettingsDialog extends JDialog {
         dispose();
     }
 
-    private boolean validPath(String path) {
-        return new File(path).exists() && new File(path).isDirectory();
-    }
 }
