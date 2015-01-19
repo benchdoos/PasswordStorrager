@@ -14,6 +14,7 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 
 public abstract class SettingsDialog extends JDialog {
@@ -24,6 +25,8 @@ public abstract class SettingsDialog extends JDialog {
     String megaPassword = "";
     String dropBoxLogin = "";
     String dropBoxPassword = "";
+
+    boolean isICloudChanged = false, isMegaChanged = false, isDropBoxChanged = false;
 
     private JPanel contentPane;
     private JButton buttonOK;
@@ -114,16 +117,16 @@ public abstract class SettingsDialog extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 String login = "", password = "";
                 if (iCloudLogin.isEmpty()) {
-                 if(Main.key != null){
-                     System.out.println(Main.key);
-                    if (!Main.key.getICloudLogin().isEmpty()) {
-                        try {
-                            login = Protector.decrypt(Main.key.getICloudLogin());
-                            password = Protector.decrypt(Main.key.getICloudPassword());
-                        } catch (GeneralSecurityException | IOException ignored) {
+                    if (Main.key != null) {
+                        System.out.println(Main.key);
+                        if (!Main.key.getICloudLogin().isEmpty()) {
+                            try {
+                                login = Protector.decrypt(Main.key.getICloudLogin());
+                                password = Protector.decrypt(Main.key.getICloudPassword());
+                            } catch (GeneralSecurityException | IOException ignored) {
+                            }
                         }
                     }
-                }
                 } else {
                     login = iCloudLogin;
                     password = iCloudPassword;
@@ -131,11 +134,11 @@ public abstract class SettingsDialog extends JDialog {
                 new AccountEnterDialog("iCloud", login, password) {
                     @Override
                     void onOK() {
-                        if (!this.textField1.getText().isEmpty() && !new String(this.passwordField1.getPassword()).isEmpty()) {
-                            iCloudLogin = this.textField1.getText();
-                            iCloudPassword = new String(this.passwordField1.getPassword());
-                            dispose();
-                        }
+                        isICloudChanged = true;
+                        iCloudLogin = this.textField1.getText();
+                        iCloudPassword = new String(this.passwordField1.getPassword());
+                        dispose();
+
                     }
                 };
             }
@@ -160,11 +163,10 @@ public abstract class SettingsDialog extends JDialog {
                 new AccountEnterDialog("MEGA", login, password) {
                     @Override
                     void onOK() {
-                        if (!this.textField1.getText().isEmpty() && !new String(this.passwordField1.getPassword()).isEmpty()) {
-                            megaLogin = this.textField1.getText();
-                            megaPassword = new String(this.passwordField1.getPassword());
-                            dispose();
-                        }
+                        isMegaChanged = true;
+                        megaLogin = this.textField1.getText();
+                        megaPassword = new String(this.passwordField1.getPassword());
+                        dispose();
                     }
                 };
             }
@@ -189,11 +191,10 @@ public abstract class SettingsDialog extends JDialog {
                 new AccountEnterDialog("DropBox", login, password) {
                     @Override
                     void onOK() {
-                        if (!this.textField1.getText().isEmpty() && !new String(this.passwordField1.getPassword()).isEmpty()) {
-                            dropBoxLogin = this.textField1.getText();
-                            dropBoxPassword = new String(this.passwordField1.getPassword());
-                            dispose();
-                        }
+                        isDropBoxChanged = true;
+                        dropBoxLogin = this.textField1.getText();
+                        dropBoxPassword = new String(this.passwordField1.getPassword());
+                        dispose();
                     }
                 };
             }
@@ -208,16 +209,23 @@ public abstract class SettingsDialog extends JDialog {
 
     public void saveSettings() {
         Key key = new Key();
-        key = createKey(key);
 
-        pushSettings(key);
+        try {
+            key = createKey(key);
+            pushSettings(key);
+        } catch (GeneralSecurityException | UnsupportedEncodingException e) {
+            e.printStackTrace();
+            System.err.println("Can not encrypt data to save to key file");
+        }
+
     }
 
     private void pushSettings(Key key) {
         String keyFilePath = Main.properties.getProperty(PropertiesManager.KEY_NAME) + Values.DEFAULT_KEY_FILE_NAME;
-        try {
-            key.encrypt();
+        try {//doos, проверить входящие данные, затем по очереди пихать в настройки а потом уже писать все это дело
+            // сделать key.setEncrypted(true) и иже потом закидывать зашифрованные данные
             key.setENC(Main.key.getENC());
+            key.setEncrypted(true);
             KeyUtils.createKeyFile(key, keyFilePath);
             Main.key = KeyUtils.loadKeyFile(keyFilePath);
         } catch (Throwable throwable) {
@@ -226,28 +234,29 @@ public abstract class SettingsDialog extends JDialog {
         }
     }
 
-    private Key createKey(Key key) {
+    private Key createKey(Key key) throws GeneralSecurityException, UnsupportedEncodingException {
+        //TODO divide this into two checks and methods
         if (StringUtils.validPath(keyField.getText()) && StringUtils.validPath(storageField.getText())) {
             PropertiesManager.changeProperties(StringUtils.fixFolder(keyField.getText()), StringUtils.fixFolder(storageField.getText()));
             Main.properties = PropertiesManager.loadProperties();
         }
 
-        if (!iCloudLogin.isEmpty() && !iCloudPassword.isEmpty()) {
-            key.setICloud(iCloudLogin, iCloudPassword);
+        if (isICloudChanged) {
+            key.setICloud(Protector.encrypt(iCloudLogin), Protector.encrypt(iCloudPassword));
         } else {
             if (!Main.key.getICloudLogin().isEmpty() && !Main.key.getICloudPassword().isEmpty()) {
                 key.setICloud(Main.key.getICloudLogin(), Main.key.getICloudPassword());
             }
         }
-        if (!megaLogin.isEmpty() && !megaPassword.isEmpty()) {
-            key.setMega(megaLogin, megaPassword);
+        if (isMegaChanged) {
+            key.setMega(Protector.encrypt(megaLogin), Protector.encrypt(megaPassword));
         } else {
             if (!Main.key.getMegaLogin().isEmpty() && !Main.key.getMegaPassword().isEmpty()) {
                 key.setMega(Main.key.getMegaLogin(), Main.key.getMegaPassword());
             }
         }
-        if (!dropBoxLogin.isEmpty() && !dropBoxPassword.isEmpty()) {
-            key.setDropBox(dropBoxLogin, dropBoxPassword);
+        if (isDropBoxChanged) {
+            key.setDropBox(Protector.encrypt(dropBoxLogin), Protector.encrypt(dropBoxPassword));
         } else {
             if (!Main.key.getDropBoxLogin().isEmpty() && !Main.key.getDropBoxPassword().isEmpty()) {
                 key.setDropBox(Main.key.getDropBoxLogin(), Main.key.getDropBoxPassword());

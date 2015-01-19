@@ -30,6 +30,7 @@ public class Protector {
     public static char[] PASSWORD = "ja*k40dL0_dg-12lKd*td@".toCharArray();
 
     public static String encrypt(String password) throws GeneralSecurityException, UnsupportedEncodingException {
+
         SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBEWithMD5AndDES");
         SecretKey key = keyFactory.generateSecret(new PBEKeySpec(PASSWORD));
         Cipher pbeCipher = Cipher.getInstance("PBEWithMD5AndDES");

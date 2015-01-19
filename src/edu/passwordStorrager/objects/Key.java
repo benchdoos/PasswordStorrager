@@ -111,12 +111,13 @@ public class Key {
     public void encrypt() throws GeneralSecurityException, UnsupportedEncodingException {
         if (!isEncrypted) {
             isEncrypted = true;
-            this.iCloud[0] = Protector.encrypt(this.iCloud[0]);
-            this.iCloud[1] = Protector.encrypt(this.iCloud[1]);
-            this.mega[0] = Protector.encrypt(this.mega[0]);
-            this.mega[1] = Protector.encrypt(this.mega[1]);
-            this.dropBox[0] = Protector.encrypt(this.dropBox[0]);
-            this.dropBox[1] = Protector.encrypt(this.dropBox[1]);
+            iCloud[0] = Protector.encrypt(iCloud[0]);
+            iCloud[1] = Protector.encrypt(iCloud[1]);
+            mega[0] = Protector.encrypt(mega[0]);
+            mega[1] = Protector.encrypt(mega[1]);
+            dropBox[0] = Protector.encrypt(dropBox[0]);
+            dropBox[1] = Protector.encrypt(dropBox[1]);
+            System.out.println("Encrypted: "+ this);
         }
     }
 

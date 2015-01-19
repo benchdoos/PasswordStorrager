@@ -161,7 +161,7 @@ public class FirstLaunchDialog extends JDialog {
 
     private void onOK() {
         if (!new String(passwordField1.getPassword()).isEmpty()) {
-            if (validPath(keyField.getText()) && validPath(storageField.getText())) {
+            if (validatePath(keyField.getText()) && validatePath(storageField.getText())) {
                 registerNewStorage();
                 try {
                     Main.key = KeyUtils.loadKeyFile(StringUtils.fixFolder(keyField.getText()) + Values.DEFAULT_KEY_FILE_NAME);
@@ -179,7 +179,7 @@ public class FirstLaunchDialog extends JDialog {
         System.exit(0);
     }
 
-    private boolean validPath(String path) {
+    private boolean validatePath(String path) {
         return new File(path).isDirectory() && new File(path).exists();
     }
 
@@ -205,51 +205,27 @@ public class FirstLaunchDialog extends JDialog {
     private void createKeyFile() throws Throwable {
 
         Key key = new Key();
-        key.setENC(new String(passwordField1.getPassword()));
+        key.setENC(Protector.hexPassword(Protector.hexPassword(new String(passwordField1.getPassword()))));//new String(passwordField1.getPassword())
         key.setICloud(iCloudLogin, iCloudPassword);
         key.setMega(megaLogin, megaPassword);
         key.setDropBox(dropBoxLogin, dropBoxPassword);
         key.encrypt();
-        key.finalise();
 
         KeyUtils.createKeyFile(key, StringUtils.fixFolder(keyField.getText()) + Values.DEFAULT_KEY_FILE_NAME);
     }
 
     private void createProperties() {
-        String key_ = StringUtils.fixFolder(keyField.getText());
-        String storage_ = StringUtils.fixFolder(storageField.getText());
+        String key = StringUtils.fixFolder(keyField.getText());
+        String storage = StringUtils.fixFolder(storageField.getText());
 
-        PropertiesManager.changeProperties(key_, storage_);
+        PropertiesManager.changeProperties(key, storage);
     }
 
     private void createEmptyStorage() throws Throwable {
         File file = new File(StringUtils.fixFolder(storageField.getText()) + "storage");
         if (!file.exists()) {
             if (file.createNewFile()) {
-
                 new XmlParser().saveRecords(new ArrayList<Record>());
-
-                /*DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-                DocumentBuilder docBuilder = null;
-                docBuilder = docFactory.newDocumentBuilder();
-
-                Document document = docBuilder.newDocument();
-                Element passwordStorage = document.createElement("PasswordStorage");
-                document.appendChild(passwordStorage);
-
-                TransformerFactory transformerFactory = TransformerFactory.newInstance();
-                Transformer transformer = transformerFactory.newTransformer();
-                transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-
-                DOMSource source = new DOMSource(document);
-                StreamResult result = new StreamResult(byteArrayOutputStream);
-
-                transformer.transform(source, result);
-
-                byte[] data = byteArrayOutputStream.toByteArray();
-                PasswordProtector.encrypt(new ByteArrayInputStream(data), new FileOutputStream(file));*/
             } else {
                 throw new IOException("Can not create file: " + file.getAbsolutePath());
             }
