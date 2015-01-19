@@ -9,12 +9,12 @@ public class FileUtils {
 
     public static void setFileHidden(String filePath) {
         try {
-            if (Main.isMac) {
+            if (Main.IS_MAC) {
                 Runtime.getRuntime().exec("setfile -a V " + filePath);
                 Runtime.getRuntime().exec("chflags hidden " + filePath);
             }
 
-            if (Main.isWindows) {
+            if (Main.IS_WINDOWS) {
                 Runtime.getRuntime().exec("attrib +H " + filePath);
             }
 

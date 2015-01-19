@@ -15,9 +15,9 @@ public class PropertiesManager {
     private static String destination;
 
     public PropertiesManager() {
-        if (Main.isMac) {
+        if (Main.IS_MAC) {
             folder = Values.DEFAULT_MAC_PROPERTIES_FILE_FOLDER;
-        } else if (Main.isWindows) {
+        } else if (Main.IS_WINDOWS) {
             folder = Values.DEFAULT_WINDOWS_PROPERTIES_FILE_FOLDER;
         } else {
             throw new UnsupportedOperationException("This OS is not supported yet");
@@ -84,7 +84,7 @@ public class PropertiesManager {
     }
 
     public static boolean exists() {
-        return (Main.isMac || Main.isWindows) && new File(destination).exists();
+        return (Main.IS_MAC || Main.IS_WINDOWS) && new File(destination).exists();
     }
 
     public static boolean isCorrect() {

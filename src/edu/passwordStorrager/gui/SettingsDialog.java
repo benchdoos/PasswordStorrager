@@ -52,7 +52,7 @@ public class SettingsDialog extends JDialog {
                 JFrame frame = new JFrame();
 
                 FileDialog d = new FileDialog(frame);
-                d.setDirectory(Main.userHome);
+                d.setDirectory(Main.USER_HOME);
                 d.setFilenameFilter(new FilenameFilter() {
                     @Override
                     public boolean accept(File dir, String name) {
@@ -70,7 +70,7 @@ public class SettingsDialog extends JDialog {
                 JFrame frame = new JFrame();
 
                 FileDialog d = new FileDialog(frame);
-                d.setDirectory(Main.userHome);
+                d.setDirectory(Main.USER_HOME);
                 d.setFilenameFilter(new FilenameFilter() {
                     @Override
                     public boolean accept(File dir, String name) {
