@@ -2,7 +2,6 @@ package edu.passwordStorrager.protector;
 
 
 import edu.passwordStorrager.core.Main;
-import edu.passwordStorrager.core.PasswordProtector;
 import edu.passwordStorrager.utils.KeyUtils;
 
 import java.io.ByteArrayInputStream;
@@ -13,19 +12,14 @@ import java.io.FileInputStream;
 public class Encryption {
     File file;
 
-    public Encryption(File file) {
-        this.file = file;
-        extractKey();
-    }
-
     public static ByteArrayInputStream decrypt(String filePath) throws Throwable {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        PasswordProtector.decrypt(new FileInputStream(filePath), byteArrayOutputStream);
+        Protector.decrypt(new FileInputStream(filePath), byteArrayOutputStream);
         byte data[] = byteArrayOutputStream.toByteArray();
         return new ByteArrayInputStream(data);
     }
 
-    private void extractKey() {
+    public static void extractKey(File file) {
         if (file.exists()) {
             try {
                 Main.key = KeyUtils.loadKeyFile(file.getAbsolutePath());

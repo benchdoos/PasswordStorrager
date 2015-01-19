@@ -1,6 +1,6 @@
 package edu.passwordStorrager.objects;
 
-import edu.passwordStorrager.core.PasswordProtector;
+import edu.passwordStorrager.protector.Protector;
 
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
@@ -149,13 +149,13 @@ public class Key {
             if (!isEncrypted) {
                 isEncrypted = true;
 
-                this.ENC = PasswordProtector.hexPassword(PasswordProtector.hexPassword(ENC));
-                this.iCloud[0] = PasswordProtector.encrypt(this.iCloud[0]);
-                this.iCloud[1] = PasswordProtector.encrypt(this.iCloud[1]);
-                this.mega[0] = PasswordProtector.encrypt(this.mega[0]);
-                this.mega[1] = PasswordProtector.encrypt(this.mega[1]);
-                this.dropBox[0] = PasswordProtector.encrypt(this.dropBox[0]);
-                this.dropBox[1] = PasswordProtector.encrypt(this.dropBox[1]);
+                this.ENC = Protector.hexPassword(Protector.hexPassword(ENC));
+                this.iCloud[0] = Protector.encrypt(this.iCloud[0]);
+                this.iCloud[1] = Protector.encrypt(this.iCloud[1]);
+                this.mega[0] = Protector.encrypt(this.mega[0]);
+                this.mega[1] = Protector.encrypt(this.mega[1]);
+                this.dropBox[0] = Protector.encrypt(this.dropBox[0]);
+                this.dropBox[1] = Protector.encrypt(this.dropBox[1]);
             }
         } else {
             throw new RuntimeException("Key can not be transformed");

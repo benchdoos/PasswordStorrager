@@ -20,10 +20,12 @@ public class Main {
 
 
     Main() {
-        if (isMac) {
-            macOsHandler();
-        }
+        checkIfOsIsSupported();
+        
         Main.key = new Key();
+
+        new PropertiesManager(); //MUST BE CALLED
+
         if (PropertiesManager.exists()) {
             new AuthorizeDialog();
         } else {
@@ -33,6 +35,17 @@ public class Main {
 
     public static void main(String[] args) {
         new Main();
+    }
+
+    private void checkIfOsIsSupported() {
+        if (isMac) {
+            macOsHandler();
+        } else if (isWindows) {
+            //osHandler here
+            System.out.println("Windows");
+        } else {
+            throw new UnsupportedOperationException("This OS is not supported yet : " + osName);
+        }
     }
 
     private void macOsHandler() {

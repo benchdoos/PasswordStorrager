@@ -1,10 +1,10 @@
 package edu.passwordStorrager.gui;
 
 import edu.passwordStorrager.core.Main;
-import edu.passwordStorrager.core.PasswordProtector;
+import edu.passwordStorrager.protector.Protector;
 import edu.passwordStorrager.core.PropertiesManager;
 import edu.passwordStorrager.objects.Key;
-import edu.passwordStorrager.protector.DefaultValues;
+import edu.passwordStorrager.protector.Values;
 import edu.passwordStorrager.utils.KeyUtils;
 import edu.passwordStorrager.utils.StringUtils;
 
@@ -116,8 +116,8 @@ public class SettingsDialog extends JDialog {
                 if (iCloudLogin.isEmpty()) {
                     if (Main.key != null && !Main.key.getICloudLogin().isEmpty()) {
                         try {
-                            login = PasswordProtector.decrypt(Main.key.getICloudLogin());
-                            password = PasswordProtector.decrypt(Main.key.getICloudPassword());
+                            login = Protector.decrypt(Main.key.getICloudLogin());
+                            password = Protector.decrypt(Main.key.getICloudPassword());
                         } catch (GeneralSecurityException | IOException ignored) {
                         }
                     }
@@ -145,8 +145,8 @@ public class SettingsDialog extends JDialog {
                 if (megaLogin.isEmpty()) {
                     if (Main.key != null && !Main.key.getMegaLogin().isEmpty()) {
                         try {
-                            login = PasswordProtector.decrypt(Main.key.getMegaLogin());
-                            password = PasswordProtector.decrypt(Main.key.getMegaPassword());
+                            login = Protector.decrypt(Main.key.getMegaLogin());
+                            password = Protector.decrypt(Main.key.getMegaPassword());
                         } catch (GeneralSecurityException | IOException ignored) {
                         }
                     }
@@ -174,8 +174,8 @@ public class SettingsDialog extends JDialog {
                 if (dropBoxLogin.isEmpty()) {
                     if (Main.key != null && !Main.key.getDropBoxLogin().isEmpty()) {
                         try {
-                            login = PasswordProtector.decrypt(Main.key.getDropBoxLogin());
-                            password = PasswordProtector.decrypt(Main.key.getDropBoxPassword());
+                            login = Protector.decrypt(Main.key.getDropBoxLogin());
+                            password = Protector.decrypt(Main.key.getDropBoxPassword());
                         } catch (GeneralSecurityException | IOException ignored) {
                         }
                     }
@@ -231,7 +231,7 @@ public class SettingsDialog extends JDialog {
                 key.setICloud(Main.key.getDropBoxLogin(), Main.key.getDropBoxPassword());
             }
         }
-        String keyFilePath = Main.properties.getProperty(PropertiesManager.KEY_NAME) + DefaultValues.DEFAULT_KEY_FILE;
+        String keyFilePath = Main.properties.getProperty(PropertiesManager.KEY_NAME) + Values.DEFAULT_KEY_FILE_NAME;
         try {
             key.encrypt();
             key.setENC(Main.key.getENC());

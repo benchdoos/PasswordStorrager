@@ -1,10 +1,10 @@
 package edu.passwordStorrager.gui;
 
 import edu.passwordStorrager.core.Main;
-import edu.passwordStorrager.core.PasswordProtector;
+import edu.passwordStorrager.protector.Protector;
 import edu.passwordStorrager.core.PropertiesManager;
-import edu.passwordStorrager.protector.DefaultValues;
 import edu.passwordStorrager.protector.Encryption;
+import edu.passwordStorrager.protector.Values;
 import edu.passwordStorrager.xmlManager.XmlParser;
 
 import javax.swing.*;
@@ -68,16 +68,17 @@ public class AuthorizeDialog extends JDialog {
     }
 
     private void onOK() throws IOException {
-        String hexedPassword = PasswordProtector.hexPassword(PasswordProtector.hexPassword(new String(passwordField.getPassword())));
-        PasswordProtector.PASSWORD = hexedPassword.toCharArray();
+        String hexedPassword = Protector.hexPassword(Protector.hexPassword(new String(passwordField.getPassword())));
+        Protector.PASSWORD = hexedPassword.toCharArray();
 
         if (PropertiesManager.exists()) {
             Main.properties = PropertiesManager.loadProperties();
             if (PropertiesManager.isCorrect()) {
                 PropertiesManager.showProperties(Main.properties);
-                System.out.println("Password is correct");
                 //TODO send notification here.
-                new Encryption(new File(Main.properties.getProperty(PropertiesManager.KEY_NAME) + DefaultValues.DEFAULT_KEY_FILE));
+                System.out.println("Password is correct");
+
+                Encryption.extractKey(new File(Main.properties.getProperty(PropertiesManager.KEY_NAME) + Values.DEFAULT_KEY_FILE_NAME));
                 new MainForm(new XmlParser().parseRecords()).setVisible(true);
             } else {
                 //TODO send notification here.

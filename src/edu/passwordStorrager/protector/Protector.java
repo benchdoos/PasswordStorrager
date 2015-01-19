@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.passwordStorrager.core;
+package edu.passwordStorrager.protector;
 
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
@@ -22,7 +22,7 @@ import java.security.NoSuchAlgorithmException;
 /**
  * @author passwordStorrager
  */
-public class PasswordProtector {
+public class Protector {
     private static final byte[] SALT = {
             (byte) 0xde, (byte) 0x33, (byte) 0x10, (byte) 0x12,
             (byte) 0xde, (byte) 0x33, (byte) 0x10, (byte) 0x12,

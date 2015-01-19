@@ -1,11 +1,11 @@
 package edu.passwordStorrager.gui;
 
 import edu.passwordStorrager.core.Main;
-import edu.passwordStorrager.core.PasswordProtector;
+import edu.passwordStorrager.protector.Protector;
 import edu.passwordStorrager.core.PropertiesManager;
 import edu.passwordStorrager.objects.Key;
 import edu.passwordStorrager.objects.Record;
-import edu.passwordStorrager.protector.DefaultValues;
+import edu.passwordStorrager.protector.Values;
 import edu.passwordStorrager.utils.KeyUtils;
 import edu.passwordStorrager.utils.StringUtils;
 import edu.passwordStorrager.xmlManager.XmlParser;
@@ -164,9 +164,9 @@ public class FirstLaunchDialog extends JDialog {
             if (validPath(keyField.getText()) && validPath(storageField.getText())) {
                 registerNewStorage();
                 try {
-                    Main.key = KeyUtils.loadKeyFile(StringUtils.fixFolder(keyField.getText()) + DefaultValues.DEFAULT_KEY_FILE);
+                    Main.key = KeyUtils.loadKeyFile(StringUtils.fixFolder(keyField.getText()) + Values.DEFAULT_KEY_FILE_NAME);
                 } catch (Throwable throwable) {
-                    System.err.println("Can not load key file: " + StringUtils.fixFolder(keyField.getText()) + DefaultValues.DEFAULT_KEY_FILE);
+                    System.err.println("Can not load key file: " + StringUtils.fixFolder(keyField.getText()) + Values.DEFAULT_KEY_FILE_NAME);
                 }
                 dispose();
             }
@@ -184,8 +184,8 @@ public class FirstLaunchDialog extends JDialog {
     }
 
     private void registerNewStorage() {
-        String hexedPassword = PasswordProtector.hexPassword(PasswordProtector.hexPassword(new String(passwordField1.getPassword())));
-        PasswordProtector.PASSWORD = hexedPassword.toCharArray();
+        String hexedPassword = Protector.hexPassword(Protector.hexPassword(new String(passwordField1.getPassword())));
+        Protector.PASSWORD = hexedPassword.toCharArray();
 
         try {
             createProperties(); //where storage is situated
@@ -212,7 +212,7 @@ public class FirstLaunchDialog extends JDialog {
         key.encrypt();
         key.finalise();
 
-        KeyUtils.createKeyFile(key, StringUtils.fixFolder(keyField.getText()) + DefaultValues.DEFAULT_KEY_FILE);
+        KeyUtils.createKeyFile(key, StringUtils.fixFolder(keyField.getText()) + Values.DEFAULT_KEY_FILE_NAME);
     }
 
     private void createProperties() {

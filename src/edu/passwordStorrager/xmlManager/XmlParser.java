@@ -1,9 +1,9 @@
 package edu.passwordStorrager.xmlManager;
 
 import edu.passwordStorrager.core.Main;
-import edu.passwordStorrager.core.PasswordProtector;
+import edu.passwordStorrager.protector.Protector;
 import edu.passwordStorrager.objects.Record;
-import edu.passwordStorrager.protector.DefaultValues;
+import edu.passwordStorrager.protector.Values;
 import edu.passwordStorrager.utils.FileUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -24,7 +24,7 @@ public class XmlParser {
 
 
     public XmlParser() {
-        pathStorageFile = Main.properties.getProperty("Storage") + DefaultValues.DEFAULT_STORAGE_FILE;
+        pathStorageFile = Main.properties.getProperty("Storage") + Values.DEFAULT_STORAGE_FILE_NAME;
     }
 
     public ArrayList<Record> parseRecords() {
@@ -36,7 +36,7 @@ public class XmlParser {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
         try {
-            PasswordProtector.decrypt(new FileInputStream(pathStorageFile), byteArrayOutputStream);
+            Protector.decrypt(new FileInputStream(pathStorageFile), byteArrayOutputStream);
             byte data[] = byteArrayOutputStream.toByteArray();
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data);
 
@@ -96,7 +96,7 @@ public class XmlParser {
 
             byte[] data = byteArrayOutputStream.toByteArray();
 
-            PasswordProtector.encrypt(new ByteArrayInputStream(data), new FileOutputStream(pathStorageFile));
+            Protector.encrypt(new ByteArrayInputStream(data), new FileOutputStream(pathStorageFile));
 
             FileUtils.setFileHidden(pathStorageFile);
 

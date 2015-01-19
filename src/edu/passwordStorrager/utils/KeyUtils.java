@@ -1,6 +1,6 @@
 package edu.passwordStorrager.utils;
 
-import edu.passwordStorrager.core.PasswordProtector;
+import edu.passwordStorrager.protector.Protector;
 import edu.passwordStorrager.objects.Key;
 import edu.passwordStorrager.protector.Encryption;
 
@@ -23,7 +23,7 @@ public class KeyUtils {
         properties.store(byteArrayOutputStream, "CUSTOM KEY");
         byte prop[] = byteArrayOutputStream.toByteArray();
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(prop);
-        PasswordProtector.encrypt(byteArrayInputStream,
+        Protector.encrypt(byteArrayInputStream,
                 new FileOutputStream(filePath));
     }
 
