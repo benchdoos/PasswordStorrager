@@ -1,6 +1,6 @@
 # TODO LIST
 
-* add Log4j logging on OSX/Windows
+* ~~add Log4j logging on OSX/Windows~~ (fdb0950)
 * make Mac OS X full support
 * add Windows support
 * add UNIX support
