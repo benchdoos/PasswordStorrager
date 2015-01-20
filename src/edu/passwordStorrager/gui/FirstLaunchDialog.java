@@ -1,14 +1,15 @@
 package edu.passwordStorrager.gui;
 
 import edu.passwordStorrager.core.Main;
-import edu.passwordStorrager.protector.Protector;
 import edu.passwordStorrager.core.PropertiesManager;
 import edu.passwordStorrager.objects.Key;
 import edu.passwordStorrager.objects.Record;
+import edu.passwordStorrager.protector.Protector;
 import edu.passwordStorrager.protector.Values;
 import edu.passwordStorrager.utils.KeyUtils;
 import edu.passwordStorrager.utils.StringUtils;
 import edu.passwordStorrager.xmlManager.XmlParser;
+import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +19,10 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
+
 public class FirstLaunchDialog extends JDialog {
+    private static final Logger log = Logger.getLogger(getCurrentClassName());
 
     String iCloudLogin = "";
     String iCloudPassword = "";
@@ -166,8 +170,9 @@ public class FirstLaunchDialog extends JDialog {
                 registerNewStorage();
                 try {
                     Main.key = KeyUtils.loadKeyFile(StringUtils.fixFolder(keyField.getText()) + Values.DEFAULT_KEY_FILE_NAME);
-                } catch (Throwable throwable) {
-                    System.err.println("Can not load key file: " + StringUtils.fixFolder(keyField.getText()) + Values.DEFAULT_KEY_FILE_NAME);
+                } catch (Throwable e) {
+                    log.warn("Can not load key file: " 
+                            + StringUtils.fixFolder(keyField.getText()) + Values.DEFAULT_KEY_FILE_NAME, e);
                 }
                 dispose();
             }
@@ -195,11 +200,11 @@ public class FirstLaunchDialog extends JDialog {
                 createKeyFile();
 
                 new MainForm(new XmlParser().parseRecords()).setVisible(true);
-            } catch (Throwable throwable) {
-                System.err.println("Can not create key");
+            } catch (Throwable e) {
+                log.warn("Can not create key", e);
             }
         } catch (Throwable e) {
-            System.err.println("Can not create storage in: " + storageField.getText());
+            log.warn("Can not create storage in: " + storageField.getText(), e);
         }
     }
 

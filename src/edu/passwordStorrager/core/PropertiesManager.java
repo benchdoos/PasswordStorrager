@@ -2,12 +2,17 @@ package edu.passwordStorrager.core;
 
 import edu.passwordStorrager.protector.Protector;
 import edu.passwordStorrager.protector.Values;
+import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.util.Properties;
 
+import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
+
 public class PropertiesManager {
+    private static final Logger log = Logger.getLogger(getCurrentClassName());
+    
     public static final String STORAGE_NAME = "Storage";
     public static final String KEY_NAME = "Key";
     
@@ -25,6 +30,7 @@ public class PropertiesManager {
         }
         propertiesFilePath = folder + Values.DEFAULT_PROPERTIES_FILE_NAME;
         framePropertiesFilePath = folder + Values.DEFAULT_FRAME_PROPERTIES_FILE_NAME;
+        System.setProperty("PropertiesFolder", folder);
     }
 
     private static void createProperties(String keyPath, String storagePath) {
@@ -40,9 +46,9 @@ public class PropertiesManager {
             Protector.encrypt(byteArrayInputStream, new FileOutputStream(propertiesFilePath));
 
         } catch (IOException e) {
-            System.err.println("Can not create File: " + propertiesFilePath);
+            log.warn("Can not create File: " + propertiesFilePath);
         } catch (Throwable throwable) {
-            System.err.println("Can not create encrypted File: " + propertiesFilePath);
+            log.warn("Can not create encrypted File: " + propertiesFilePath);
         }
     }
     
@@ -58,7 +64,7 @@ public class PropertiesManager {
                     Files.copy(folder_.toPath(), new FileOutputStream(folder + "_bak"));
                     folder_.delete();
                 } catch (IOException e) {
-                    System.err.println("can not copy file");
+                    log.warn("can not copy file");
                 }
             }
         } else {
@@ -77,9 +83,9 @@ public class PropertiesManager {
             properties.load(new ByteArrayInputStream(data));
             return properties;
         } catch (IOException e) {
-            System.err.println("Can not load File: " + propertiesPath);
+            log.warn("Can not load File: " + propertiesPath);
         } catch (Throwable throwable) {
-            System.err.println("Can not decrypt File: " + propertiesPath);
+            log.warn("Can not decrypt File: " + propertiesPath);
         }
         return null;
     }

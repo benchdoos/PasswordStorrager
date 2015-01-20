@@ -4,25 +4,25 @@ import edu.passwordStorrager.objects.Record;
 import edu.passwordStorrager.utils.FrameUtils;
 import edu.passwordStorrager.utils.StringUtils;
 import edu.passwordStorrager.xmlManager.XmlParser;
+import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.EventObject;
 
-import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
-import static edu.passwordStorrager.utils.FrameUtils.getFrameLocation;
-import static edu.passwordStorrager.utils.FrameUtils.getFrameSize;
+import static edu.passwordStorrager.utils.FrameUtils.*;
 
 public class MainForm extends JFrame {
+
+    private static final Logger log = Logger.getLogger(getCurrentClassName());
+    
     public static final int STATUS_MESSAGE = 1, STATUS_ERROR = -1, STATUS_SUCCESS = 2;
     protected static JRadioButtonMenuItem editModeJRadioButtonMenuItem; //if checked - can edit existing
     protected static JLabel bar;
@@ -155,7 +155,7 @@ public class MainForm extends JFrame {
                             try {
                                 desktop.browse(URI.create(StringUtils.parseUrl((String) MainForm.this.table.getModel().getValueAt(row, table.getColumn(SITE_COLUMN_NAME).getModelIndex()))));
                             } catch (IOException e) {
-                                System.out.println("Can not open in browser: " + StringUtils.parseUrl((String) MainForm.this.table.getModel().getValueAt(row, 0)));
+                                log.warn("Can not open in browser: " + StringUtils.parseUrl((String) MainForm.this.table.getModel().getValueAt(row, table.getColumn(SITE_COLUMN_NAME).getModelIndex())));
                             }
                         } else {
                             copyToClipboard((String) MainForm.this.table.getModel().getValueAt(row, table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex()));
@@ -361,29 +361,7 @@ public class MainForm extends JFrame {
     }
 
 
-    private void resizeTableColumns() {
-        /*for (int column = 0; column < table.getColumnCount(); column++) {
-            TableColumn tableColumn = table.getColumnModel().getColumn(column);
-            int preferredWidth = tableColumn.getMinWidth();
-            int maxWidth = tableColumn.getMaxWidth();
-
-            for (int row = 0; row < table.getRowCount(); row++) {
-                TableCellRenderer cellRenderer = table.getCellRenderer(row, column);
-                Component c = table.prepareRenderer(cellRenderer, row, column);
-                int width = c.getPreferredSize().width + table.getIntercellSpacing().width;
-                preferredWidth = Math.max(preferredWidth, width);
-
-                //  We've exceeded the maximum width, no need to check other rows
-
-                if (preferredWidth >= maxWidth) {
-                    preferredWidth = maxWidth;
-                    break;
-                }
-            }
-
-            tableColumn.setPreferredWidth(preferredWidth);
-        }*/
-        TableColumn tableColumn = table.getColumn(NUMBER_COLUMN_NAME);
+    private void resizeTableColumns(TableColumn tableColumn) {
         int column = table.getColumn(NUMBER_COLUMN_NAME).getModelIndex();
         int preferredWidth = tableColumn.getMinWidth();
         int maxWidth = tableColumn.getMaxWidth();
@@ -392,8 +370,6 @@ public class MainForm extends JFrame {
             Component c = table.prepareRenderer(cellRenderer, row, column);
             int width = c.getPreferredSize().width + table.getIntercellSpacing().width;
             preferredWidth = Math.max(preferredWidth, width);
-
-            //  We've exceeded the maximum width, no need to check other rows
 
             if (preferredWidth >= maxWidth) {
                 preferredWidth = maxWidth;
@@ -445,7 +421,7 @@ public class MainForm extends JFrame {
         table.getColumn(LOGIN_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField("field")));
         table.getColumn(PASSWORD_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField("field")));
 
-        resizeTableColumns();
+        resizeTableColumns(table.getColumn(NUMBER_COLUMN_NAME));
 
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.setDragEnabled(false);
@@ -498,13 +474,6 @@ public class MainForm extends JFrame {
                 }
             }
         }
-    }
-
-    private void copyToClipboard(String value) {
-        System.out.println("copy [" + value + "]");
-        StringSelection stringSelection = new StringSelection(value);
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        clipboard.setContents(stringSelection, null);
     }
     
     
