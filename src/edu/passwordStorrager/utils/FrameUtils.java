@@ -2,12 +2,16 @@ package edu.passwordStorrager.utils;
 
 import edu.passwordStorrager.core.Main;
 import edu.passwordStorrager.core.PropertiesManager;
+import org.apache.log4j.Logger;
 
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.FileInputStream;
 import java.io.IOException;
 
 public class FrameUtils {
+    private static final Logger log = Logger.getLogger(getCurrentClassName());
 
     /**
      * Returns the name of called class. Made for usage in static methods.
@@ -23,7 +27,7 @@ public class FrameUtils {
         }
 
     }
-    
+
 
     public static void setFrameLocation(String className, Point point) {
         Main.frames.setProperty(className + "LX", new Double(point.getX()).intValue() + "");
@@ -32,8 +36,7 @@ public class FrameUtils {
             PropertiesManager.saveProperties(Main.frames, PropertiesManager.framePropertiesFilePath);
             Main.frames.load(new FileInputStream(PropertiesManager.framePropertiesFilePath));
         } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("Can not write frame location");
+            log.warn("Can not write frame location", e);
         }
     }
 
@@ -45,8 +48,7 @@ public class FrameUtils {
 
             Main.frames.load(new FileInputStream(PropertiesManager.framePropertiesFilePath));
         } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("Can not write frame size");
+            log.warn("Can not write frame size", e);
         }
     }
 
@@ -71,7 +73,7 @@ public class FrameUtils {
         if (Main.frames != null) {
             try {
                 Main.frames.load(new FileInputStream(PropertiesManager.framePropertiesFilePath));
-                
+
                 int width = Integer.parseInt(Main.frames.getProperty(className + "SW"));
                 int height = Integer.parseInt(Main.frames.getProperty(className + "SH"));
                 return new Dimension(width, height);
@@ -82,5 +84,18 @@ public class FrameUtils {
         } else {
             return new Dimension(100, 100);
         }
+    }
+
+
+    public static Point setFrameOnCenter(Dimension size) {
+        int width = (int) ((Toolkit.getDefaultToolkit().getScreenSize().width / 2) - (size.getWidth() / 2));
+        int height = (int) ((Toolkit.getDefaultToolkit().getScreenSize().height / 2) - (size.getHeight() / 2));
+        return new Point(width, height);
+    }
+
+    public static void copyToClipboard(String value) {
+        StringSelection stringSelection = new StringSelection(value);
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(stringSelection, null);
     }
 }

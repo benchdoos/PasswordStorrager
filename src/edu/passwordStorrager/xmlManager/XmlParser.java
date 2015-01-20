@@ -1,10 +1,11 @@
 package edu.passwordStorrager.xmlManager;
 
 import edu.passwordStorrager.core.Main;
-import edu.passwordStorrager.protector.Protector;
 import edu.passwordStorrager.objects.Record;
+import edu.passwordStorrager.protector.Protector;
 import edu.passwordStorrager.protector.Values;
 import edu.passwordStorrager.utils.FileUtils;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -19,7 +20,11 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.util.ArrayList;
 
+import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
+
 public class XmlParser {
+    private static final Logger log = Logger.getLogger(getCurrentClassName());
+
     String pathStorageFile;
 
 
@@ -55,13 +60,11 @@ public class XmlParser {
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
         } catch (SAXException e) {
-            System.err.println("Can not parse file.");
+            log.warn("Can not parse file.", e);
         } catch (IOException e) {
-            //System.err.println("No file found:" + pathStorageFile);
-            e.printStackTrace();
-            System.err.println("File can not be decoded"); //no file / can not be decoded cause of wrong password
-        } catch (Throwable throwable) {
-            System.err.println("Can not decrypt storage");
+            log.warn("File can not be decoded", e); //no file / can not be decoded cause of wrong password
+        } catch (Throwable e) {
+            log.warn("Can not decrypt storage", e);
         }
         return records;
     }
@@ -101,16 +104,15 @@ public class XmlParser {
             FileUtils.setFileHidden(pathStorageFile);
 
         } catch (ParserConfigurationException e) {
-            System.err.println("Error in parser configuration while saving");
+            log.warn("Error in parser configuration while saving", e);
         } catch (TransformerConfigurationException e) {
-            System.err.println("Error in transforming while saving");
+            log.warn("Error in transforming while saving", e);
         } catch (TransformerException e) {
-            System.err.println("Error in transformer while saving");
+            log.warn("Error in transformer while saving", e);
         } catch (FileNotFoundException e) {
-            System.err.println("File not found : " + pathStorageFile);
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-            System.err.println("Can not encrypt (save) to file: " + pathStorageFile);
+            log.warn("File not found : " + pathStorageFile, e);
+        } catch (Throwable e) {
+            log.warn("Can not encrypt (save) to file: " + pathStorageFile, e);
         }
     }
 

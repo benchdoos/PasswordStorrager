@@ -8,6 +8,7 @@ import edu.passwordStorrager.protector.Values;
 import edu.passwordStorrager.utils.FrameUtils;
 import edu.passwordStorrager.utils.KeyUtils;
 import edu.passwordStorrager.utils.StringUtils;
+import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,6 +24,7 @@ import static edu.passwordStorrager.utils.FrameUtils.getFrameLocation;
 import static edu.passwordStorrager.utils.FrameUtils.getFrameSize;
 
 public abstract class SettingsDialog extends JDialog {
+    private static final Logger log = Logger.getLogger(getCurrentClassName());
 
     String iCloudLogin = "";
     String iCloudPassword = "";
@@ -229,23 +231,20 @@ public abstract class SettingsDialog extends JDialog {
             key = createKey(key);
             pushSettings(key);
         } catch (GeneralSecurityException | UnsupportedEncodingException e) {
-            e.printStackTrace();
-            System.err.println("Can not encrypt data to save to key file");
+            log.warn("Can not encrypt data to save to key file",e);
         }
 
     }
 
     private void pushSettings(Key key) {
         String keyFilePath = Main.properties.getProperty(PropertiesManager.KEY_NAME) + Values.DEFAULT_KEY_FILE_NAME;
-        try {//doos, проверить входящие данные, затем по очереди пихать в настройки а потом уже писать все это дело
-            // сделать key.setEncrypted(true) и иже потом закидывать зашифрованные данные
+        try {
             key.setENC(Main.key.getENC());
             key.setEncrypted(true);
             KeyUtils.createKeyFile(key, keyFilePath);
             Main.key = KeyUtils.loadKeyFile(keyFilePath);
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-            System.err.println("Can not create file: " + keyFilePath);
+        } catch (Throwable e) {
+            log.warn("Can not create file: " + keyFilePath,e);
         }
     }
 

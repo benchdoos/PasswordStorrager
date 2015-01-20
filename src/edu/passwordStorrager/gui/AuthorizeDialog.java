@@ -4,10 +4,10 @@ import edu.passwordStorrager.core.Main;
 import edu.passwordStorrager.protector.Encryption;
 import edu.passwordStorrager.protector.Protector;
 import edu.passwordStorrager.protector.Values;
+import edu.passwordStorrager.utils.FrameUtils;
 import edu.passwordStorrager.xmlManager.XmlParser;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
@@ -62,9 +62,8 @@ public class AuthorizeDialog extends JDialog {
 
         pack();
 
-        int width = (Toolkit.getDefaultToolkit().getScreenSize().width / 2) - (this.getWidth() / 2);
-        int height = (Toolkit.getDefaultToolkit().getScreenSize().height / 2) - (this.getHeight() / 2);
-        setLocation(width, height);
+
+        setLocation(FrameUtils.setFrameOnCenter(getSize()));
 
         setVisible(true);
     }

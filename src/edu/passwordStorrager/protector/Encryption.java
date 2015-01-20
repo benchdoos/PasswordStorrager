@@ -3,13 +3,18 @@ package edu.passwordStorrager.protector;
 
 import edu.passwordStorrager.core.Main;
 import edu.passwordStorrager.utils.KeyUtils;
+import org.apache.log4j.Logger;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 
+import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
+
 public class Encryption {
+    private static final Logger log = Logger.getLogger(getCurrentClassName());
+
     File file;
 
     public static ByteArrayInputStream decrypt(String filePath) throws Throwable {
@@ -23,13 +28,12 @@ public class Encryption {
         if (file.exists()) {
             try {
                 Main.key = KeyUtils.loadKeyFile(file.getAbsolutePath());
-            } catch (Throwable throwable) {
-                throwable.printStackTrace();
-                System.err.println("Can not load file: " + file.getAbsolutePath());
+            } catch (Throwable e) {
+                log.warn("Can not load file: " + file.getAbsolutePath(), e);
             }
         } else {
             //new FirstLaunchDialog();
-            System.err.println("Can not load file: " + file.getAbsolutePath());
+            log.fatal("Can not load file: " + file.getAbsolutePath());
             //TODO push notification, show dialog message to find / create key
             System.exit(-1);
         }
