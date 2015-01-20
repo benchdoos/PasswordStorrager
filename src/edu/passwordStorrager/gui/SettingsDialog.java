@@ -134,7 +134,6 @@ public abstract class SettingsDialog extends JDialog {
                 String login = "", password = "";
                 if (iCloudLogin.isEmpty()) {
                     if (Main.key != null) {
-                        System.out.println(Main.key);
                         if (!Main.key.getICloudLogin().isEmpty()) {
                             try {
                                 login = Protector.decrypt(Main.key.getICloudLogin());
