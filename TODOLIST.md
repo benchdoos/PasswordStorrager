@@ -1,6 +1,6 @@
 # TODO LIST
 
-* ~~add Log4j logging on OSX/Windows~~ [fdb0950](commit/fdb0950ccb34a854ba0303acbfbe34afe909ab62)
+* ~~add Log4j logging on OSX/Windows~~ [fdb0950](/PasswordStorrager/commit/fdb0950ccb34a854ba0303acbfbe34afe909ab62)
 * make Mac OS X full support
 * add Windows support
 * add UNIX support
