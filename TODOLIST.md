@@ -5,6 +5,7 @@
 * add Notification push for Mac OS X
 * add Windows support
 * add UNIX support
+* add import support (txt file, xml file, mac keychain, 1password, (oth))
 * add DropBox support
 * add Mega support
 * add iCloud support
