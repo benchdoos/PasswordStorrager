@@ -35,7 +35,7 @@ public class MainForm extends JFrame {
 
 
     private JPopupMenu popupMenu;
-    private JMenuBar jMenuBar1;
+    public static JMenuBar jMenuBar1;
     private JMenu fileJMenu;
     private JMenuItem openItem;
     private JMenuItem saveItem;
@@ -119,6 +119,8 @@ public class MainForm extends JFrame {
             }
         });
 
+        //putClientProperty("Window.documentFile", new File("/tmp"));
+        
 
         initTableListeners();
 
@@ -253,7 +255,8 @@ public class MainForm extends JFrame {
                 };
             }
         });
-        fileJMenu.add(settingsItem);
+        
+        //fileJMenu.add(settingsItem);
 
         editJMenu.setText("Правка");
 

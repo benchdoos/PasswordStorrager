@@ -49,6 +49,8 @@ public abstract class SettingsDialog extends JDialog {
     public SettingsDialog() {
         setResizable(false);
         setMinimumSize(new Dimension(380,320));
+        
+        setTitle("Настройки PasswordStorragers");
 
         setPreferredSize(getFrameSize(getCurrentClassName()));
         setLocation(getFrameLocation(getCurrentClassName()));

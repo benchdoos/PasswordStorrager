@@ -80,6 +80,7 @@ public class AuthorizeDialog extends JDialog {
                 System.out.println("Password is correct");
 
                 Encryption.extractKey(new File(Main.properties.getProperty(KEY_NAME) + Values.DEFAULT_KEY_FILE_NAME));
+                Main.application.setEnabledPreferencesMenu(true);
                 new MainForm(new XmlParser().parseRecords()).setVisible(true);
             } else {
                 //TODO send notification here.
