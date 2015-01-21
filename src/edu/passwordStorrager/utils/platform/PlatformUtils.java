@@ -20,11 +20,15 @@ import static edu.passwordStorrager.core.Main.*;
 import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
 
 public class PlatformUtils {
-    private static Image icon = Toolkit.getDefaultToolkit().getImage(getCurrentClassName().getClass().getResource("/resources/icons/icon_black.png"));
+    private static Image icon = Toolkit.getDefaultToolkit()
+            .getImage(getCurrentClassName().getClass().getResource("/resources/icons/icon_black.png"));
     private static final Logger log = Logger.getLogger(getCurrentClassName());
-    
+
     public static void initializeOS() {
-        log.info("System - OS: " + OS_NAME + " v." + system.getProperty("os.version") + " " + system.getProperty("os.arch") + "; Java v." + system.getProperty("java.version"));
+        log.info("System - OS: " + OS_NAME
+                + " v." + system.getProperty("os.version")
+                + " " + system.getProperty("os.arch")
+                + "; Java v." + system.getProperty("java.version"));
         if (!PlatformUtils.isOsSupported()) {
             throw new UnsupportedOsException();
         }
@@ -35,11 +39,11 @@ public class PlatformUtils {
             //osHandler here
         }
     }
-    
+
     public static boolean isOsSupported() {
         return IS_MAC;
     }
-    
+
     public static void initializeMacOSX() {
         if (IS_MAC) {
             application.requestForeground(false);
@@ -49,6 +53,8 @@ public class PlatformUtils {
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "PasswordStorrager");
             System.setProperty("com.apple.laf.AquaLookAndFeel", "true");
             System.setProperty("apple.awt.fileDialogForDirectories", "true");
+            System.setProperty("apple.awt.UIElement", "true");
+            System.setProperty("apple.awt.fakefullscreen", "true"); //TODO remove when fullScreen ready
 
             application.setAboutHandler(new AboutHandler() {
                 @Override
@@ -97,12 +103,22 @@ public class PlatformUtils {
             application.addAppEventListener(new SystemSleepListener() {
                 @Override
                 public void systemAboutToSleep(AppEvent.SystemSleepEvent systemSleepEvent) {
-                    System.out.println("sync here");
+                    //TODO sync here
+                    log.info("System going sleep");
                 }
 
                 @Override
                 public void systemAwoke(AppEvent.SystemSleepEvent systemSleepEvent) {
-                    System.out.println("sync here");
+                    //TODO sync here
+                    log.info("System woke up");
+                }
+            });
+
+            application.setOpenFileHandler(new OpenFilesHandler() {
+                @Override
+                public void openFiles(AppEvent.OpenFilesEvent openFilesEvent) {
+                    System.out.println("openfileHandler");
+                    //?when file tried to open by app? in bundle??
                 }
             });
 
@@ -113,6 +129,7 @@ public class PlatformUtils {
             p.add(new MenuItem("2"));
             com.apple.eawt.Application.getApplication().setDockMenu(p);*/
             try {
+                System.setProperty("java.library.path", "/lib");
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             } catch (ClassNotFoundException | InstantiationException | UnsupportedLookAndFeelException | IllegalAccessException e) {
                 e.printStackTrace();

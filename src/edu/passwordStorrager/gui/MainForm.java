@@ -120,9 +120,13 @@ public class MainForm extends JFrame {
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                FrameUtils.setFrameLocation(getClass().getEnclosingClass().getName(), getLocation());
-                FrameUtils.setFrameSize(getClass().getEnclosingClass().getName(), getSize());
-                dispose();
+                if (isEdited) {
+
+                } else {
+                    FrameUtils.setFrameLocation(getClass().getEnclosingClass().getName(), getLocation());
+                    FrameUtils.setFrameSize(getClass().getEnclosingClass().getName(), getSize());
+                    Main.onQuit();
+                }
             }
         });
 

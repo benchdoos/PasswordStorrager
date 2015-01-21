@@ -82,7 +82,7 @@ public abstract class SettingsDialog extends JDialog {
                     }
                 });
                 d.setVisible(true);
-                storageField.setText(d.getDirectory() + d.getFile());
+                storageField.setText(d.getDirectory() != null ? d.getDirectory() + d.getFile() : "");
             }
         });
 
@@ -100,7 +100,7 @@ public abstract class SettingsDialog extends JDialog {
                     }
                 });
                 d.setVisible(true);
-                keyField.setText(d.getDirectory() + d.getFile());
+                keyField.setText(d.getDirectory() != null ? d.getDirectory() + d.getFile() : "");
             }
         });
 

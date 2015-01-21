@@ -10,7 +10,10 @@ import edu.passwordStorrager.utils.StringUtils;
 import edu.passwordStorrager.xmlManager.XmlParser;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.FilenameFilter;
 
 public abstract class ChangeKey extends JDialog {
     private JPanel contentPane;
@@ -44,6 +47,31 @@ public abstract class ChangeKey extends JDialog {
         buttonCancel.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 onCancel();
+            }
+        });
+
+        button1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFrame frame = new JFrame();
+                frame.getRootPane().putClientProperty("apple.awt.fileDialogForDirectories","true");
+                FileDialog d = new FileDialog(frame);
+                d.setDirectory(Main.USER_HOME);
+                d.setFilenameFilter(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String name) {
+                        return new File(dir.getAbsolutePath() + name).isDirectory();
+                    }
+                });
+                d.setVisible(true);
+                textField1.setText(d.getDirectory() != null ? d.getDirectory() + d.getFile() : "");
+            }
+        });
+
+        button2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
             }
         });
 
