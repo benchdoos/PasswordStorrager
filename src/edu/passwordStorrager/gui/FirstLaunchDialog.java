@@ -3,10 +3,10 @@ package edu.passwordStorrager.gui;
 import edu.passwordStorrager.core.Main;
 import edu.passwordStorrager.core.PropertiesManager;
 import edu.passwordStorrager.objects.Key;
-import edu.passwordStorrager.objects.Record;
 import edu.passwordStorrager.protector.Protector;
 import edu.passwordStorrager.protector.Values;
 import edu.passwordStorrager.utils.KeyUtils;
+import edu.passwordStorrager.utils.StorageUtils;
 import edu.passwordStorrager.utils.StringUtils;
 import edu.passwordStorrager.xmlManager.XmlParser;
 import org.apache.log4j.Logger;
@@ -16,8 +16,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
-import java.util.ArrayList;
 
 import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
 
@@ -195,11 +193,11 @@ public class FirstLaunchDialog extends JDialog {
 
         try {
             createProperties(); //where storage is situated
-            createEmptyStorage();
+            StorageUtils.createEmptyStorage(storageField.getText());
             try {
                 createKeyFile();
 
-                new MainForm(new XmlParser().parseRecords()).setVisible(true);
+                new MainForm(new XmlParser().parseRecords());
             } catch (Throwable e) {
                 log.warn("Can not create key", e);
             }
@@ -227,15 +225,5 @@ public class FirstLaunchDialog extends JDialog {
         PropertiesManager.changeProperties(key, storage);
     }
 
-    private void createEmptyStorage() throws Throwable {
-        File file = new File(StringUtils.fixFolder(storageField.getText()) + "storage");
-        if (!file.exists()) {
-            if (file.createNewFile()) {
-                new XmlParser().saveRecords(new ArrayList<Record>());
-            } else {
-                throw new IOException("Can not create file: " + file.getAbsolutePath());
-            }
-        }
-    }
 
 }

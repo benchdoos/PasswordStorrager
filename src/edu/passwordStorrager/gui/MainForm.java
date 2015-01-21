@@ -61,6 +61,7 @@ public class MainForm extends JFrame {
         this.recordArrayList = recordArrayList;
         initComponents();
         setVisible(true);
+        Main.framesMainForm.add(this);
     }
 
 
@@ -497,7 +498,7 @@ public class MainForm extends JFrame {
 
     public void updateTitle(File file) {
         getRootPane().putClientProperty("Window.documentFile", file);
-        setTitle(file.getName() + " - PasswordStorrager" );
+        setTitle(file.getName());
     }
 
 

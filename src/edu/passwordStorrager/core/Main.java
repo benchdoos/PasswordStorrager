@@ -1,16 +1,13 @@
 package edu.passwordStorrager.core;
 
-import com.apple.eawt.*;
-import edu.passwordStorrager.gui.*;
+import com.apple.eawt.Application;
+import edu.passwordStorrager.gui.AuthorizeDialog;
+import edu.passwordStorrager.gui.FirstLaunchDialog;
+import edu.passwordStorrager.gui.MainForm;
 import edu.passwordStorrager.objects.Key;
-import edu.passwordStorrager.protector.Values;
-import edu.passwordStorrager.utils.UnsupportedOsException;
-import edu.passwordStorrager.xmlManager.XmlParser;
+import edu.passwordStorrager.utils.platform.PlatformUtils;
 import org.apache.log4j.Logger;
 
-import javax.swing.*;
-import java.awt.*;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,12 +29,12 @@ public class Main {
 
 
     public static Key key = new Key();
+    public static boolean isAuthorized = false;
     public static Properties propertiesApplication = new Properties();
     public static Properties propertiesFrames = new Properties();
     public static Application application = com.apple.eawt.Application.getApplication();
     public static ArrayList<MainForm> framesMainForm = new ArrayList<MainForm>();
-
-    private Image icon = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/icons/icon_black.png"));
+    public static ArrayList<AuthorizeDialog> framesAuthForm = new ArrayList<AuthorizeDialog>();
 
     Main() {
         log.debug("Launch");
@@ -69,13 +66,9 @@ public class Main {
     private void initSystem() {
         new PropertiesManager(); //MUST BE CALLED. DO NOT TOUCH
 
-        initializeOS();
+        PlatformUtils.initializeOS();
 
         printOSParameters();
-    }
-
-    public static boolean isOsSupported() {
-        return IS_MAC;
     }
 
     private void printOSParameters() {
@@ -92,146 +85,14 @@ public class Main {
         System.out.println("=========================================================");
     }
 
-
-    private void initializeOS() {
-        log.info("System - OS: " + OS_NAME + " v." + system.getProperty("os.version") + " " + system.getProperty("os.arch") + "; Java v." + system.getProperty("java.version"));
-        if (!isOsSupported()) {
-            throw new UnsupportedOsException();
-        }
-
-        if (IS_MAC) {
-            initializeMacOSX();
-        } else if (IS_WINDOWS) {
-            //osHandler here
-        }
-    }
-
-    private void initializeMacOSX() {
-        if (IS_MAC) {
-            application.requestForeground(false);
-            application.setDockIconImage(icon);
-
-            System.setProperty("apple.laf.useScreenMenuBar", "true");
-            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "PasswordStorrager");
-                        System.setProperty("com.apple.laf.AquaLookAndFeel", "true");
-            System.setProperty("apple.awt.fileDialogForDirectories", "true");
-
-            application.setAboutHandler(new AboutHandler() {
-                @Override
-                public void handleAbout(AppEvent.AboutEvent aboutEvent) {
-                    new AboutApplication();
-                }
-            });
-
-            application.setPreferencesHandler(new PreferencesHandler() {
-                @Override
-                public void handlePreferences(AppEvent.PreferencesEvent preferencesEvent) {
-                    new SettingsDialog() {
-                        @Override
-                        public void onOK() {
-                            this.saveSettings();
-                            if(framesMainForm.size()>0) {
-                                MainForm currentForm = framesMainForm.get(framesMainForm.size() - 1);
-                                currentForm.recordArrayList = new XmlParser().parseRecords();
-                                currentForm.loadList();
-                                currentForm.updateTitle(new File(Main.propertiesApplication.getProperty(PropertiesManager.KEY_NAME) + Values.DEFAULT_STORAGE_FILE_NAME));
-                                currentForm.setEdited(false);
-                            }
-                            this.dispose();
-                        }
-                    };
-                }
-            });
-
-            application.setQuitHandler(new QuitHandler() {
-                @Override
-                public void handleQuitRequestWith(AppEvent.QuitEvent quitEvent, QuitResponse quitResponse) {
-                    onQuit();
-                }
-            });
-
-            application.addAppEventListener(new SystemSleepListener() {
-                @Override
-                public void systemAboutToSleep(AppEvent.SystemSleepEvent systemSleepEvent) {
-                    System.out.println("sync here");
-                }
-
-                @Override
-                public void systemAwoke(AppEvent.SystemSleepEvent systemSleepEvent) {
-                    System.out.println("sync here");
-                }
-            });
-
-            //application.setDockIconBadge("mac os");
-
-            /*PopupMenu p = new PopupMenu("lala");
-            p.add(new MenuItem("1"));
-            p.add(new MenuItem("2"));
-            com.apple.eawt.Application.getApplication().setDockMenu(p);*/
-            try {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } catch (ClassNotFoundException | InstantiationException | UnsupportedLookAndFeelException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public static void initMacApplication() {
-       /* application.addApplicationListener(
-                new ApplicationAdapter() {
-                    public void handleAbout(ApplicationEvent applicationEvent) {
-                        System.out.println("about");
-                        applicationEvent.setHandled(true);
-                    }
-
-                    public void handlePreferences(ApplicationEvent applicationEvent) {
-                        new SettingsDialog() {
-                            @Override
-                            public void onOK() {
-
-                            }
-                        };
-                    }
-
-                    public void handleQuit(ApplicationEvent applicationEvent) {
-                        System.out.println("quit");
-                    }
-
-                    public void handleOpenFile(ApplicationEvent applicationEvent) {
-                                                   *//*Project project = getProject();
-                                                   String filename = applicationEvent.getFilename();
-                                                   if (filename == null) return;
-                                                   File file = new File(filename);
-                                                   if (ProjectUtil.openOrImport(file.getAbsolutePath(), project, true) != null) {
-                                                       IdeaApplication.getInstance().setPerformProjectLoad(false);
-                                                       return;
-                                                   }
-                                                   if (project != null && file.exists()) {
-                                                       OpenFileAction.openFile(filename, project);
-                                                       applicationEvent.setHandled(true);
-                                                   }*//*
-                        System.out.println("open file");
-                    }
-                }
-        );*/
-//        application.addAboutMenuItem();
-//        application.addPreferencesMenuItem();
-//        application.setEnabledAboutMenu(true);
-//        application.setEnabledPreferencesMenu(false);
-        //installAutoUpdateMenu();
-    }
-
-
+    
     public static void onQuit() {
         log.debug("Quit");
         //TODO sync here
         System.exit(0);
     }
-
-    public static void onForceQuit() {
-        log.warn("Application forced quit");
-    }
-
+    
+    
     public static void main(String[] args) {
         new Main();
     }

@@ -5,6 +5,7 @@ import edu.passwordStorrager.core.PropertiesManager;
 import edu.passwordStorrager.objects.Key;
 import edu.passwordStorrager.protector.Protector;
 import edu.passwordStorrager.protector.Values;
+import edu.passwordStorrager.utils.FileUtils;
 import edu.passwordStorrager.utils.FrameUtils;
 import edu.passwordStorrager.utils.KeyUtils;
 import edu.passwordStorrager.utils.StringUtils;
@@ -19,9 +20,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 
-import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
-import static edu.passwordStorrager.utils.FrameUtils.getFrameLocation;
-import static edu.passwordStorrager.utils.FrameUtils.getFrameSize;
+import static edu.passwordStorrager.utils.FrameUtils.*;
 
 public abstract class SettingsDialog extends JDialog {
     private static final Logger log = Logger.getLogger(getCurrentClassName());
@@ -252,7 +251,7 @@ public abstract class SettingsDialog extends JDialog {
 
     private Key createKey(Key key) throws GeneralSecurityException, UnsupportedEncodingException {
         //TODO divide this into two checks and methods
-        if (StringUtils.validPath(keyField.getText()) && StringUtils.validPath(storageField.getText())) {
+        if (FileUtils.validPath(keyField.getText()) && FileUtils.validPath(storageField.getText())) {
             PropertiesManager.changeProperties(StringUtils.fixFolder(keyField.getText()), StringUtils.fixFolder(storageField.getText()));
             Main.propertiesApplication = PropertiesManager.loadProperties(PropertiesManager.propertiesFilePath);
         }

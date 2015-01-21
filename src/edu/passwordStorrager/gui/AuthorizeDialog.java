@@ -68,6 +68,7 @@ public class AuthorizeDialog extends JDialog {
         setLocation(FrameUtils.setFrameOnCenter(getSize()));
         Main.application.requestUserAttention(true);
         //TODO request foreground here if is in settings??
+        Main.framesAuthForm.add(this);
         setVisible(true);
     }
 
@@ -81,12 +82,13 @@ public class AuthorizeDialog extends JDialog {
                 showProperties(Main.propertiesApplication);
                 //TODO send notification here.
                 System.out.println("Password is correct");
-
+                Main.isAuthorized = true;
                 Encryption.extractKey(new File(Main.propertiesApplication.getProperty(KEY_NAME) + Values.DEFAULT_KEY_FILE_NAME));
-                Main.framesMainForm.add(new MainForm(new XmlParser().parseRecords()));
+                new MainForm(new XmlParser().parseRecords());
             } else {
                 //TODO send notification here.
                 System.out.println("Password is not correct");
+                Main.isAuthorized = false;
                 dispose();
                 System.exit(-1);
             }
