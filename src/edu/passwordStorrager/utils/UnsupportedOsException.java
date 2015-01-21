@@ -17,10 +17,10 @@ public class UnsupportedOsException extends RuntimeException {
             new NotificationDialog(title, message, NotificationDialog.NOTIFICATION_ERROR) {
                 @Override
                 public void onOK() {
-                    Main.onExit();
+                    Main.onQuit();
                     dispose();
                 }
             };
-        System.exit(-1);
+        Main.onQuit();
     }
 }

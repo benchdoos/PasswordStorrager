@@ -62,8 +62,8 @@ public abstract class SettingsDialog extends JDialog {
             }
         });
 
-        storageField.setText(Main.properties.getProperty("Storage"));
-        keyField.setText(Main.properties.getProperty("Key"));
+        storageField.setText(Main.propertiesApplication.getProperty("Storage"));
+        keyField.setText(Main.propertiesApplication.getProperty("Key"));
 
         setContentPane(contentPane);
         setModal(true);
@@ -239,7 +239,7 @@ public abstract class SettingsDialog extends JDialog {
     }
 
     private void pushSettings(Key key) {
-        String keyFilePath = Main.properties.getProperty(PropertiesManager.KEY_NAME) + Values.DEFAULT_KEY_FILE_NAME;
+        String keyFilePath = Main.propertiesApplication.getProperty(PropertiesManager.KEY_NAME) + Values.DEFAULT_KEY_FILE_NAME;
         try {
             key.setENC(Main.key.getENC());
             key.setEncrypted(true);
@@ -254,7 +254,7 @@ public abstract class SettingsDialog extends JDialog {
         //TODO divide this into two checks and methods
         if (StringUtils.validPath(keyField.getText()) && StringUtils.validPath(storageField.getText())) {
             PropertiesManager.changeProperties(StringUtils.fixFolder(keyField.getText()), StringUtils.fixFolder(storageField.getText()));
-            Main.properties = PropertiesManager.loadProperties(PropertiesManager.propertiesFilePath);
+            Main.propertiesApplication = PropertiesManager.loadProperties(PropertiesManager.propertiesFilePath);
         }
 
         if (isICloudChanged) {

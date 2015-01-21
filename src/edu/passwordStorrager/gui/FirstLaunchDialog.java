@@ -46,7 +46,7 @@ public class FirstLaunchDialog extends JDialog {
 
     public FirstLaunchDialog() {
         setResizable(false);
-        /*storageField.setText(PropertiesManager.properties.getProperty("Storage"));*/
+        /*storageField.setText(PropertiesManager.propertiesApplication.getProperty("Storage"));*/
 
         browseButton.addActionListener(new ActionListener() {
             @Override

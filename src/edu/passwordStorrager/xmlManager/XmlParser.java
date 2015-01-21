@@ -29,7 +29,7 @@ public class XmlParser {
 
 
     public XmlParser() {
-        pathStorageFile = Main.properties.getProperty("Storage") + Values.DEFAULT_STORAGE_FILE_NAME;
+        pathStorageFile = Main.propertiesApplication.getProperty("Storage") + Values.DEFAULT_STORAGE_FILE_NAME;
     }
 
     public ArrayList<Record> parseRecords() {

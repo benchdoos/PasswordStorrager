@@ -28,6 +28,8 @@ public class AuthorizeDialog extends JDialog {
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 
+        //buttonOK.putClientProperty("JButton.buttonType", "textured"); //works))
+
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -64,7 +66,8 @@ public class AuthorizeDialog extends JDialog {
 
 
         setLocation(FrameUtils.setFrameOnCenter(getSize()));
-
+        Main.application.requestUserAttention(true);
+        //TODO request foreground here if is in settings??
         setVisible(true);
     }
 
@@ -73,15 +76,14 @@ public class AuthorizeDialog extends JDialog {
         Protector.PASSWORD = hexedPassword.toCharArray();
 
         if (exists(propertiesFilePath)) {
-            Main.properties = loadProperties(propertiesFilePath);
+            Main.propertiesApplication = loadProperties(propertiesFilePath);
             if (isCorrect()) {
-                showProperties(Main.properties);
+                showProperties(Main.propertiesApplication);
                 //TODO send notification here.
                 System.out.println("Password is correct");
 
-                Encryption.extractKey(new File(Main.properties.getProperty(KEY_NAME) + Values.DEFAULT_KEY_FILE_NAME));
-                Main.application.setEnabledPreferencesMenu(true);
-                new MainForm(new XmlParser().parseRecords()).setVisible(true);
+                Encryption.extractKey(new File(Main.propertiesApplication.getProperty(KEY_NAME) + Values.DEFAULT_KEY_FILE_NAME));
+                Main.framesMainForm.add(new MainForm(new XmlParser().parseRecords()));
             } else {
                 //TODO send notification here.
                 System.out.println("Password is not correct");

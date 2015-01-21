@@ -29,7 +29,7 @@ public class FileUtils {
     public static void setFileHidden(String filePath) {
         try {
             if (Main.IS_MAC) {
-                Runtime.getRuntime().exec("setfile -a V " + filePath); //not sure if it works when xcode not installed
+                //Runtime.getRuntime().exec("setfile -a V " + filePath); //not sure if it works when xcode not installed
                 Runtime.getRuntime().exec("chflags hidden " + filePath);
             }
 

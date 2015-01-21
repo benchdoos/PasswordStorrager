@@ -30,35 +30,35 @@ public class FrameUtils {
 
 
     public static void setFrameLocation(String className, Point point) {
-        Main.frames.setProperty(className + "LX", new Double(point.getX()).intValue() + "");
-        Main.frames.setProperty(className + "LY", new Double(point.getY()).intValue() + "");
+        Main.propertiesFrames.setProperty(className + "LX", new Double(point.getX()).intValue() + "");
+        Main.propertiesFrames.setProperty(className + "LY", new Double(point.getY()).intValue() + "");
         try {
-            PropertiesManager.saveProperties(Main.frames, PropertiesManager.framePropertiesFilePath);
-            Main.frames.load(new FileInputStream(PropertiesManager.framePropertiesFilePath));
+            PropertiesManager.saveProperties(Main.propertiesFrames, PropertiesManager.framePropertiesFilePath);
+            Main.propertiesFrames.load(new FileInputStream(PropertiesManager.framePropertiesFilePath));
         } catch (IOException e) {
             log.warn("Can not write frame location", e);
         }
     }
 
     public static void setFrameSize(String className, Dimension dimension) {
-        Main.frames.setProperty(className + "SW", new Double(dimension.getWidth()).intValue() + "");
-        Main.frames.setProperty(className + "SH", new Double(dimension.getHeight()).intValue() + "");
+        Main.propertiesFrames.setProperty(className + "SW", new Double(dimension.getWidth()).intValue() + "");
+        Main.propertiesFrames.setProperty(className + "SH", new Double(dimension.getHeight()).intValue() + "");
         try {
-            PropertiesManager.saveProperties(Main.frames, PropertiesManager.framePropertiesFilePath);
+            PropertiesManager.saveProperties(Main.propertiesFrames, PropertiesManager.framePropertiesFilePath);
 
-            Main.frames.load(new FileInputStream(PropertiesManager.framePropertiesFilePath));
+            Main.propertiesFrames.load(new FileInputStream(PropertiesManager.framePropertiesFilePath));
         } catch (IOException e) {
             log.warn("Can not write frame size", e);
         }
     }
 
     public static Point getFrameLocation(String className) {
-        if (Main.frames != null) {
+        if (Main.propertiesFrames != null) {
             try {
-                Main.frames.load(new FileInputStream(PropertiesManager.framePropertiesFilePath));
+                Main.propertiesFrames.load(new FileInputStream(PropertiesManager.framePropertiesFilePath));
 
-                int x = Integer.parseInt(Main.frames.getProperty(className + "LX"));
-                int y = Integer.parseInt(Main.frames.getProperty(className + "LY"));
+                int x = Integer.parseInt(Main.propertiesFrames.getProperty(className + "LX"));
+                int y = Integer.parseInt(Main.propertiesFrames.getProperty(className + "LY"));
                 return new Point(x, y);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -70,12 +70,12 @@ public class FrameUtils {
     }
 
     public static Dimension getFrameSize(String className) {
-        if (Main.frames != null) {
+        if (Main.propertiesFrames != null) {
             try {
-                Main.frames.load(new FileInputStream(PropertiesManager.framePropertiesFilePath));
+                Main.propertiesFrames.load(new FileInputStream(PropertiesManager.framePropertiesFilePath));
 
-                int width = Integer.parseInt(Main.frames.getProperty(className + "SW"));
-                int height = Integer.parseInt(Main.frames.getProperty(className + "SH"));
+                int width = Integer.parseInt(Main.propertiesFrames.getProperty(className + "SW"));
+                int height = Integer.parseInt(Main.propertiesFrames.getProperty(className + "SH"));
                 return new Dimension(width, height);
             } catch (Exception e) {
                 return new Dimension(100, 100);

@@ -36,11 +36,11 @@ public class PropertiesManager {
     private static void createProperties(String keyPath, String storagePath) {
         createFolderDirectory();
         try {
-            Main.properties.setProperty(STORAGE_NAME, storagePath);
-            Main.properties.setProperty(KEY_NAME, keyPath);
+            Main.propertiesApplication.setProperty(STORAGE_NAME, storagePath);
+            Main.propertiesApplication.setProperty(KEY_NAME, keyPath);
 
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            Main.properties.store(byteArrayOutputStream, "");
+            Main.propertiesApplication.store(byteArrayOutputStream, "");
             byte prop[] = byteArrayOutputStream.toByteArray();
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(prop);
             Protector.encrypt(byteArrayInputStream, new FileOutputStream(propertiesFilePath));
@@ -98,7 +98,7 @@ public class PropertiesManager {
 
 
     public static boolean isCorrect() {
-        return Main.properties.containsKey(KEY_NAME);
+        return Main.propertiesApplication.containsKey(KEY_NAME);
     }
 
     public static void showProperties(Properties properties) {

@@ -1,6 +1,9 @@
 package edu.passwordStorrager.gui;
 
+import edu.passwordStorrager.core.Main;
+import edu.passwordStorrager.core.PropertiesManager;
 import edu.passwordStorrager.objects.Record;
+import edu.passwordStorrager.protector.Values;
 import edu.passwordStorrager.utils.FrameUtils;
 import edu.passwordStorrager.utils.StringUtils;
 import edu.passwordStorrager.xmlManager.XmlParser;
@@ -12,6 +15,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -22,7 +26,7 @@ import static edu.passwordStorrager.utils.FrameUtils.*;
 public class MainForm extends JFrame {
 
     private static final Logger log = Logger.getLogger(getCurrentClassName());
-    
+
     public static final int STATUS_MESSAGE = 1, STATUS_ERROR = -1, STATUS_SUCCESS = 2;
     protected static JRadioButtonMenuItem editModeJRadioButtonMenuItem; //if checked - can edit existing
     protected static JLabel bar;
@@ -30,8 +34,9 @@ public class MainForm extends JFrame {
 
     static final String NUMBER_COLUMN_NAME = "#", SITE_COLUMN_NAME = "Сайт", LOGIN_COLUMN_NAME = "Логин", PASSWORD_COLUMN_NAME = "Пароль";
 
+    private boolean isEdited = false;
 
-    private ArrayList<Record> recordArrayList = new ArrayList<>();
+    public ArrayList<Record> recordArrayList = new ArrayList<>();
 
 
     private JPopupMenu popupMenu;
@@ -55,6 +60,7 @@ public class MainForm extends JFrame {
     public MainForm(ArrayList<Record> recordArrayList) {
         this.recordArrayList = recordArrayList;
         initComponents();
+        setVisible(true);
     }
 
 
@@ -103,6 +109,7 @@ public class MainForm extends JFrame {
 
     private void initComponents() {
         setContentPane(panel1);
+        getRootPane().putClientProperty("Window.documentFile", new File(Main.propertiesApplication.getProperty(PropertiesManager.KEY_NAME) + Values.DEFAULT_STORAGE_FILE_NAME));
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         //setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -110,17 +117,15 @@ public class MainForm extends JFrame {
         setPreferredSize(getFrameSize(getCurrentClassName()));
         setLocation(getFrameLocation(getCurrentClassName()));
 
-
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                FrameUtils.setFrameLocation(getClass().getEnclosingClass().getName(),getLocation());
-                FrameUtils.setFrameSize(getClass().getEnclosingClass().getName(),getSize());
+                FrameUtils.setFrameLocation(getClass().getEnclosingClass().getName(), getLocation());
+                FrameUtils.setFrameSize(getClass().getEnclosingClass().getName(), getSize());
                 dispose();
             }
         });
 
         //putClientProperty("Window.documentFile", new File("/tmp"));
-        
 
         initTableListeners();
 
@@ -223,6 +228,7 @@ public class MainForm extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 recordArrayList = new XmlParser().parseRecords();
                 loadList();
+                setEdited(false);
             }
         });
         fileJMenu.add(openItem);
@@ -244,7 +250,7 @@ public class MainForm extends JFrame {
         settingsItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new SettingsDialog(){
+                new SettingsDialog() {
 
                     @Override
                     public void onOK() {
@@ -255,7 +261,7 @@ public class MainForm extends JFrame {
                 };
             }
         });
-        
+
         //fileJMenu.add(settingsItem);
 
         editJMenu.setText("Правка");
@@ -390,7 +396,7 @@ public class MainForm extends JFrame {
         }
     }
 
-    private void loadList() {
+    public void loadList() {
         //Record[] recordsList = recordArrayList.toArray(new Record[recordArrayList.size()]);
         table.setModel(createTableModel(recordArrayList));
         table.setRowHeight(20);
@@ -450,6 +456,7 @@ public class MainForm extends JFrame {
         editModeJRadioButtonMenuItem.setSelected(false);
         new XmlParser().saveRecords(recordArrayList);
         loadList();
+        setEdited(false);
         setStatus("Сохранено", STATUS_SUCCESS);
     }
 
@@ -460,6 +467,7 @@ public class MainForm extends JFrame {
         table.clearSelection();
         table.setRowSelectionInterval(table.getModel().getRowCount() - 1, table.getModel().getRowCount() - 1);
         scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
+        setEdited(true);
     }
 
     private void deleteSelectedRecord() {
@@ -477,9 +485,17 @@ public class MainForm extends JFrame {
                 }
             }
         }
+        setEdited(true);
     }
-    
-    
+
+    public void setEdited(boolean isFileEdited) {
+        if(isEdited != isFileEdited) {
+            isEdited = isFileEdited;
+            getRootPane().putClientProperty("Window.documentModified", isFileEdited);
+        }
+    }
+
+
     private DefaultTableModel createTableModel(ArrayList<Record> recordArrayList) {
         DefaultTableModel tableModel = new DefaultTableModel();
         String[] number = new String[recordArrayList.size()];

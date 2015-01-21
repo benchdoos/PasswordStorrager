@@ -1,21 +1,19 @@
 package edu.passwordStorrager.core;
 
-import com.apple.eawt.AboutHandler;
-import com.apple.eawt.AppEvent;
-import com.apple.eawt.Application;
-import com.apple.eawt.PreferencesHandler;
-import edu.passwordStorrager.gui.AboutApplication;
-import edu.passwordStorrager.gui.AuthorizeDialog;
-import edu.passwordStorrager.gui.FirstLaunchDialog;
-import edu.passwordStorrager.gui.SettingsDialog;
+import com.apple.eawt.*;
+import edu.passwordStorrager.gui.*;
 import edu.passwordStorrager.objects.Key;
+import edu.passwordStorrager.protector.Values;
 import edu.passwordStorrager.utils.UnsupportedOsException;
+import edu.passwordStorrager.xmlManager.XmlParser;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Properties;
 
 import static edu.passwordStorrager.utils.FileUtils.exists;
@@ -34,27 +32,28 @@ public class Main {
 
 
     public static Key key = new Key();
-    public static Properties properties = new Properties();
-    public static Properties frames = new Properties();
+    public static Properties propertiesApplication = new Properties();
+    public static Properties propertiesFrames = new Properties();
     public static Application application = com.apple.eawt.Application.getApplication();
+    public static ArrayList<MainForm> framesMainForm = new ArrayList<MainForm>();
 
     private Image icon = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/icons/icon_black.png"));
 
     Main() {
-        log.debug("Start");
+        log.debug("Launch");
 
         initSystem();
 
         if (exists(PropertiesManager.framePropertiesFilePath)) {
-            Main.frames = new Properties();
+            Main.propertiesFrames = new Properties();
             try {
-                Main.frames.load(new FileInputStream(PropertiesManager.framePropertiesFilePath));
+                Main.propertiesFrames.load(new FileInputStream(PropertiesManager.framePropertiesFilePath));
                 log.debug("Frames properties loaded from " + PropertiesManager.framePropertiesFilePath);
             } catch (IOException e) {
                 log.warn("Can not load Frames properties", e);
             }
         } else {
-            Main.frames = new Properties();
+            Main.propertiesFrames = new Properties();
             log.debug("Creating new Frames properties");
         }
 
@@ -109,12 +108,13 @@ public class Main {
 
     private void initializeMacOSX() {
         if (IS_MAC) {
-
+            application.requestForeground(false);
             application.setDockIconImage(icon);
 
             System.setProperty("apple.laf.useScreenMenuBar", "true");
-            System.setProperty("com.apple.laf.AquaLookAndFeel", "true");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "PasswordStorrager");
+
+            System.setProperty("com.apple.laf.AquaLookAndFeel", "true");
             System.setProperty("apple.awt.fileDialogForDirectories", "true");
 
             application.setAboutHandler(new AboutHandler() {
@@ -131,13 +131,37 @@ public class Main {
                         @Override
                         public void onOK() {
                             this.saveSettings();
+                            if(framesMainForm.size()>0) {
+                                MainForm currentForm = framesMainForm.get(framesMainForm.size() - 1);
+                                currentForm.recordArrayList = new XmlParser().parseRecords();
+                                currentForm.loadList();
+                                currentForm.getRootPane().putClientProperty("Window.documentFile", new File(Main.propertiesApplication.getProperty(PropertiesManager.KEY_NAME) + Values.DEFAULT_STORAGE_FILE_NAME));
+                                currentForm.setEdited(false);
+                            }
                             this.dispose();
                         }
                     };
                 }
             });
-            
-            
+
+            application.setQuitHandler(new QuitHandler() {
+                @Override
+                public void handleQuitRequestWith(AppEvent.QuitEvent quitEvent, QuitResponse quitResponse) {
+                    onQuit();
+                }
+            });
+
+            application.addAppEventListener(new SystemSleepListener() {
+                @Override
+                public void systemAboutToSleep(AppEvent.SystemSleepEvent systemSleepEvent) {
+                    System.out.println("sync here");
+                }
+
+                @Override
+                public void systemAwoke(AppEvent.SystemSleepEvent systemSleepEvent) {
+                    System.out.println("sync here");
+                }
+            });
 
             //application.setDockIconBadge("mac os");
 
@@ -199,8 +223,14 @@ public class Main {
     }
 
 
-    public static void onExit() {
-        log.debug("Stop");
+    public static void onQuit() {
+        log.debug("Quit");
+        //TODO sync here
+        System.exit(0);
+    }
+
+    public static void onForceQuit() {
+        log.warn("Application forced quit");
     }
 
     public static void main(String[] args) {
