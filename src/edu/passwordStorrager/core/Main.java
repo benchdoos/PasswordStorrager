@@ -113,8 +113,7 @@ public class Main {
 
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "PasswordStorrager");
-
-            System.setProperty("com.apple.laf.AquaLookAndFeel", "true");
+                        System.setProperty("com.apple.laf.AquaLookAndFeel", "true");
             System.setProperty("apple.awt.fileDialogForDirectories", "true");
 
             application.setAboutHandler(new AboutHandler() {
@@ -135,7 +134,7 @@ public class Main {
                                 MainForm currentForm = framesMainForm.get(framesMainForm.size() - 1);
                                 currentForm.recordArrayList = new XmlParser().parseRecords();
                                 currentForm.loadList();
-                                currentForm.getRootPane().putClientProperty("Window.documentFile", new File(Main.propertiesApplication.getProperty(PropertiesManager.KEY_NAME) + Values.DEFAULT_STORAGE_FILE_NAME));
+                                currentForm.updateTitle(new File(Main.propertiesApplication.getProperty(PropertiesManager.KEY_NAME) + Values.DEFAULT_STORAGE_FILE_NAME));
                                 currentForm.setEdited(false);
                             }
                             this.dispose();

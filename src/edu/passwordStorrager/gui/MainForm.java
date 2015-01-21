@@ -108,8 +108,8 @@ public class MainForm extends JFrame {
 
 
     private void initComponents() {
+        updateTitle(new File(Main.propertiesApplication.getProperty(PropertiesManager.KEY_NAME) + Values.DEFAULT_STORAGE_FILE_NAME));
         setContentPane(panel1);
-        getRootPane().putClientProperty("Window.documentFile", new File(Main.propertiesApplication.getProperty(PropertiesManager.KEY_NAME) + Values.DEFAULT_STORAGE_FILE_NAME));
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         //setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -493,6 +493,11 @@ public class MainForm extends JFrame {
             isEdited = isFileEdited;
             getRootPane().putClientProperty("Window.documentModified", isFileEdited);
         }
+    }
+
+    public void updateTitle(File file) {
+        getRootPane().putClientProperty("Window.documentFile", file);
+        setTitle(file.getName() + " - PasswordStorrager" );
     }
 
 
