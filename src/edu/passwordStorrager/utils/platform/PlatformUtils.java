@@ -46,7 +46,7 @@ public class PlatformUtils {
 
     public static void initializeMacOSX() {
         if (IS_MAC) {
-            application.requestForeground(false);
+            //application.requestForeground(false);
             application.setDockIconImage(icon);
 
             System.setProperty("apple.laf.useScreenMenuBar", "true");
@@ -135,5 +135,19 @@ public class PlatformUtils {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static void printOSParameters() {
+        System.out.println("==========================System=========================");
+        System.out.println("System:");
+        System.out.println("\tOS: " + OS_NAME + " v." + system.getProperty("os.version") + " arch: " + system.getProperty("os.arch"));
+        System.out.println("Java:");
+        System.out.println("\tJava version: " + system.getProperty("java.specification.version") + "(" + system.getProperty("java.version") + ")");
+        System.out.println("\t" + system.getProperty("java.runtime.name") + " v." + system.getProperty("java.vm.version"));
+        System.out.println("User:");
+        System.out.println("\tName: " + system.getProperty("user.name") + " Home: " + USER_HOME);
+        System.out.println("\tTime zone: " + system.getProperty("user.timezone") + " (" + system.getProperty("user.country") + ") language: " + system.getProperty("user.language"));
+        System.out.println("Logging to: " + system.getProperty("java.io.tmpdir") + "PasswordStorrager/Logs/");
+        System.out.println("=========================================================");
     }
 }

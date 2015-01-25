@@ -32,14 +32,18 @@ public abstract class ChangeKey extends JDialog {
                 "Укажите пароль, заданный при создании данного хранилища. </html>");
         setContentPane(contentPane);
         setModal(true);
+        setResizable(false);
         getRootPane().setDefaultButton(buttonOK);
 
+        final Component c = this;
+
         buttonOK.addActionListener(new ActionListener() {
+
             public void actionPerformed(ActionEvent e) {
                 if (checkFields()) {
                     onOK();
                 } else {
-                    //TODO shake maybe?
+                    FrameUtils.shakeFrame(c);
                 }
             }
         });
@@ -71,7 +75,7 @@ public abstract class ChangeKey extends JDialog {
         button2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                
+
             }
         });
 
@@ -97,9 +101,6 @@ public abstract class ChangeKey extends JDialog {
     public abstract void onOK();
 
     public boolean checkFields() {
-        System.out.println(new String(passwordField1.getPassword()));
-        System.out.println((StringUtils.fixFolder(textField1.getText())) + Values.DEFAULT_KEY_FILE_NAME);
-        System.out.println((StringUtils.fixFolder(textField2.getText())) + Values.DEFAULT_STORAGE_FILE_NAME);
         return !new String(passwordField1.getPassword()).isEmpty()
                 && FileUtils.exists(StringUtils.fixFolder(textField1.getText()) + Values.DEFAULT_KEY_FILE_NAME)
                 && FileUtils.exists(StringUtils.fixFolder(textField2.getText()) + Values.DEFAULT_STORAGE_FILE_NAME);
@@ -107,7 +108,21 @@ public abstract class ChangeKey extends JDialog {
 
     private void onCancel() {
 // add your code here if necessary
+
         dispose();
+        Window auth = FrameUtils.getWindow(AuthorizeDialog.class.getName());
+        if (auth != null) {
+            auth.setVisible(true);
+        }
+        Window mf = FrameUtils.getWindow(MainForm.class.getName());
+        if (mf != null) {
+            mf.setVisible(true);
+        }
+
+        Window setD = FrameUtils.getWindow(SettingsDialog.class.getName());
+        if (setD != null) {
+            setD.setVisible(true);
+        }
     }
 
     public void saveOptions() {
@@ -119,6 +134,7 @@ public abstract class ChangeKey extends JDialog {
         String storage = StringUtils.fixFolder(textField2.getText());
         PropertiesManager.changeProperties(key, storage);
 
+        //FrameUtils.getWindow(""); //FIXME
         if (Main.framesMainForm.size() > 0) {
             if (Main.framesMainForm.get(Main.framesMainForm.size() - 1) != null) {
                 Main.framesMainForm.set((Main.framesMainForm.size() - 1), null);

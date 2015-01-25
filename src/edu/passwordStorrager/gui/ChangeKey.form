@@ -163,6 +163,7 @@
           <background color="-1118482"/>
           <contentType value="text/html"/>
           <editable value="false"/>
+          <focusable value="false"/>
           <font size="12" style="0"/>
           <text value="&lt;html&gt;&#10;  &lt;head&gt;&#10;&#10;  &lt;/head&gt;&#10;  &lt;body&gt;&#10;    &lt;p style=&quot;margin-top: 0&quot;&gt;&#10;      &#10;    &lt;/p&gt;&#10;  &lt;/body&gt;&#10;&lt;/html&gt;&#10;"/>
         </properties>

@@ -44,183 +44,201 @@ public abstract class SettingsDialog extends JDialog {
     private JTextField keyField;
     private JButton browseKeyButton;
     private JTextField storageField;
+    private JButton changeKey;
+    public static boolean isCreated = false;
 
     public SettingsDialog() {
-        setResizable(false);
-        setMinimumSize(new Dimension(380,320));
-        
-        setTitle("Настройки PasswordStorragers");
+        if (!isCreated) {
+            setResizable(false);
+            setMinimumSize(new Dimension(380, 320));
 
-        setPreferredSize(getFrameSize(getCurrentClassName()));
-        setLocation(getFrameLocation(getCurrentClassName()));
+            setTitle("Настройки PasswordStorrager");
 
-        addWindowListener(new WindowAdapter() {
-            public void windowClosed(WindowEvent e) {
-                FrameUtils.setFrameLocation(getClass().getEnclosingClass().getName(), getLocation());
-                //FrameUtils.setFrameSize(getClass().getEnclosingClass().getName(), getSize());
-            }
-        });
+            setPreferredSize(getFrameSize(getCurrentClassName()));
+            setLocation(getFrameLocation(getCurrentClassName()));
 
-        storageField.setText(Main.propertiesApplication.getProperty("Storage"));
-        keyField.setText(Main.propertiesApplication.getProperty("Key"));
+            addWindowListener(new WindowAdapter() {
+                public void windowClosed(WindowEvent e) {
+                    FrameUtils.setFrameLocation(getClass().getEnclosingClass().getName(), getLocation());
+                    //FrameUtils.setFrameSize(getClass().getEnclosingClass().getName(), getSize());
+                }
+            });
 
-        setContentPane(contentPane);
-        setModal(true);
-        getRootPane().setDefaultButton(buttonOK);
+            storageField.setText(Main.propertiesApplication.getProperty("Storage"));
+            keyField.setText(Main.propertiesApplication.getProperty("Key"));
 
-        browseButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JFrame frame = new JFrame();
+            setContentPane(contentPane);
+            setModal(true);
+            getRootPane().setDefaultButton(buttonOK);
 
-                FileDialog d = new FileDialog(frame);
-                d.setDirectory(Main.USER_HOME);
-                d.setFilenameFilter(new FilenameFilter() {
-                    @Override
-                    public boolean accept(File dir, String name) {
-                        return new File(dir.getAbsolutePath() + name).isDirectory();
-                    }
-                });
-                d.setVisible(true);
-                storageField.setText(d.getDirectory() != null ? d.getDirectory() + d.getFile() : "");
-            }
-        });
+            browseButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    JFrame frame = new JFrame();
 
-        browseKeyButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JFrame frame = new JFrame();
+                    FileDialog d = new FileDialog(frame);
+                    d.setDirectory(Main.USER_HOME);
+                    d.setFilenameFilter(new FilenameFilter() {
+                        @Override
+                        public boolean accept(File dir, String name) {
+                            return new File(dir.getAbsolutePath() + name).isDirectory();
+                        }
+                    });
+                    d.setVisible(true);
+                    storageField.setText(d.getDirectory() != null ? d.getDirectory() + d.getFile() : "");
+                }
+            });
 
-                FileDialog d = new FileDialog(frame);
-                d.setDirectory(Main.USER_HOME);
-                d.setFilenameFilter(new FilenameFilter() {
-                    @Override
-                    public boolean accept(File dir, String name) {
-                        return new File(dir.getAbsolutePath() + name).isDirectory();
-                    }
-                });
-                d.setVisible(true);
-                keyField.setText(d.getDirectory() != null ? d.getDirectory() + d.getFile() : "");
-            }
-        });
+            browseKeyButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    JFrame frame = new JFrame();
 
-        buttonOK.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onOK();
-            }
-        });
+                    FileDialog d = new FileDialog(frame);
+                    d.setDirectory(Main.USER_HOME);
+                    d.setFilenameFilter(new FilenameFilter() {
+                        @Override
+                        public boolean accept(File dir, String name) {
+                            return new File(dir.getAbsolutePath() + name).isDirectory();
+                        }
+                    });
+                    d.setVisible(true);
+                    keyField.setText(d.getDirectory() != null ? d.getDirectory() + d.getFile() : "");
+                }
+            });
 
-        buttonCancel.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onCancel();
-            }
-        });
+            buttonOK.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    onOK();
+                }
+            });
+
+            buttonCancel.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    onCancel();
+                }
+            });
 
 // call onCancel() when cross is clicked
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                onCancel();
-            }
-        });
+            setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+            addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent e) {
+                    onCancel();
+                }
+            });
 
 // call onCancel() on ESCAPE
-        contentPane.registerKeyboardAction(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onCancel();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+            contentPane.registerKeyboardAction(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    onCancel();
+                }
+            }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        button1.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String login = "", password = "";
-                if (iCloudLogin.isEmpty()) {
-                    if (Main.key != null) {
-                        if (!Main.key.getICloudLogin().isEmpty()) {
+            button1.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String login = "", password = "";
+                    if (iCloudLogin.isEmpty()) {
+                        if (Main.key != null) {
+                            if (!Main.key.getICloudLogin().isEmpty()) {
+                                try {
+                                    login = Protector.decrypt(Main.key.getICloudLogin());
+                                    password = Protector.decrypt(Main.key.getICloudPassword());
+                                } catch (GeneralSecurityException | IOException ignored) {
+                                }
+                            }
+                        }
+                    } else {
+                        login = iCloudLogin;
+                        password = iCloudPassword;
+                    }
+                    new AccountEnterDialog("iCloud", login, password) {
+                        @Override
+                        void onOK() {
+                            isICloudChanged = true;
+                            iCloudLogin = this.textField1.getText();
+                            iCloudPassword = new String(this.passwordField1.getPassword());
+                            dispose();
+
+                        }
+                    };
+                }
+            });
+
+            button2.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String login = "", password = "";
+                    if (megaLogin.isEmpty()) {
+                        if (Main.key != null && !Main.key.getMegaLogin().isEmpty()) {
                             try {
-                                login = Protector.decrypt(Main.key.getICloudLogin());
-                                password = Protector.decrypt(Main.key.getICloudPassword());
+                                login = Protector.decrypt(Main.key.getMegaLogin());
+                                password = Protector.decrypt(Main.key.getMegaPassword());
                             } catch (GeneralSecurityException | IOException ignored) {
                             }
                         }
+                    } else {
+                        login = megaLogin;
+                        password = megaPassword;
                     }
-                } else {
-                    login = iCloudLogin;
-                    password = iCloudPassword;
-                }
-                new AccountEnterDialog("iCloud", login, password) {
-                    @Override
-                    void onOK() {
-                        isICloudChanged = true;
-                        iCloudLogin = this.textField1.getText();
-                        iCloudPassword = new String(this.passwordField1.getPassword());
-                        dispose();
-
-                    }
-                };
-            }
-        });
-
-        button2.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String login = "", password = "";
-                if (megaLogin.isEmpty()) {
-                    if (Main.key != null && !Main.key.getMegaLogin().isEmpty()) {
-                        try {
-                            login = Protector.decrypt(Main.key.getMegaLogin());
-                            password = Protector.decrypt(Main.key.getMegaPassword());
-                        } catch (GeneralSecurityException | IOException ignored) {
+                    new AccountEnterDialog("MEGA", login, password) {
+                        @Override
+                        void onOK() {
+                            isMegaChanged = true;
+                            megaLogin = this.textField1.getText();
+                            megaPassword = new String(this.passwordField1.getPassword());
+                            dispose();
                         }
-                    }
-                } else {
-                    login = megaLogin;
-                    password = megaPassword;
+                    };
                 }
-                new AccountEnterDialog("MEGA", login, password) {
-                    @Override
-                    void onOK() {
-                        isMegaChanged = true;
-                        megaLogin = this.textField1.getText();
-                        megaPassword = new String(this.passwordField1.getPassword());
-                        dispose();
-                    }
-                };
-            }
-        });
+            });
 
-        button3.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String login = "", password = "";
-                if (dropBoxLogin.isEmpty()) {
-                    if (Main.key != null && !Main.key.getDropBoxLogin().isEmpty()) {
-                        try {
-                            login = Protector.decrypt(Main.key.getDropBoxLogin());
-                            password = Protector.decrypt(Main.key.getDropBoxPassword());
-                        } catch (GeneralSecurityException | IOException ignored) {
+            button3.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String login = "", password = "";
+                    if (dropBoxLogin.isEmpty()) {
+                        if (Main.key != null && !Main.key.getDropBoxLogin().isEmpty()) {
+                            try {
+                                login = Protector.decrypt(Main.key.getDropBoxLogin());
+                                password = Protector.decrypt(Main.key.getDropBoxPassword());
+                            } catch (GeneralSecurityException | IOException ignored) {
+                            }
                         }
+                    } else {
+                        login = dropBoxLogin;
+                        password = dropBoxPassword;
                     }
-                } else {
-                    login = dropBoxLogin;
-                    password = dropBoxPassword;
+                    new AccountEnterDialog("DropBox", login, password) {
+                        @Override
+                        void onOK() {
+                            isDropBoxChanged = true;
+                            dropBoxLogin = this.textField1.getText();
+                            dropBoxPassword = new String(this.passwordField1.getPassword());
+                            dispose();
+                        }
+                    };
                 }
-                new AccountEnterDialog("DropBox", login, password) {
-                    @Override
-                    void onOK() {
-                        isDropBoxChanged = true;
-                        dropBoxLogin = this.textField1.getText();
-                        dropBoxPassword = new String(this.passwordField1.getPassword());
-                        dispose();
-                    }
-                };
-            }
-        });
+            });
 
-        pack();
-        setVisible(true);
+            changeKey.addActionListener(new ActionListener() {
 
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    new ChangeKey() {
+                        @Override
+                        public void onOK() {
+                            saveOptions();
+                            dispose();
+                        }
+                    };
+                }
+            });
+
+            pack();
+            isCreated = true;
+            setVisible(true);
+        }
     }
 
     abstract public void onOK();
@@ -232,7 +250,7 @@ public abstract class SettingsDialog extends JDialog {
             key = createKey(key);
             pushSettings(key);
         } catch (GeneralSecurityException | UnsupportedEncodingException e) {
-            log.warn("Can not encrypt data to save to key file",e);
+            log.warn("Can not encrypt data to save to key file", e);
         }
 
     }
@@ -245,7 +263,7 @@ public abstract class SettingsDialog extends JDialog {
             KeyUtils.createKeyFile(key, keyFilePath);
             Main.key = KeyUtils.loadKeyFile(keyFilePath);
         } catch (Throwable e) {
-            log.warn("Can not create file: " + keyFilePath,e);
+            log.warn("Can not create file: " + keyFilePath, e);
         }
     }
 
@@ -281,6 +299,7 @@ public abstract class SettingsDialog extends JDialog {
     }
 
     private void onCancel() {
+        isCreated = false;
         dispose();
     }
 

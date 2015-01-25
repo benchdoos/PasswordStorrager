@@ -4,9 +4,12 @@ import edu.passwordStorrager.core.Main;
 import edu.passwordStorrager.core.PropertiesManager;
 import org.apache.log4j.Logger;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.FileInputStream;
 import java.io.IOException;
 
@@ -25,7 +28,10 @@ public class FrameUtils {
         } catch (RuntimeException e) {
             return e.getStackTrace()[1].getClassName();
         }
+    }
 
+    public static String getCurrentClassName(Class clazz) {
+        return clazz.getCanonicalName();
     }
 
 
@@ -86,6 +92,58 @@ public class FrameUtils {
         }
     }
 
+    public static void shakeFrame(final Component component) {
+        final Timer timer = new Timer(60, null);
+        timer.addActionListener(new ActionListener() {
+            int counter = 0;
+            final int maxCounter = 6;
+            int step = 10;
+            final Point location = component.getLocation();
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (counter <= 2) {
+                    step = 10;
+                } else if (counter <= 4) {
+                    step = 5;
+                } else if (counter <= 6) {
+                    step = 3;
+                }
+                if (counter <= maxCounter) {
+                    if (counter % 2 == 0) {
+                        component.setLocation(location.x + step, location.y);
+                    } else {
+                        component.setLocation(location.x - step, location.y);
+                    }
+                } else {
+                    component.setLocation(location.x, location.y);
+                    timer.stop();
+                }
+                counter++;
+            }
+        });
+        timer.start();
+    }
+
+    public static Window getWindow(String frameClassName) {
+        if (Main.frames != null) {
+            for (int i = 0; i < Main.frames.size(); i++) {
+                Window window = Main.frames.get(i);
+                System.out.println(i + "current:" + getCurrentClassName(window.getClass()) +
+                        "\ninc:" + frameClassName);
+                if (frameClassName != null && getCurrentClassName(window.getClass())!=null) {
+                    System.out.println("[][]3["+getCurrentClassName(window.getClass()));
+                    System.out.println("[][]4["+ frameClassName);
+                    if (getCurrentClassName(window.getClass()).equals(frameClassName)) {
+                        System.out.println("returning window");
+                        return window;
+                    }
+                }
+
+            }
+        }
+        return null;
+    }
 
     public static Point setFrameOnCenter(Dimension size) {
         int width = (int) ((Toolkit.getDefaultToolkit().getScreenSize().width / 2) - (size.getWidth() / 2));

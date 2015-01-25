@@ -8,6 +8,7 @@ import edu.passwordStorrager.objects.Key;
 import edu.passwordStorrager.utils.platform.PlatformUtils;
 import org.apache.log4j.Logger;
 
+import java.awt.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,6 +37,8 @@ public class Main {
     public static ArrayList<MainForm> framesMainForm = new ArrayList<MainForm>();
     public static ArrayList<AuthorizeDialog> framesAuthForm = new ArrayList<AuthorizeDialog>();
 
+    public static ArrayList<Window> frames = new ArrayList<Window>();
+
     Main() {
         log.debug("Launch");
 
@@ -53,6 +56,8 @@ public class Main {
             Main.propertiesFrames = new Properties();
             log.debug("Creating new Frames properties");
         }
+        
+        ////////////////////////////////////////////
 
         if (exists(PropertiesManager.propertiesFilePath)) {
             log.debug("Properties file found, loading AuthorizeDialog");
@@ -66,25 +71,9 @@ public class Main {
     private void initSystem() {
         new PropertiesManager(); //MUST BE CALLED. DO NOT TOUCH
 
+        PlatformUtils.printOSParameters();
         PlatformUtils.initializeOS();
-
-        printOSParameters();
     }
-
-    private void printOSParameters() {
-        System.out.println("==========================System=========================");
-        System.out.println("System:");
-        System.out.println("\tOS: " + OS_NAME + " v." + system.getProperty("os.version") + " arch: " + system.getProperty("os.arch"));
-        System.out.println("Java:");
-        System.out.println("\tJava version: " + system.getProperty("java.specification.version") + "(" + system.getProperty("java.version") + ")");
-        System.out.println("\t" + system.getProperty("java.runtime.name") + " v." + system.getProperty("java.vm.version"));
-        System.out.println("User:");
-        System.out.println("\tName: " + system.getProperty("user.name") + " Home: " + USER_HOME);
-        System.out.println("\tTime zone: " + system.getProperty("user.timezone") + " (" + system.getProperty("user.country") + ") language: " + system.getProperty("user.language"));
-        System.out.println("Logging to: " + system.getProperty("java.io.tmpdir") + "PasswordStorrager/Logs/");
-        System.out.println("=========================================================");
-    }
-
     
     public static void onQuit() {
         log.debug("Quit");
