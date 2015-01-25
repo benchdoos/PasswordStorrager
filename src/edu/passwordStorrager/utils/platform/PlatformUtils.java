@@ -34,7 +34,8 @@ public class PlatformUtils {
         }
 
         if (IS_MAC) {
-            PlatformUtils.initializeMacOSX();
+            //PlatformUtils.initializeMacOSX();
+            PlatformUtils.initOtherOS();
         } else if (IS_WINDOWS) {
             //osHandler here
         }
@@ -129,13 +130,26 @@ public class PlatformUtils {
             p.add(new MenuItem("2"));
             com.apple.eawt.Application.getApplication().setDockMenu(p);*/
             try {
-                System.setProperty("java.library.path", "/lib");
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             } catch (ClassNotFoundException | InstantiationException | UnsupportedLookAndFeelException | IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
     }
+
+    private static void initOtherOS() {
+        try {
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
+    } 
 
     public static void printOSParameters() {
         System.out.println("==========================System=========================");
