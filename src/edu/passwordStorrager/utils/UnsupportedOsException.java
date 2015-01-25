@@ -21,6 +21,6 @@ public class UnsupportedOsException extends RuntimeException {
                     dispose();
                 }
             };
-        Main.onQuit();
+        //Main.onQuit();
     }
 }
