@@ -21,7 +21,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.EventObject;
 
-import static edu.passwordStorrager.core.Main.IS_MAC;
 import static edu.passwordStorrager.utils.FrameUtils.*;
 
 public class MainForm extends JFrame {
@@ -227,11 +226,7 @@ public class MainForm extends JFrame {
 
         fileJMenu.setText("Файл");
 
-        if (IS_MAC) {
-            openItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.META_MASK));
-        } else {
-            openItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-        }
+        openItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.META_MASK));
         openItem.setText("Открыть");
         openItem.addActionListener(new ActionListener() {
             @Override
@@ -243,11 +238,7 @@ public class MainForm extends JFrame {
         });
         fileJMenu.add(openItem);
 
-        if (IS_MAC) {
-            saveItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.META_MASK));
-        } else {
-            saveItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
-        }
+        saveItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.META_MASK));
         saveItem.setText("Сохранить");
         saveItem.addActionListener(new ActionListener() {
             @Override
@@ -259,8 +250,7 @@ public class MainForm extends JFrame {
 
         jMenuBar1.add(fileJMenu);
 
-        settingsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, InputEvent.CTRL_MASK));
-
+        settingsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, InputEvent.META_MASK));
         settingsItem.setText("Настройки");
         settingsItem.addActionListener(new ActionListener() {
             @Override
@@ -276,17 +266,12 @@ public class MainForm extends JFrame {
                 };
             }
         });
-        if (!IS_MAC) {
-            fileJMenu.add(settingsItem);
-        }
+
+        //fileJMenu.add(settingsItem);
 
         editJMenu.setText("Правка");
 
-        if (IS_MAC) {
-            editModeJRadioButtonMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.META_MASK));
-        } else {
-            editModeJRadioButtonMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK));
-        }
+        editModeJRadioButtonMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.META_MASK));
         editModeJRadioButtonMenuItem.setSelected(false);
         editModeJRadioButtonMenuItem.setText("Режим редактирования");
         editModeJRadioButtonMenuItem.addActionListener(new ActionListener() {
@@ -300,11 +285,7 @@ public class MainForm extends JFrame {
 
         editJMenu.add(editModeJRadioButtonMenuItem);
 
-        if (IS_MAC) {
-            addItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.META_MASK));
-        } else {
-            addItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
-        }
+        addItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.META_MASK));
         addItem.setText("Добавить");
         addItem.addActionListener(new ActionListener() {
             @Override
@@ -314,11 +295,7 @@ public class MainForm extends JFrame {
         });
         editJMenu.add(addItem);
 
-        if (IS_MAC) {
-            deleteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.META_MASK));
-        } else {
-            deleteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.CTRL_MASK));
-        }
+        deleteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.META_MASK));
         deleteItem.setText("Удалить");
         deleteItem.addActionListener(new ActionListener() {
             @Override
@@ -332,11 +309,7 @@ public class MainForm extends JFrame {
 
         copyJMenu.setText("Копировать");
 
-        if (IS_MAC) {
-            copySiteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.META_MASK));
-        } else {
-            copySiteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.CTRL_MASK));
-        }
+        copySiteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.META_MASK));
         copySiteItem.setText("Копировать сайт");
         copySiteItem.addActionListener(new ActionListener() {
             @Override
@@ -346,11 +319,7 @@ public class MainForm extends JFrame {
         });
         copyJMenu.add(copySiteItem);
 
-        if (IS_MAC) {
-            copyLoginItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.META_MASK));
-        } else {
-            copyLoginItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.CTRL_MASK));
-        }
+        copyLoginItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.META_MASK));
         copyLoginItem.setText("Копировать логин");
         copyLoginItem.addActionListener(new ActionListener() {
             @Override
@@ -360,11 +329,7 @@ public class MainForm extends JFrame {
         });
         copyJMenu.add(copyLoginItem);
 
-        if (IS_MAC) {
-            copyPasswordItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.META_MASK));
-        } else {
-            copyPasswordItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.CTRL_MASK));
-        }
+        copyPasswordItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.META_MASK));
         copyPasswordItem.setText("Копировать пароль");
         copyPasswordItem.addActionListener(new ActionListener() {
             @Override
@@ -529,7 +494,7 @@ public class MainForm extends JFrame {
     }
 
     public void setEdited(boolean isFileEdited) {
-        if (isEdited != isFileEdited) {
+        if(isEdited != isFileEdited) {
             isEdited = isFileEdited;
             getRootPane().putClientProperty("Window.documentModified", isFileEdited);
         }
