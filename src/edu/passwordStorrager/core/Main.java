@@ -25,8 +25,8 @@ public class Main {
     public static final Properties system = System.getProperties();
     public static final String OS_NAME = system.getProperty("os.name");
     public static final String USER_HOME = system.getProperty("user.home");
-    public static final boolean IS_MAC = OS_NAME.toLowerCase().equals("mac os x");
-    public static final boolean IS_WINDOWS = OS_NAME.toLowerCase().equals("windows");
+    public static final boolean IS_MAC = OS_NAME.toLowerCase().contains("mac");
+    public static final boolean IS_WINDOWS = OS_NAME.toLowerCase().contains("windows");
 
 
     public static Key key = new Key();
