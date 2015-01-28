@@ -1,5 +1,6 @@
 package edu.passwordStorrager.gui;
 
+import edu.passwordStorrager.cloud.CloudManager;
 import edu.passwordStorrager.core.Main;
 import edu.passwordStorrager.protector.Encryption;
 import edu.passwordStorrager.protector.Protector;
@@ -84,6 +85,9 @@ public class AuthorizeDialog extends JDialog {
                 System.out.println("Password is correct");
                 Main.isAuthorized = true;
                 Encryption.extractKey(new File(Main.propertiesApplication.getProperty(KEY_NAME) + Values.DEFAULT_KEY_FILE_NAME));
+                
+                new CloudManager().synchronize();
+                
                 new MainForm(new XmlParser().parseRecords());
             } else {
                 //TODO send notification here.

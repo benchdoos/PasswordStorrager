@@ -58,13 +58,13 @@ public class XmlParser {
                 records.add(record);
             }
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+            log.warn("Wrong configuration.", e);
         } catch (SAXException e) {
             log.warn("Can not parse file.", e);
         } catch (IOException e) {
-            log.warn("File can not be decoded", e); //no file / can not be decoded cause of wrong password
+            log.warn("File can not be decoded.", e); //no file / can not be decoded cause of wrong password
         } catch (Throwable e) {
-            log.warn("Can not decrypt storage", e);
+            log.warn("Can not decrypt storage.", e);
         }
         return records;
     }
