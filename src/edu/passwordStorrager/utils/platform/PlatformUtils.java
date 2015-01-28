@@ -34,8 +34,7 @@ public class PlatformUtils {
         }
 
         if (IS_MAC) {
-            //PlatformUtils.initializeMacOSX();
-            PlatformUtils.initOtherOS();
+            PlatformUtils.initializeMacOSX();
         } else if (IS_WINDOWS) {
             //osHandler here
         }
@@ -136,20 +135,6 @@ public class PlatformUtils {
             }
         }
     }
-
-    private static void initOtherOS() {
-        try {
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
-        }
-    } 
 
     public static void printOSParameters() {
         System.out.println("==========================System=========================");
