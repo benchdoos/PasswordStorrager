@@ -74,7 +74,7 @@ public class PlatformUtils {
                                 if (framesMainForm.size() > 0) {
                                     MainForm currentForm = framesMainForm.get(framesMainForm.size() - 1);
                                     currentForm.recordArrayList = new XmlParser().parseRecords();
-                                    currentForm.loadList();
+                                    currentForm.loadList(currentForm.recordArrayList);
                                     currentForm.updateTitle(new File(Main.propertiesApplication.getProperty(PropertiesManager.KEY_NAME) + Values.DEFAULT_STORAGE_FILE_NAME));
                                     currentForm.setEdited(false);
                                 }

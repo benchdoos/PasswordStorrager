@@ -10,6 +10,8 @@ import edu.passwordStorrager.xmlManager.XmlParser;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -56,6 +58,11 @@ public class MainForm extends JFrame {
     private JScrollPane scrollPane;
     private JTable table;
     private JPanel statusPanel;
+    private JButton addDown;
+    private JButton addUp;
+    private JTextField searchField;
+    private JLabel isEditableLable;
+    private Timer searchTimer;
 
     public MainForm(ArrayList<Record> recordArrayList) {
         this.recordArrayList = recordArrayList;
@@ -130,9 +137,11 @@ public class MainForm extends JFrame {
             }
         });
 
-        //putClientProperty("Window.documentFile", new File("/tmp"));
+        initSearchBarListeners();
 
         initTableListeners();
+
+        initControlBar();
 
         initStatusBar();
 
@@ -140,9 +149,101 @@ public class MainForm extends JFrame {
 
         initPopUp();
 
-        loadList();
+        loadList(recordArrayList);
+
+        //request focus on table
 
         pack();
+        table.requestFocus();
+        if (table.getRowCount() > 0) {
+            table.setRowSelectionInterval(0, 0);
+        }
+    }
+
+    private void initSearchBarListeners() {
+        panel1.registerKeyboardAction(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        searchField.requestFocus();
+                    }
+                }, KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.META_MASK),
+                JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+        searchField.putClientProperty("JTextField.variant", "search");
+
+        searchField.getDocument().addDocumentListener(new DocumentListener() {
+            void search() {
+                if (!searchField.getText().isEmpty()) {
+                    initSearchTimer(searchField.getText());
+                } else {
+                    searchTimer.stop();
+                    loadList(recordArrayList);
+                }
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                search();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                search();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                search();
+            }
+        });
+
+        searchField.registerKeyboardAction(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!searchField.getText().isEmpty()) {
+                    searchField.setText("");
+                    loadList(recordArrayList);
+                } else {
+                    table.requestFocus();
+                    table.setRowSelectionInterval(0, 0);
+                }
+            }
+        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_FOCUSED);
+    }
+
+    private void initSearchTimer(final String text) {
+        if (searchTimer != null) {
+            searchTimer.stop();
+        }
+        searchTimer = new Timer(500, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadList(searchRecord(text));
+            }
+        });
+        searchTimer.setRepeats(false);
+        searchTimer.start();
+    }
+
+    private ArrayList<Record> searchRecord(String text) {
+        if (text.isEmpty()) {
+            return recordArrayList;
+        }
+        ArrayList<Record> foundRecords = new ArrayList<Record>(recordArrayList.size());
+        for (Record record : recordArrayList) {
+            try {
+                if (record.getSite().contains(text) || record.getLogin().contains(text)) {
+                    foundRecords.add(record);
+                }
+            } catch (NullPointerException ignored) {
+            }
+        }
+        return foundRecords;
+    }
+
+    private void initControlBar() {
+        addDown.putClientProperty("JButton.buttonType", "roundRect");
+        addUp.putClientProperty("JButton.buttonType", "roundRect");
     }
 
     private void initStatusBar() {
@@ -232,8 +333,9 @@ public class MainForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 recordArrayList = new XmlParser().parseRecords();
-                loadList();
+                loadList(recordArrayList);
                 setEdited(false);
+                isEditableLable.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage("NSImage://NSLockLockedTemplate")));
             }
         });
         fileJMenu.add(openItem);
@@ -278,11 +380,21 @@ public class MainForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!editModeJRadioButtonMenuItem.isSelected()) {
-                    table.getCellEditor().cancelCellEditing();
+                    isEditableLable.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage("NSImage://NSLockUnlockedTemplate")));
+                    int index = table.getSelectedRow();
+                    try {
+                        table.getCellEditor().cancelCellEditing();
+                    } catch (NullPointerException ignored) {}
+//                    table.getCellEditor(table.getEditingRow(), table.getEditingColumn()).cancelCellEditing();
+                    table.setRowSelectionInterval(index,index);
+                    //table.clearSelection();
+                } else {
+                    isEditableLable.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage("NSImage://NSLockLockedTemplate")));
                 }
             }
         });
 
+        isEditableLable.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage("NSImage://NSLockLockedTemplate")));
         editJMenu.add(editModeJRadioButtonMenuItem);
 
         addItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.META_MASK));
@@ -401,7 +513,7 @@ public class MainForm extends JFrame {
         }
     }
 
-    public void loadList() {
+    public void loadList(ArrayList<Record> recordArrayList) {
         //Record[] recordsList = recordArrayList.toArray(new Record[recordArrayList.size()]);
         table.setModel(createTableModel(recordArrayList));
         table.setRowHeight(20);
@@ -460,15 +572,18 @@ public class MainForm extends JFrame {
         }
         editModeJRadioButtonMenuItem.setSelected(false);
         new XmlParser().saveRecords(recordArrayList);
-        loadList();
+        loadList(recordArrayList);
         setEdited(false);
         setStatus("Сохранено", STATUS_SUCCESS);
     }
 
     private void addNewRecord() {
         recordArrayList.add(new Record());
-        loadList();
-        editModeJRadioButtonMenuItem.setSelected(true);
+        loadList(recordArrayList);
+        if (!editModeJRadioButtonMenuItem.isSelected()) {
+            editModeJRadioButtonMenuItem.doClick();
+        }
+        isEditableLable.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage("NSImage://NSLockUnlockedTemplate")));
         table.clearSelection();
         table.setRowSelectionInterval(table.getModel().getRowCount() - 1, table.getModel().getRowCount() - 1);
         scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
@@ -479,8 +594,11 @@ public class MainForm extends JFrame {
         int index = table.getSelectedRow();
         if (index >= 0) {
             recordArrayList.remove(index);
-            loadList();
+            loadList(recordArrayList);
             table.clearSelection();
+
+            editModeJRadioButtonMenuItem.setSelected(true);
+            isEditableLable.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage("NSImage://NSLockUnlockedTemplate")));
 
             if (index >= 0 && recordArrayList.size() > 0) {
                 if (index < recordArrayList.size()) {
@@ -494,9 +612,10 @@ public class MainForm extends JFrame {
     }
 
     public void setEdited(boolean isFileEdited) {
-        if(isEdited != isFileEdited) {
+        if (isEdited != isFileEdited) {
             isEdited = isFileEdited;
             getRootPane().putClientProperty("Window.documentModified", isFileEdited);
+            setTitle(Values.DEFAULT_STORAGE_FILE_NAME + " - Изменено");
         }
     }
 
