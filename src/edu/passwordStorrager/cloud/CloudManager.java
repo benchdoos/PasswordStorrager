@@ -11,7 +11,7 @@ public class CloudManager {
     }
 
     public void synchronize() {
-        new DropBoxManager(storageFilePath).syncDropBox();
+//        new DropBoxManager(storageFilePath).syncDropBox();
     }
 
 

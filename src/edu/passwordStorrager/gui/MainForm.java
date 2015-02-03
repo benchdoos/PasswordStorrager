@@ -197,9 +197,36 @@ public class MainForm extends JFrame {
             }
         });
 
-        searchField.registerKeyboardAction(new ActionListener() {
+        searchField.addFocusListener(new FocusListener() {
+            private void changeSearchFieldSize(int width) {
+                int height = searchField.getHeight();
+                searchField.setMinimumSize(new Dimension(width, height));
+                searchField.setPreferredSize(new Dimension(width, height));
+                searchField.setMaximumSize(new Dimension(width, height));
+                searchField.setSize(new Dimension(width, height));
+            }
+
+            
+            //TODO add resizing to searchField
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void focusGained(FocusEvent e) {
+                int width = 300;
+                //changeSearchFieldSize(width);
+
+                System.out.println("gained");
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                int width = 150;
+//                changeSearchFieldSize(width);
+
+                System.out.println("lost");
+            }
+        });
+
+        ActionListener clearSearchFieldAction = new ActionListener() {
+            void clear() {
                 if (!searchField.getText().isEmpty()) {
                     searchField.setText("");
                     loadList(recordArrayList);
@@ -208,7 +235,16 @@ public class MainForm extends JFrame {
                     table.setRowSelectionInterval(0, 0);
                 }
             }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_FOCUSED);
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                clear();
+            }
+        };
+
+        searchField.registerKeyboardAction(clearSearchFieldAction, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_FOCUSED);
+        searchField.registerKeyboardAction(clearSearchFieldAction, KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 
+                InputEvent.META_DOWN_MASK), JComponent.WHEN_FOCUSED);
     }
 
     private void initSearchTimer(final String text) {
@@ -384,9 +420,10 @@ public class MainForm extends JFrame {
                     int index = table.getSelectedRow();
                     try {
                         table.getCellEditor().cancelCellEditing();
-                    } catch (NullPointerException ignored) {}
+                    } catch (NullPointerException ignored) {
+                    }
 //                    table.getCellEditor(table.getEditingRow(), table.getEditingColumn()).cancelCellEditing();
-                    table.setRowSelectionInterval(index,index);
+                    table.setRowSelectionInterval(index, index);
                     //table.clearSelection();
                 } else {
                     isEditableLable.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage("NSImage://NSLockLockedTemplate")));
