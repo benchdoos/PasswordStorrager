@@ -13,6 +13,8 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -128,7 +130,7 @@ public class MainForm extends JFrame {
         updateTitle(new File(Main.propertiesApplication.getProperty(PropertiesManager.KEY_NAME) + Values.DEFAULT_STORAGE_FILE_NAME));
         setContentPane(panel1);
 
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         //setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(600, 430));
         setPreferredSize(getFrameSize(getCurrentClassName()));
@@ -137,12 +139,17 @@ public class MainForm extends JFrame {
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 if (isEdited) {
-
-                } else {
-                    FrameUtils.setFrameLocation(getClass().getEnclosingClass().getName(), getLocation());
-                    FrameUtils.setFrameSize(getClass().getEnclosingClass().getName(), getSize());
-                    Main.onQuit();
+                    //TODO ask befor close
                 }
+                FrameUtils.setFrameLocation(getClass().getEnclosingClass().getName(), getLocation());
+                FrameUtils.setFrameSize(getClass().getEnclosingClass().getName(), getSize());
+                Main.onQuit();
+            }
+
+            public void windowClosed(WindowEvent e) {
+                FrameUtils.setFrameLocation(getClass().getEnclosingClass().getName(), getLocation());
+                FrameUtils.setFrameSize(getClass().getEnclosingClass().getName(), getSize());
+                Main.onQuit();
             }
         });
 
@@ -384,12 +391,15 @@ public class MainForm extends JFrame {
                         if (MainForm.this.table.getSelectedColumn() == table.getColumn(SITE_COLUMN_NAME).getModelIndex()) {
                             java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
                             try {
-                                desktop.browse(URI.create(StringUtils.parseUrl((String) MainForm.this.table.getModel().getValueAt(row, table.getColumn(SITE_COLUMN_NAME).getModelIndex()))));
+                                desktop.browse(URI.create(StringUtils.parseUrl((String) MainForm.this.table.getModel()
+                                        .getValueAt(row, table.getColumn(SITE_COLUMN_NAME).getModelIndex()))));
                             } catch (IOException e) {
-                                log.warn("Can not open in browser: " + StringUtils.parseUrl((String) MainForm.this.table.getModel().getValueAt(row, table.getColumn(SITE_COLUMN_NAME).getModelIndex())));
+                                log.warn("Can not open in browser: " + StringUtils.parseUrl((String) MainForm.this.table.getModel()
+                                        .getValueAt(row, table.getColumn(SITE_COLUMN_NAME).getModelIndex())));
                             }
                         } else {
-                            String copy = (String) MainForm.this.table.getModel().getValueAt(row, table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex());
+                            String copy = (String) MainForm.this.table.getModel().getValueAt(row, 
+                                    table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex());
                             copyToClipboard(copy);
                             setStatus("Скопировано:" + copy, STATUS_SUCCESS);
 
@@ -436,6 +446,29 @@ public class MainForm extends JFrame {
             }
         });
 
+        ListSelectionModel cellSelectionModel = table.getSelectionModel();
+        cellSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        cellSelectionModel.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                int selected = table.getSelectedRow();
+                if (selected == 0) {
+                    moveUpButton.setEnabled(false);
+                    moveUpItem.setEnabled(false);
+                }else{
+                    moveUpButton.setEnabled(true);
+                    moveUpItem.setEnabled(true);
+                }
+                if (selected == table.getRowCount() - 1) {
+                    moveDownButton.setEnabled(false);
+                    moveDownItem.setEnabled(false);
+                } else {
+                    moveDownButton.setEnabled(true);
+                    moveDownItem.setEnabled(true);
+                }
+                
+            }
+        });
         //TODO add table change listener, fix the carret
         /*scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
             public void adjustmentValueChanged(AdjustmentEvent e) {
@@ -571,7 +604,7 @@ public class MainForm extends JFrame {
         });
         editJMenu.add(addUpItem);
 
-        addDownItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_MASK));
+        addDownItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_MASK));
         addDownItem.setText("Добавить запись снизу");
         addDownItem.addActionListener(new ActionListener() {
             @Override
@@ -582,7 +615,7 @@ public class MainForm extends JFrame {
         editJMenu.add(addDownItem);
 
         moveUpItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.SHIFT_MASK));
-        moveUpItem.setText("Добавить запись снизу");
+        moveUpItem.setText("Переместить вверх");
         moveUpItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -591,7 +624,7 @@ public class MainForm extends JFrame {
         });
         editJMenu.add(moveUpItem);
 
-        moveDownItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.SHIFT_MASK));
+        moveDownItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.SHIFT_MASK));
         moveDownItem.setText("Переместить вниз");
         moveDownItem.addActionListener(new ActionListener() {
             @Override
@@ -664,7 +697,7 @@ public class MainForm extends JFrame {
         menuItemCopySite.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String copy = (String) table.getModel().getValueAt(table.getSelectedRow(), 1);
+                String copy = (String) table.getModel().getValueAt(table.getSelectedRow(), table.getColumn(SITE_COLUMN_NAME).getModelIndex());
                 copyToClipboard(copy);
                 setStatus("Скопировано:" + copy, STATUS_SUCCESS);
             }
@@ -673,7 +706,7 @@ public class MainForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (table.getSelectedRow() != -1) {
-                    String copy = (String) table.getModel().getValueAt(table.getSelectedRow(), 2);
+                    String copy = (String) table.getModel().getValueAt(table.getSelectedRow(), table.getColumn(LOGIN_COLUMN_NAME).getModelIndex());
                     copyToClipboard(copy);
                     setStatus("Скопировано:" + copy, STATUS_SUCCESS);
                 }
@@ -772,12 +805,14 @@ public class MainForm extends JFrame {
     }
 
     private void addNewRecord(int index) {
-        recordArrayList.add(index, new Record());
         if (!editModeJRadioButtonMenuItem.isSelected()) {
             editModeJRadioButtonMenuItem.doClick();
         }
         isEditableLable.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage("NSImage://NSLockUnlockedTemplate")));
+        
+        recordArrayList.add(index, new Record());
         loadList(recordArrayList);
+        
         table.clearSelection();
         table.setRowSelectionInterval(index, index);
         scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
