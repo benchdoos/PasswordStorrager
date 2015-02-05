@@ -52,6 +52,11 @@ public class MainForm extends JFrame {
     private JMenu editJMenu;
     private JMenuItem addItem;
     private JMenuItem deleteItem;
+    private JMenuItem addUpItem;
+    private JMenuItem addDownItem;
+    private JMenuItem moveUpItem;
+    private JMenuItem moveDownItem;
+    private JMenuItem searchMenuItem;
     private JMenu copyJMenu;
     private JMenuItem copySiteItem;
     private JMenuItem copyLoginItem;
@@ -67,7 +72,6 @@ public class MainForm extends JFrame {
     private JButton addUpButton;
     private JButton addDownButton;
     private Timer searchTimer;
-    private JMenuItem searchMenuItem;
 
     public MainForm(ArrayList<Record> recordArrayList) {
         this.recordArrayList = recordArrayList;
@@ -307,7 +311,57 @@ public class MainForm extends JFrame {
             moveUpButton.setIcon(new ImageIcon(img));
             img = ImageIO.read(getClass().getResource("/resources/icons/moveDown.png"));
             moveDownButton.setIcon(new ImageIcon(img));
-        } catch (IOException ex) {log.warn("Can not load images for buttons");}
+        } catch (IOException ex) {
+            log.warn("Can not load images for buttons");
+        }
+
+        /////Listeners
+        addUpButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int index = table.getSelectedRow();
+                if (index > 0) {
+                    addNewRecord(index);
+                } else {
+                    addNewRecord(0);
+                }
+            }
+        });
+        addDownButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int index = table.getSelectedRow();
+                if (index <= table.getModel().getRowCount()) {
+                    addNewRecord(index + 1);
+                } else {
+                    addNewRecord(0);
+                }
+            }
+        });
+
+        moveUpButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int index = table.getSelectedRow();
+                if (index > 0) {
+                    exchangeRecords(index, index - 1);
+                    table.clearSelection();
+                    table.setRowSelectionInterval(index - 1, index - 1);
+                }
+            }
+        });
+
+        moveDownButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int index = table.getSelectedRow();
+                if (index + 1 < table.getRowCount()) {
+                    exchangeRecords(index, index + 1);
+                    table.clearSelection();
+                    table.setRowSelectionInterval(index + 1, index + 1);
+                }
+            }
+        });
     }
 
     private void initStatusBar() {
@@ -335,7 +389,10 @@ public class MainForm extends JFrame {
                                 log.warn("Can not open in browser: " + StringUtils.parseUrl((String) MainForm.this.table.getModel().getValueAt(row, table.getColumn(SITE_COLUMN_NAME).getModelIndex())));
                             }
                         } else {
-                            copyToClipboard((String) MainForm.this.table.getModel().getValueAt(row, table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex()));
+                            String copy = (String) MainForm.this.table.getModel().getValueAt(row, table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex());
+                            copyToClipboard(copy);
+                            setStatus("Скопировано:" + copy, STATUS_SUCCESS);
+
                         }
                     }
                 }
@@ -354,15 +411,18 @@ public class MainForm extends JFrame {
                 if (editModeJRadioButtonMenuItem.isSelected()) {
                     if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.META_DOWN_MASK) != 0)) {
                         if (table.getSelectedRow() != -1) {
-                            copyToClipboard((String) MainForm.this.table.getModel().getValueAt(table.getSelectedRow(),
-                                    table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex()));
+                            String copy = (String) MainForm.this.table.getModel().getValueAt(table.getSelectedRow(),
+                                    table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex());
+                            copyToClipboard(copy);
+                            setStatus("Скопировано:" + copy, STATUS_SUCCESS);
+
                         }
                     }
                 } else {
                     //TODO FIX IF NEEDED
                     int key = e.getKeyCode();
-                    
-                    if ((((key >= 65) && (key <= 90)) || ((key >= 97) && (key <= 122)) || ((key >= 48) && (key <= 57))) && e.getModifiers()<=0) {
+
+                    if ((((key >= 65) && (key <= 90)) || ((key >= 97) && (key <= 122)) || ((key >= 48) && (key <= 57))) && e.getModifiers() <= 0) {
                         searchField.requestFocus();
                         searchField.setText(e.getKeyChar() + "");
                         searchField.setCaret(new DefaultCaret());
@@ -375,7 +435,7 @@ public class MainForm extends JFrame {
             public void keyReleased(KeyEvent e) {
             }
         });
-        
+
         //TODO add table change listener, fix the carret
         /*scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
             public void adjustmentValueChanged(AdjustmentEvent e) {
@@ -396,6 +456,10 @@ public class MainForm extends JFrame {
         editModeJRadioButtonMenuItem = new JRadioButtonMenuItem();
         addItem = new JMenuItem();
         deleteItem = new JMenuItem();
+        addUpItem = new JMenuItem();
+        addDownItem = new JMenuItem();
+        moveUpItem = new JMenuItem();
+        moveDownItem = new JMenuItem();
         searchMenuItem = new JMenuItem();
 
         copyJMenu = new JMenu();
@@ -413,6 +477,7 @@ public class MainForm extends JFrame {
                 recordArrayList = new XmlParser().parseRecords();
                 loadList(recordArrayList);
                 setEdited(false);
+                editModeJRadioButtonMenuItem.setSelected(false);
                 isEditableLable.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage("NSImage://NSLockLockedTemplate")));
             }
         });
@@ -481,7 +546,7 @@ public class MainForm extends JFrame {
         addItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                addNewRecord();
+                addNewRecord(recordArrayList.size());
             }
         });
         editJMenu.add(addItem);
@@ -495,6 +560,46 @@ public class MainForm extends JFrame {
             }
         });
         editJMenu.add(deleteItem);
+
+        addUpItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_MASK));
+        addUpItem.setText("Добавить запись сверху");
+        addUpItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addUpButton.doClick();
+            }
+        });
+        editJMenu.add(addUpItem);
+
+        addDownItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_MASK));
+        addDownItem.setText("Добавить запись снизу");
+        addDownItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addDownButton.doClick();
+            }
+        });
+        editJMenu.add(addDownItem);
+
+        moveUpItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.SHIFT_MASK));
+        moveUpItem.setText("Добавить запись снизу");
+        moveUpItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                moveUpButton.doClick();
+            }
+        });
+        editJMenu.add(moveUpItem);
+
+        moveDownItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.SHIFT_MASK));
+        moveDownItem.setText("Переместить вниз");
+        moveDownItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                moveDownButton.doClick();
+            }
+        });
+        editJMenu.add(moveDownItem);
 
         searchMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.META_MASK));
         searchMenuItem.setText("Поиск");
@@ -515,7 +620,7 @@ public class MainForm extends JFrame {
         copySiteItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                copySelectedCell(0);
+                copySelectedCell(table.getColumn(SITE_COLUMN_NAME).getModelIndex());
             }
         });
         copyJMenu.add(copySiteItem);
@@ -525,7 +630,7 @@ public class MainForm extends JFrame {
         copyLoginItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                copySelectedCell(1);
+                copySelectedCell(table.getColumn(LOGIN_COLUMN_NAME).getModelIndex());
             }
         });
         copyJMenu.add(copyLoginItem);
@@ -535,7 +640,7 @@ public class MainForm extends JFrame {
         copyPasswordItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                copySelectedCell(2);
+                copySelectedCell(table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex());
             }
         });
         copyJMenu.add(copyPasswordItem);
@@ -559,16 +664,18 @@ public class MainForm extends JFrame {
         menuItemCopySite.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                copyToClipboard((String) table.getModel().getValueAt(table.getSelectedRow(), 1));
-
+                String copy = (String) table.getModel().getValueAt(table.getSelectedRow(), 1);
+                copyToClipboard(copy);
+                setStatus("Скопировано:" + copy, STATUS_SUCCESS);
             }
         });
         menuItemCopyLogin.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (table.getSelectedRow() != -1) {
-                    copyToClipboard((String) table.getModel().getValueAt(table.getSelectedRow(), 2));
+                    String copy = (String) table.getModel().getValueAt(table.getSelectedRow(), 2);
+                    copyToClipboard(copy);
+                    setStatus("Скопировано:" + copy, STATUS_SUCCESS);
                 }
             }
         });
@@ -597,8 +704,9 @@ public class MainForm extends JFrame {
 
     private void copySelectedCell(int column) {
         if (table.getSelectedRow() >= 0) {
-            System.out.println("{{{" + table.getColumn("Сайт").getModelIndex());
-            copyToClipboard((String) table.getModel().getValueAt(table.getSelectedRow(), column));
+            String copy = (String) table.getModel().getValueAt(table.getSelectedRow(), column);
+            copyToClipboard(copy);
+            setStatus("Скопировано:" + copy, STATUS_SUCCESS);
         }
     }
 
@@ -663,16 +771,27 @@ public class MainForm extends JFrame {
         setStatus("Сохранено", STATUS_SUCCESS);
     }
 
-    private void addNewRecord() {
-        recordArrayList.add(new Record());
+    private void addNewRecord(int index) {
+        recordArrayList.add(index, new Record());
         if (!editModeJRadioButtonMenuItem.isSelected()) {
             editModeJRadioButtonMenuItem.doClick();
         }
         isEditableLable.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage("NSImage://NSLockUnlockedTemplate")));
         loadList(recordArrayList);
         table.clearSelection();
-        table.setRowSelectionInterval(table.getModel().getRowCount() - 1, table.getModel().getRowCount() - 1);
+        table.setRowSelectionInterval(index, index);
         scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
+        setEdited(true);
+    }
+
+    private void exchangeRecords(int index1, int index2) {
+        Record rec1 = recordArrayList.get(index1);
+        Record rec2 = recordArrayList.get(index2);
+        recordArrayList.set(index1, rec2);
+        recordArrayList.set(index2, rec1);
+        loadList(recordArrayList);
+        table.clearSelection();
+        table.setRowSelectionInterval(index1, index1);
         setEdited(true);
     }
 
@@ -698,13 +817,13 @@ public class MainForm extends JFrame {
     }
 
     public void setEdited(boolean isFileEdited) {
-            isEdited = isFileEdited;
+        isEdited = isFileEdited;
         if (isFileEdited) {
             setTitle(Values.DEFAULT_STORAGE_FILE_NAME + " - Изменено");
         } else {
             setTitle(Values.DEFAULT_STORAGE_FILE_NAME);
         }
-            getRootPane().putClientProperty("Window.documentModified", isEdited);
+        getRootPane().putClientProperty("Window.documentModified", isEdited);
     }
 
     public void updateTitle(File file) {
@@ -745,7 +864,7 @@ public class MainForm extends JFrame {
 
         @Override
         public boolean isCellEditable(EventObject anEvent) {
-            return textField != null && !textField.getText().equals(NUMBER_COLUMN_NAME) 
+            return textField != null && !textField.getText().equals(NUMBER_COLUMN_NAME)
                     && editModeJRadioButtonMenuItem.isSelected();
         }
     }
