@@ -21,6 +21,8 @@ import javax.swing.table.TableColumn;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -465,6 +467,33 @@ public class MainForm extends JFrame {
                 } else {
                     moveDownButton.setEnabled(true);
                     moveDownItem.setEnabled(true);
+                }
+                
+            }
+        });
+
+        table.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                JTable table = (JTable) evt.getSource();
+                setEdited(true);
+                int row = table.getEditingRow();
+                int col = table.getEditingColumn();
+                if (col == table.getColumn(SITE_COLUMN_NAME).getModelIndex()) {
+                    Record rec = recordArrayList.get(row);
+                    rec.setSite(table.getValueAt(row, col)+"");
+                    recordArrayList.set(row, rec);
+                }
+                if (col == table.getColumn(LOGIN_COLUMN_NAME).getModelIndex()) {
+                    Record rec = recordArrayList.get(row);
+                    rec.setLogin(table.getValueAt(row, col) + "");
+                    recordArrayList.set(row, rec);
+                }
+
+                if (col == table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex()) {
+                    Record rec = recordArrayList.get(row);
+                    rec.setPassword(table.getValueAt(row, col) + "");
+                    recordArrayList.set(row, rec);
                 }
                 
             }
