@@ -20,7 +20,7 @@ import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
 public class Main {
     private static final Logger log = Logger.getLogger(getCurrentClassName());
 
-    public static final String version = "0.1.b.9";
+    public static final String version = "0.1.b";
 
     public static final Properties system = System.getProperties();
     public static final String OS_NAME = system.getProperty("os.name");
