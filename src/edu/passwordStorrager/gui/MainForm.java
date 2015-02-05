@@ -9,12 +9,14 @@ import edu.passwordStorrager.utils.StringUtils;
 import edu.passwordStorrager.xmlManager.XmlParser;
 import org.apache.log4j.Logger;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -58,11 +60,14 @@ public class MainForm extends JFrame {
     private JScrollPane scrollPane;
     private JTable table;
     private JPanel statusPanel;
-    private JButton addDown;
-    private JButton addUp;
     private JTextField searchField;
     private JLabel isEditableLable;
+    private JButton moveUpButton;
+    private JButton moveDownButton;
+    private JButton addUpButton;
+    private JButton addDownButton;
     private Timer searchTimer;
+    private JMenuItem searchMenuItem;
 
     public MainForm(ArrayList<Record> recordArrayList) {
         this.recordArrayList = recordArrayList;
@@ -161,13 +166,13 @@ public class MainForm extends JFrame {
     }
 
     private void initSearchBarListeners() {
-        panel1.registerKeyboardAction(
+        /*panel1.registerKeyboardAction(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         searchField.requestFocus();
                     }
                 }, KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.META_MASK),
-                JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+                JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);*/
 
         searchField.putClientProperty("JTextField.variant", "search");
 
@@ -206,7 +211,7 @@ public class MainForm extends JFrame {
                 searchField.setSize(new Dimension(width, height));
             }
 
-            
+
             //TODO add resizing to searchField
             @Override
             public void focusGained(FocusEvent e) {
@@ -243,7 +248,7 @@ public class MainForm extends JFrame {
         };
 
         searchField.registerKeyboardAction(clearSearchFieldAction, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_FOCUSED);
-        searchField.registerKeyboardAction(clearSearchFieldAction, KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 
+        searchField.registerKeyboardAction(clearSearchFieldAction, KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE,
                 InputEvent.META_DOWN_MASK), JComponent.WHEN_FOCUSED);
     }
 
@@ -278,8 +283,31 @@ public class MainForm extends JFrame {
     }
 
     private void initControlBar() {
-        addDown.putClientProperty("JButton.buttonType", "roundRect");
-        addUp.putClientProperty("JButton.buttonType", "roundRect");
+        addUpButton.putClientProperty("JButton.buttonType", "gradient");
+        addDownButton.putClientProperty("JButton.buttonType", "gradient");
+        moveUpButton.putClientProperty("JButton.buttonType", "gradient");
+        moveDownButton.putClientProperty("JButton.buttonType", "gradient");
+        /*addUpButton.putClientProperty("JButton.buttonType", "textured");
+        addDownButton.putClientProperty("JButton.buttonType", "textured");*/
+
+        addUpButton.setText("");
+        addUpButton.setToolTipText("Добавить запись сверху");
+        addDownButton.setText("");
+        addDownButton.setToolTipText("Добавить запись снизу");
+        moveUpButton.setText("");
+        moveUpButton.setToolTipText("Переместить вверх");
+        moveDownButton.setText("");
+        moveDownButton.setToolTipText("Переместить вниз");
+        try {
+            Image img = ImageIO.read(getClass().getResource("/resources/icons/AddDown.png"));
+            addDownButton.setIcon(new ImageIcon(img));
+            img = ImageIO.read(getClass().getResource("/resources/icons/AddUp.png"));
+            addUpButton.setIcon(new ImageIcon(img));
+            img = ImageIO.read(getClass().getResource("/resources/icons/moveUp.png"));
+            moveUpButton.setIcon(new ImageIcon(img));
+            img = ImageIO.read(getClass().getResource("/resources/icons/moveDown.png"));
+            moveDownButton.setIcon(new ImageIcon(img));
+        } catch (IOException ex) {log.warn("Can not load images for buttons");}
     }
 
     private void initStatusBar() {
@@ -325,9 +353,20 @@ public class MainForm extends JFrame {
             public void keyPressed(KeyEvent e) {
                 if (editModeJRadioButtonMenuItem.isSelected()) {
                     if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.META_DOWN_MASK) != 0)) {
-                        /*if (table.getSelectedRow() != -1) {
-                            copyToClipboard((String) table.getModel().getValueAt(table.getSelectedRow(), 2));
-                        }*/
+                        if (table.getSelectedRow() != -1) {
+                            copyToClipboard((String) MainForm.this.table.getModel().getValueAt(table.getSelectedRow(),
+                                    table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex()));
+                        }
+                    }
+                } else {
+                    //TODO FIX IF NEEDED
+                    int key = e.getKeyCode();
+                    
+                    if ((((key >= 65) && (key <= 90)) || ((key >= 97) && (key <= 122)) || ((key >= 48) && (key <= 57))) && e.getModifiers()<=0) {
+                        searchField.requestFocus();
+                        searchField.setText(e.getKeyChar() + "");
+                        searchField.setCaret(new DefaultCaret());
+                        searchField.setCaretPosition(searchField.getText().length());
                     }
                 }
             }
@@ -336,6 +375,8 @@ public class MainForm extends JFrame {
             public void keyReleased(KeyEvent e) {
             }
         });
+        
+        //TODO add table change listener, fix the carret
         /*scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
             public void adjustmentValueChanged(AdjustmentEvent e) {
                 e.getAdjustable().setValue(e.getAdjustable().getMaximum());
@@ -355,6 +396,7 @@ public class MainForm extends JFrame {
         editModeJRadioButtonMenuItem = new JRadioButtonMenuItem();
         addItem = new JMenuItem();
         deleteItem = new JMenuItem();
+        searchMenuItem = new JMenuItem();
 
         copyJMenu = new JMenu();
         copySiteItem = new JMenuItem();
@@ -454,6 +496,16 @@ public class MainForm extends JFrame {
         });
         editJMenu.add(deleteItem);
 
+        searchMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.META_MASK));
+        searchMenuItem.setText("Поиск");
+        searchMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                searchField.requestFocus();
+            }
+        });
+        editJMenu.add(searchMenuItem);
+
         jMenuBar1.add(editJMenu);
 
         copyJMenu.setText("Копировать");
@@ -508,7 +560,7 @@ public class MainForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                copyToClipboard((String) table.getModel().getValueAt(table.getSelectedRow(), 0));
+                copyToClipboard((String) table.getModel().getValueAt(table.getSelectedRow(), 1));
 
             }
         });
@@ -516,7 +568,7 @@ public class MainForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (table.getSelectedRow() != -1) {
-                    copyToClipboard((String) table.getModel().getValueAt(table.getSelectedRow(), 1));
+                    copyToClipboard((String) table.getModel().getValueAt(table.getSelectedRow(), 2));
                 }
             }
         });
@@ -553,17 +605,14 @@ public class MainForm extends JFrame {
     public void loadList(ArrayList<Record> recordArrayList) {
         //Record[] recordsList = recordArrayList.toArray(new Record[recordArrayList.size()]);
         table.setModel(createTableModel(recordArrayList));
-        table.setRowHeight(20);
+        table.setRowHeight(25);
 
         TableColumn number = table.getColumnModel().getColumn(0);
         number.setHeaderValue(NUMBER_COLUMN_NAME);
         number.setMinWidth(20);
-        //number.setWidth(20);
         number.setMaxWidth(40);
         number.setPreferredWidth(number.getPreferredWidth());
         number.sizeWidthToFit();
-
-        //number.setResizable(false);
 
         TableColumn site = table.getColumnModel().getColumn(1);
         site.setHeaderValue(SITE_COLUMN_NAME);
@@ -580,9 +629,9 @@ public class MainForm extends JFrame {
         password.setResizable(false);
 
         table.getColumn(NUMBER_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField(NUMBER_COLUMN_NAME)));
-        table.getColumn(SITE_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField("field")));
-        table.getColumn(LOGIN_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField("field")));
-        table.getColumn(PASSWORD_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField("field")));
+        table.getColumn(SITE_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField(SITE_COLUMN_NAME)));
+        table.getColumn(LOGIN_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField(LOGIN_COLUMN_NAME)));
+        table.getColumn(PASSWORD_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField(PASSWORD_COLUMN_NAME)));
 
         resizeTableColumns(table.getColumn(NUMBER_COLUMN_NAME));
 
@@ -616,11 +665,11 @@ public class MainForm extends JFrame {
 
     private void addNewRecord() {
         recordArrayList.add(new Record());
-        loadList(recordArrayList);
         if (!editModeJRadioButtonMenuItem.isSelected()) {
             editModeJRadioButtonMenuItem.doClick();
         }
         isEditableLable.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage("NSImage://NSLockUnlockedTemplate")));
+        loadList(recordArrayList);
         table.clearSelection();
         table.setRowSelectionInterval(table.getModel().getRowCount() - 1, table.getModel().getRowCount() - 1);
         scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
@@ -649,11 +698,13 @@ public class MainForm extends JFrame {
     }
 
     public void setEdited(boolean isFileEdited) {
-        if (isEdited != isFileEdited) {
             isEdited = isFileEdited;
-            getRootPane().putClientProperty("Window.documentModified", isFileEdited);
+        if (isFileEdited) {
             setTitle(Values.DEFAULT_STORAGE_FILE_NAME + " - Изменено");
+        } else {
+            setTitle(Values.DEFAULT_STORAGE_FILE_NAME);
         }
+            getRootPane().putClientProperty("Window.documentModified", isEdited);
     }
 
     public void updateTitle(File file) {
@@ -694,7 +745,8 @@ public class MainForm extends JFrame {
 
         @Override
         public boolean isCellEditable(EventObject anEvent) {
-            return textField != null && !textField.getText().equals("#") && editModeJRadioButtonMenuItem.isSelected();
+            return textField != null && !textField.getText().equals(NUMBER_COLUMN_NAME) 
+                    && editModeJRadioButtonMenuItem.isSelected();
         }
     }
 
