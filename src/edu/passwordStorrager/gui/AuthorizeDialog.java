@@ -24,6 +24,7 @@ public class AuthorizeDialog extends JDialog {
     private JButton buttonOK;
     private JButton buttonCancel;
     private JPasswordField passwordField;
+    private JProgressBar progressBar;
     private static Timer timer;
 
     public AuthorizeDialog() {
@@ -33,12 +34,19 @@ public class AuthorizeDialog extends JDialog {
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
         setResizable(false);
-
-        //buttonOK.putClientProperty("JButton.buttonType", "textured"); //works))
+        progressBar.setIndeterminate(true);
+        progressBar.putClientProperty("JProgressBar.style", "circular");
 
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                onOK();
+                buttonOK.setVisible(false);
+                progressBar.setVisible(true);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        onOK();
+                    }
+                }).start();
             }
         });
 
@@ -100,11 +108,13 @@ public class AuthorizeDialog extends JDialog {
                 //TODO send notification here.
                 System.out.println("Password is not correct");
                 Main.isAuthorized = false;
+                
                 buttonOK.setEnabled(false);
+                buttonOK.setVisible(true);
+                progressBar.setVisible(false);
+
                 timer.start();
                 FrameUtils.shakeFrame(this);
-                //dispose();
-                //System.exit(-1);
             }
         }
     }
