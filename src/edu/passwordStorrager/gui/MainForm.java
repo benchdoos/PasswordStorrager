@@ -71,6 +71,7 @@ public class MainForm extends JFrame {
     private JButton moveDownButton;
     private JButton addUpButton;
     private JButton addDownButton;
+    private JPanel controlPanel;
     private Timer searchTimer;
     private static TableModelListener tableModelListener;
 
@@ -217,9 +218,11 @@ public class MainForm extends JFrame {
             private void changeSearchFieldSize(int width) {
                 int height = searchField.getHeight();
                 searchField.setMinimumSize(new Dimension(width, height));
-                searchField.setPreferredSize(new Dimension(width, height));
+                /*searchField.setPreferredSize(new Dimension(width, height));*/
                 searchField.setMaximumSize(new Dimension(width, height));
-                searchField.setSize(new Dimension(width, height));
+                searchField.invalidate();
+                controlPanel.validate();
+                /*searchField.setSize(new Dimension(width, height));*/
             }
 
 
@@ -227,7 +230,7 @@ public class MainForm extends JFrame {
             @Override
             public void focusGained(FocusEvent e) {
                 int width = 300;
-                //changeSearchFieldSize(width);
+                changeSearchFieldSize(width);
 
                 System.out.println("gained");
             }
@@ -235,8 +238,7 @@ public class MainForm extends JFrame {
             @Override
             public void focusLost(FocusEvent e) {
                 int width = 150;
-//                changeSearchFieldSize(width);
-
+                changeSearchFieldSize(width);
                 System.out.println("lost");
             }
         });
