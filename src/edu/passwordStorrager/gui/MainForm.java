@@ -155,17 +155,17 @@ public class MainForm extends JFrame {
             }
         });
 
-        initSearchBarListeners();
-
         initTableListeners();
-
-        initControlBar();
-
-        initStatusBar();
 
         initMenu();
 
         initPopUp();
+
+        initControlBar();
+
+        initSearchBarListeners();
+
+        initStatusBar();
 
         loadList(recordArrayList);
 
@@ -184,7 +184,7 @@ public class MainForm extends JFrame {
                     public void actionPerformed(ActionEvent e) {
                         searchField.requestFocus();
                     }
-                }, KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.META_MASK),
+                }, KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.META_MASK),
                 JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);*/
 
         searchField.putClientProperty("JTextField.variant", "search");
@@ -455,19 +455,21 @@ public class MainForm extends JFrame {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 int selected = table.getSelectedRow();
-                if (selected == 0) {
-                    moveUpButton.setEnabled(false);
-                    moveUpItem.setEnabled(false);
-                } else {
-                    moveUpButton.setEnabled(true);
-                    moveUpItem.setEnabled(true);
-                }
-                if (selected == table.getRowCount() - 1) {
-                    moveDownButton.setEnabled(false);
-                    moveDownItem.setEnabled(false);
-                } else {
-                    moveDownButton.setEnabled(true);
-                    moveDownItem.setEnabled(true);
+                if (table.isFocusOwner()) {
+                    if (selected == 0) {
+                        moveUpButton.setEnabled(false);
+                        moveUpItem.setEnabled(false);
+                    } else {
+                        moveUpButton.setEnabled(true);
+                        moveUpItem.setEnabled(true);
+                    }
+                    if (selected == table.getRowCount() - 1) {
+                        moveDownButton.setEnabled(false);
+                        moveDownItem.setEnabled(false);
+                    } else {
+                        moveDownButton.setEnabled(true);
+                        moveDownItem.setEnabled(true);
+                    }
                 }
 
             }
@@ -497,6 +499,24 @@ public class MainForm extends JFrame {
                     recordArrayList.set(row, rec);
                 }
 
+            }
+        });
+
+        table.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                addUpButton.setEnabled(true);
+                addDownButton.setEnabled(true);
+                moveUpButton.setEnabled(true);
+                moveDownButton.setEnabled(true);
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                addUpButton.setEnabled(false);
+                addDownButton.setEnabled(false);
+                moveUpButton.setEnabled(false);
+                moveDownButton.setEnabled(false);
             }
         });
         //TODO add table change listener, fix the carret
@@ -532,7 +552,7 @@ public class MainForm extends JFrame {
 
         fileJMenu.setText("Файл");
 
-        openItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.META_MASK));
+        openItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.META_MASK));
         openItem.setText("Открыть");
         openItem.addActionListener(new ActionListener() {
             @Override
@@ -546,7 +566,7 @@ public class MainForm extends JFrame {
         });
         fileJMenu.add(openItem);
 
-        saveItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.META_MASK));
+        saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.META_MASK));
         saveItem.setText("Сохранить");
         saveItem.addActionListener(new ActionListener() {
             @Override
@@ -604,7 +624,7 @@ public class MainForm extends JFrame {
         isEditableLable.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage("NSImage://NSLockLockedTemplate")));
         editJMenu.add(editModeJRadioButtonMenuItem);
 
-        addItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.META_MASK));
+        addItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.META_MASK));
         addItem.setText("Добавить");
         addItem.addActionListener(new ActionListener() {
             @Override
@@ -664,7 +684,7 @@ public class MainForm extends JFrame {
         });
         editJMenu.add(moveDownItem);
 
-        searchMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.META_MASK));
+        searchMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.META_MASK));
         searchMenuItem.setText("Поиск");
         searchMenuItem.addActionListener(new ActionListener() {
             @Override
