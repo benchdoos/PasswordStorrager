@@ -131,9 +131,9 @@ public class FrameUtils {
                 Window window = Main.frames.get(i);
                 System.out.println(i + "current:" + getCurrentClassName(window.getClass()) +
                         "\ninc:" + frameClassName);
-                if (frameClassName != null && getCurrentClassName(window.getClass())!=null) {
-                    System.out.println("[][]3["+getCurrentClassName(window.getClass()));
-                    System.out.println("[][]4["+ frameClassName);
+                if (frameClassName != null && getCurrentClassName(window.getClass()) != null) {
+                    System.out.println("[][]3[" + getCurrentClassName(window.getClass()));
+                    System.out.println("[][]4[" + frameClassName);
                     if (getCurrentClassName(window.getClass()).equals(frameClassName)) {
                         System.out.println("returning window");
                         return window;
@@ -152,8 +152,10 @@ public class FrameUtils {
     }
 
     public static void copyToClipboard(String value) {
-        StringSelection stringSelection = new StringSelection(value);
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        clipboard.setContents(stringSelection, null);
+        if (!value.isEmpty()) {
+            StringSelection stringSelection = new StringSelection(value);
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            clipboard.setContents(stringSelection, null);
+        }
     }
 }

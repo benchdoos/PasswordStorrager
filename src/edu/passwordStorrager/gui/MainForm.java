@@ -459,7 +459,6 @@ public class MainForm extends JFrame {
                             String copy = (String) MainForm.this.table.getModel().getValueAt(row,
                                     table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex());
                             copyToClipboard(copy);
-                            setStatus("Скопировано: " + copy, STATUS_SUCCESS);
                         }
                     }
                 }
@@ -481,7 +480,6 @@ public class MainForm extends JFrame {
                             String copy = (String) MainForm.this.table.getModel().getValueAt(table.getSelectedRow(),
                                     table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex());
                             copyToClipboard(copy);
-                            setStatus("Скопировано: " + copy, STATUS_SUCCESS);
 
                         }
                     }
@@ -615,11 +613,13 @@ public class MainForm extends JFrame {
         openItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                recordArrayList = new XmlParser().parseRecords();
-                loadList(recordArrayList);
-                setEdited(false);
-                editModeJRadioButtonMenuItem.setSelected(false);
-                isEditableLable.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage("NSImage://NSLockLockedTemplate")));
+                if (!isSearchMode) {
+                    recordArrayList = new XmlParser().parseRecords();
+                    loadList(recordArrayList);
+                    setEdited(false);
+                    editModeJRadioButtonMenuItem.setSelected(false);
+                    isEditableLable.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage("NSImage://NSLockLockedTemplate")));
+                }
             }
         });
         fileJMenu.add(openItem);
@@ -629,7 +629,9 @@ public class MainForm extends JFrame {
         saveItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                saveStorage();
+                if (!isSearchMode) {
+                    saveStorage();
+                }
             }
         });
         fileJMenu.add(saveItem);
@@ -653,7 +655,9 @@ public class MainForm extends JFrame {
             }
         });
 
-        //fileJMenu.add(settingsItem);
+        if (Main.IS_WINDOWS) {
+            fileJMenu.add(settingsItem);
+        }
 
         editJMenu.setText("Правка");
 
@@ -663,18 +667,20 @@ public class MainForm extends JFrame {
         editModeJRadioButtonMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!editModeJRadioButtonMenuItem.isSelected()) {
-                    isEditableLable.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage("NSImage://NSLockLockedTemplate")));
-                    int index = table.getSelectedRow();
-                    try {
-                        table.getCellEditor().cancelCellEditing();
-                    } catch (NullPointerException ignored) {
-                    }
+                if (!isSearchMode) {
+                    if (!editModeJRadioButtonMenuItem.isSelected()) {
+                        isEditableLable.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage("NSImage://NSLockLockedTemplate")));
+                        int index = table.getSelectedRow();
+                        try {
+                            table.getCellEditor().cancelCellEditing();
+                        } catch (NullPointerException ignored) {
+                        }
 //                    table.getCellEditor(table.getEditingRow(), table.getEditingColumn()).cancelCellEditing();
-                    table.setRowSelectionInterval(index, index);
-                    //table.clearSelection();
-                } else {
-                    isEditableLable.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage("NSImage://NSLockUnlockedTemplate")));
+                        table.setRowSelectionInterval(index, index);
+                        //table.clearSelection();
+                    } else {
+                        isEditableLable.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage("NSImage://NSLockUnlockedTemplate")));
+                    }
                 }
             }
         });
@@ -687,7 +693,9 @@ public class MainForm extends JFrame {
         addItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                addNewRecord(recordArrayList.size());
+                if (!isSearchMode) {
+                    addNewRecord(recordArrayList.size());
+                }
             }
         });
         editJMenu.add(addItem);
@@ -697,7 +705,9 @@ public class MainForm extends JFrame {
         deleteItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                deleteSelectedRecord();
+                if (!isSearchMode) {
+                    deleteSelectedRecord();
+                }
             }
         });
         editJMenu.add(deleteItem);
@@ -807,7 +817,6 @@ public class MainForm extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String copy = (String) table.getModel().getValueAt(table.getSelectedRow(), table.getColumn(SITE_COLUMN_NAME).getModelIndex());
                 copyToClipboard(copy);
-                setStatus("Скопировано: " + copy, STATUS_SUCCESS);
             }
         });
         menuItemCopyLogin.addActionListener(new ActionListener() {
@@ -821,6 +830,15 @@ public class MainForm extends JFrame {
             }
         });
 
+    }
+
+    private void copyToClipboard(String copy) {
+        if (!copy.isEmpty()) {
+            FrameUtils.copyToClipboard(copy);
+            setStatus("Скопировано: " + copy, STATUS_SUCCESS);
+        } else {
+            setStatus("Нечего копировать!", STATUS_ERROR);
+        }
     }
 
 
