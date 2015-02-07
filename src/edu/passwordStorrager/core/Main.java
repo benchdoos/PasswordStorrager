@@ -8,6 +8,7 @@ import edu.passwordStorrager.objects.Key;
 import edu.passwordStorrager.utils.platform.PlatformUtils;
 import org.apache.log4j.Logger;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -56,7 +57,7 @@ public class Main {
             Main.propertiesFrames = new Properties();
             log.debug("Creating new Frames properties");
         }
-        
+
         ////////////////////////////////////////////
 
         if (exists(PropertiesManager.propertiesFilePath)) {
@@ -74,15 +75,20 @@ public class Main {
         PlatformUtils.printOSParameters();
         PlatformUtils.initializeOS();
     }
-    
+
     public static void onQuit() {
         log.debug("Quit");
         //TODO sync here
         System.exit(0);
     }
-    
-    
+
+
     public static void main(String[] args) {
-        new Main();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new Main();
+            }
+        });
     }
 }
