@@ -385,7 +385,7 @@ public class MainForm extends JFrame {
     private void initTableListeners() {
         MouseListener copyMouseListener = new MouseAdapter() {
             int count = 0;
-            Timer timer = new Timer(1000, new ActionListener() {
+            Timer timer = new Timer(700, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     count = 0;
@@ -393,7 +393,7 @@ public class MainForm extends JFrame {
             });
 
             public void mousePressed(MouseEvent me) {
-                count++;
+                count = me.getClickCount();
                 if (timer.isRunning()) {
                     timer.restart();
                 } else {
@@ -402,7 +402,7 @@ public class MainForm extends JFrame {
                 JTable table = (JTable) me.getSource();
                 Point p = me.getPoint();
                 int row = table.rowAtPoint(p);
-                if (count == 2 && me.getButton() == MouseEvent.BUTTON1) {
+                if (count >= 2 && me.getButton() == MouseEvent.BUTTON1) {
                     if (MainForm.this.table.getSelectedRow() >= 0) {
                         if (MainForm.this.table.getSelectedColumn() == table.getColumn(SITE_COLUMN_NAME).getModelIndex()) {
                             java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
@@ -626,7 +626,7 @@ public class MainForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!editModeJRadioButtonMenuItem.isSelected()) {
-                    isEditableLable.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage("NSImage://NSLockUnlockedTemplate")));
+                    isEditableLable.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage("NSImage://NSLockLockedTemplate")));
                     int index = table.getSelectedRow();
                     try {
                         table.getCellEditor().cancelCellEditing();
@@ -636,7 +636,7 @@ public class MainForm extends JFrame {
                     table.setRowSelectionInterval(index, index);
                     //table.clearSelection();
                 } else {
-                    isEditableLable.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage("NSImage://NSLockLockedTemplate")));
+                    isEditableLable.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage("NSImage://NSLockUnlockedTemplate")));
                 }
             }
         });
