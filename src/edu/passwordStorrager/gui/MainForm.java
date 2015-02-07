@@ -72,8 +72,10 @@ public class MainForm extends JFrame {
     private JButton addUpButton;
     private JButton addDownButton;
     private JPanel controlPanel;
+    private JProgressBar progressBar;
     private Timer searchTimer;
     private static TableModelListener tableModelListener;
+    private boolean isSearchMode = false;
 
     public MainForm(ArrayList<Record> recordArrayList) {
         this.recordArrayList = recordArrayList;
@@ -218,15 +220,11 @@ public class MainForm extends JFrame {
             private void changeSearchFieldSize(int width) {
                 int height = searchField.getHeight();
                 searchField.setMinimumSize(new Dimension(width, height));
-                /*searchField.setPreferredSize(new Dimension(width, height));*/
                 searchField.setMaximumSize(new Dimension(width, height));
                 searchField.invalidate();
                 controlPanel.validate();
-                /*searchField.setSize(new Dimension(width, height));*/
             }
 
-
-            //TODO add resizing to searchField
             @Override
             public void focusGained(FocusEvent e) {
                 int width = 300;
@@ -248,6 +246,8 @@ public class MainForm extends JFrame {
                 if (!searchField.getText().isEmpty()) {
                     searchField.setText("");
                     loadList(recordArrayList);
+                    setControlButtonsEnabled(true);
+                    isSearchMode = false;
                 } else {
                     table.requestFocus();
                     table.setRowSelectionInterval(0, 0);
@@ -272,25 +272,50 @@ public class MainForm extends JFrame {
         searchTimer = new Timer(500, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                isSearchMode = true;
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setVisible(true);
+                    }
+                }).start();
                 loadList(searchRecord(text));
+
+                setControlButtonsEnabled(false);
             }
         });
         searchTimer.setRepeats(false);
         searchTimer.start();
     }
 
+    private void setControlButtonsEnabled(boolean value) {
+        addUpButton.setEnabled(value);
+        addDownButton.setEnabled(value);
+        moveUpButton.setEnabled(value);
+        moveDownButton.setEnabled(value);
+    }
+
     private ArrayList<Record> searchRecord(String text) {
         if (text.isEmpty()) {
             return recordArrayList;
         }
+        //start
+        progressBar.setValue(0);
+
         ArrayList<Record> foundRecords = new ArrayList<Record>(recordArrayList.size());
+
+        int total = recordArrayList.size();
+        int current = 0;
+
         for (Record record : recordArrayList) {
+            current++;
             try {
                 if (record.getSite().contains(text) || record.getLogin().contains(text)) {
                     foundRecords.add(record);
                 }
             } catch (NullPointerException ignored) {
             }
+            progressBar.setValue((int) ((double) current / total) * 100);
         }
         return foundRecords;
     }
@@ -371,6 +396,19 @@ public class MainForm extends JFrame {
                         table.setRowSelectionInterval(index + 1, index + 1);
                     }
                 }
+            }
+        });
+
+        progressBar.setIndeterminate(true);
+        progressBar.putClientProperty("JProgressBar.style", "circular");
+        progressBar.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                JProgressBar pb = (JProgressBar) e.getSource();
+                pb.setToolTipText(pb.getValue() + "%");
+
+                pb.setVisible(!(pb.getValue() == 100));
+
             }
         });
     }
@@ -473,19 +511,21 @@ public class MainForm extends JFrame {
                 int selected = table.getSelectedRow();
                 if (table.isFocusOwner()) {
                     if (selected > -1) {
-                        if (selected == 0) {
-                            moveUpButton.setEnabled(false);
-                            moveUpItem.setEnabled(false);
-                        } else {
-                            moveUpButton.setEnabled(true);
-                            moveUpItem.setEnabled(true);
-                        }
-                        if (selected == table.getRowCount() - 1) {
-                            moveDownButton.setEnabled(false);
-                            moveDownItem.setEnabled(false);
-                        } else {
-                            moveDownButton.setEnabled(true);
-                            moveDownItem.setEnabled(true);
+                        if (!isSearchMode) {
+                            if (selected == 0) {
+                                moveUpButton.setEnabled(false);
+                                moveUpItem.setEnabled(false);
+                            } else {
+                                moveUpButton.setEnabled(true);
+                                moveUpItem.setEnabled(true);
+                            }
+                            if (selected == table.getRowCount() - 1) {
+                                moveDownButton.setEnabled(false);
+                                moveDownItem.setEnabled(false);
+                            } else {
+                                moveDownButton.setEnabled(true);
+                                moveDownItem.setEnabled(true);
+                            }
                         }
                     }
 
@@ -527,18 +567,14 @@ public class MainForm extends JFrame {
         table.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
-                addUpButton.setEnabled(true);
-                addDownButton.setEnabled(true);
-                moveUpButton.setEnabled(true);
-                moveDownButton.setEnabled(true);
+                if (!isSearchMode) {
+                    setControlButtonsEnabled(true);
+                }
             }
 
             @Override
             public void focusLost(FocusEvent e) {
-                addUpButton.setEnabled(false);
-                addDownButton.setEnabled(false);
-                moveUpButton.setEnabled(false);
-                moveDownButton.setEnabled(false);
+                setControlButtonsEnabled(false);
             }
         });
         //TODO add table change listener, fix the carret
@@ -870,7 +906,7 @@ public class MainForm extends JFrame {
             record.setPassword((String) table.getModel().getValueAt(i, table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex()));
             recordArrayList.add(record);
         }
-        editModeJRadioButtonMenuItem.setSelected(false);
+        editModeJRadioButtonMenuItem.doClick();
         new XmlParser().saveRecords(recordArrayList);
         loadList(recordArrayList);
         setEdited(false);
