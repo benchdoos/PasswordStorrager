@@ -11,18 +11,13 @@ import org.apache.log4j.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.event.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -49,6 +44,7 @@ public class MainForm extends JFrame {
 
     private JPopupMenu popupMenu;
     public static JMenuBar jMenuBar1;
+    public static boolean isFirstLaunch = true;
     private JMenu fileJMenu;
     private JMenuItem openItem;
     private JMenuItem saveItem;
@@ -76,6 +72,7 @@ public class MainForm extends JFrame {
     private JButton addUpButton;
     private JButton addDownButton;
     private Timer searchTimer;
+    private static TableModelListener tableModelListener;
 
     public MainForm(ArrayList<Record> recordArrayList) {
         this.recordArrayList = recordArrayList;
@@ -176,6 +173,7 @@ public class MainForm extends JFrame {
         if (table.getRowCount() > 0) {
             table.setRowSelectionInterval(0, 0);
         }
+        isFirstLaunch = false; //to fix isEdited on start
     }
 
     private void initSearchBarListeners() {
@@ -475,11 +473,9 @@ public class MainForm extends JFrame {
             }
         });
 
-        table.addPropertyChangeListener(new PropertyChangeListener() {
+        tableModelListener = new TableModelListener() {
             @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                JTable table = (JTable) evt.getSource();
-                setEdited(true);
+            public void tableChanged(TableModelEvent e) {
                 int row = table.getEditingRow();
                 int col = table.getEditingColumn();
                 if (col == table.getColumn(SITE_COLUMN_NAME).getModelIndex()) {
@@ -499,8 +495,13 @@ public class MainForm extends JFrame {
                     recordArrayList.set(row, rec);
                 }
 
+                if (isFirstLaunch) {
+                    setEdited(false);
+                } else {
+                    setEdited(true);
+                }
             }
-        });
+        };
 
         table.addFocusListener(new FocusListener() {
             @Override
@@ -832,7 +833,8 @@ public class MainForm extends JFrame {
 
         table.setComponentPopupMenu(popupMenu);
         table.setSurrendersFocusOnKeystroke(true);
-
+        table.getModel().addTableModelListener(tableModelListener);
+        
         setStatus("Количество записей: " + table.getModel().getRowCount(), STATUS_MESSAGE);
     }
 
