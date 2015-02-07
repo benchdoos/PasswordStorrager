@@ -338,10 +338,10 @@ public class MainForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int index = table.getSelectedRow();
-                if (index <= table.getModel().getRowCount()) {
+                if (index > -1) {
                     addNewRecord(index + 1);
                 } else {
-                    addNewRecord(0);
+                    addNewRecord(table.getRowCount());
                 }
             }
         });
@@ -362,10 +362,12 @@ public class MainForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int index = table.getSelectedRow();
-                if (index + 1 < table.getRowCount()) {
-                    exchangeRecords(index, index + 1);
-                    table.clearSelection();
-                    table.setRowSelectionInterval(index + 1, index + 1);
+                if (index > -1) {
+                    if (index + 1 < table.getRowCount()) {
+                        exchangeRecords(index, index + 1);
+                        table.clearSelection();
+                        table.setRowSelectionInterval(index + 1, index + 1);
+                    }
                 }
             }
         });
@@ -454,20 +456,23 @@ public class MainForm extends JFrame {
             public void valueChanged(ListSelectionEvent e) {
                 int selected = table.getSelectedRow();
                 if (table.isFocusOwner()) {
-                    if (selected == 0) {
-                        moveUpButton.setEnabled(false);
-                        moveUpItem.setEnabled(false);
-                    } else {
-                        moveUpButton.setEnabled(true);
-                        moveUpItem.setEnabled(true);
+                    if (selected > -1) {
+                        if (selected == 0) {
+                            moveUpButton.setEnabled(false);
+                            moveUpItem.setEnabled(false);
+                        } else {
+                            moveUpButton.setEnabled(true);
+                            moveUpItem.setEnabled(true);
+                        }
+                        if (selected == table.getRowCount() - 1) {
+                            moveDownButton.setEnabled(false);
+                            moveDownItem.setEnabled(false);
+                        } else {
+                            moveDownButton.setEnabled(true);
+                            moveDownItem.setEnabled(true);
+                        }
                     }
-                    if (selected == table.getRowCount() - 1) {
-                        moveDownButton.setEnabled(false);
-                        moveDownItem.setEnabled(false);
-                    } else {
-                        moveDownButton.setEnabled(true);
-                        moveDownItem.setEnabled(true);
-                    }
+
                 }
 
             }
@@ -645,7 +650,7 @@ public class MainForm extends JFrame {
         });
         editJMenu.add(deleteItem);
 
-        addUpItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_MASK));
+        addUpItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.ALT_MASK | InputEvent.SHIFT_MASK));
         addUpItem.setText("Добавить запись сверху");
         addUpItem.addActionListener(new ActionListener() {
             @Override
@@ -655,7 +660,7 @@ public class MainForm extends JFrame {
         });
         editJMenu.add(addUpItem);
 
-        addDownItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_MASK));
+        addDownItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.ALT_MASK | InputEvent.SHIFT_MASK));
         addDownItem.setText("Добавить запись снизу");
         addDownItem.addActionListener(new ActionListener() {
             @Override
@@ -665,7 +670,7 @@ public class MainForm extends JFrame {
         });
         editJMenu.add(addDownItem);
 
-        moveUpItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.SHIFT_MASK));
+        moveUpItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_MASK | InputEvent.ALT_MASK | InputEvent.SHIFT_MASK));
         moveUpItem.setText("Переместить вверх");
         moveUpItem.addActionListener(new ActionListener() {
             @Override
@@ -675,7 +680,7 @@ public class MainForm extends JFrame {
         });
         editJMenu.add(moveUpItem);
 
-        moveDownItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.SHIFT_MASK));
+        moveDownItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.CTRL_MASK | InputEvent.ALT_MASK | InputEvent.SHIFT_MASK));
         moveDownItem.setText("Переместить вниз");
         moveDownItem.addActionListener(new ActionListener() {
             @Override
@@ -834,7 +839,7 @@ public class MainForm extends JFrame {
         table.setComponentPopupMenu(popupMenu);
         table.setSurrendersFocusOnKeystroke(true);
         table.getModel().addTableModelListener(tableModelListener);
-        
+
         setStatus("Количество записей: " + table.getModel().getRowCount(), STATUS_MESSAGE);
     }
 

@@ -180,7 +180,7 @@ public class FirstLaunchDialog extends JDialog {
     private void onCancel() {
 // add your code here if necessary
         dispose();
-        System.exit(0);
+        System.exit(0); //NOT AUTHORIZED, DO NOT CHANGE TO MAIN.OnQUIT;
     }
 
     private boolean validatePath(String path) {

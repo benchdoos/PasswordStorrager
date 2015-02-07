@@ -2,6 +2,7 @@ package edu.passwordStorrager.protector;
 
 
 import edu.passwordStorrager.core.Main;
+import edu.passwordStorrager.gui.NotificationDialog;
 import edu.passwordStorrager.utils.KeyUtils;
 import org.apache.log4j.Logger;
 
@@ -35,7 +36,14 @@ public class Encryption {
             //new FirstLaunchDialog();
             log.fatal("Can not load file: " + file.getAbsolutePath());
             //TODO push notification, show dialog message to find / create key
-            System.exit(-1);
+            new NotificationDialog("Ошибка", "<html><body>Не удалось найти файл :<br>"
+                    + file.getAbsolutePath() + "</body></html>",
+                    NotificationDialog.NOTIFICATION_ERROR){
+                @Override
+                public void onOK() {
+                    Main.onQuit();
+                }
+            };
         }
     }
 

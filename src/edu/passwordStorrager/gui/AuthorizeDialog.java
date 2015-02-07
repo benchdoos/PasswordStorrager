@@ -12,7 +12,6 @@ import org.apache.log4j.Logger;
 import javax.swing.*;
 import java.awt.event.*;
 import java.io.File;
-import java.io.IOException;
 
 import static edu.passwordStorrager.core.PropertiesManager.*;
 import static edu.passwordStorrager.utils.FileUtils.exists;
@@ -20,7 +19,7 @@ import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
 
 public class AuthorizeDialog extends JDialog {
     private static final Logger log = Logger.getLogger(getCurrentClassName());
-    
+
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
@@ -35,17 +34,11 @@ public class AuthorizeDialog extends JDialog {
         getRootPane().setDefaultButton(buttonOK);
         setResizable(false);
 
-
         //buttonOK.putClientProperty("JButton.buttonType", "textured"); //works))
 
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                try {
-                    onOK();
-                } catch (IOException e1) {
-                    System.out.println("Can not load custom file, fatal");
-                    System.exit(-1);
-                }
+                onOK();
             }
         });
 
@@ -54,6 +47,13 @@ public class AuthorizeDialog extends JDialog {
                 onCancel();
             }
         });
+
+        passwordField.registerKeyboardAction(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                passwordField.setText("");
+            }
+        }, KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.META_MASK), JComponent.WHEN_FOCUSED);
 
 // call onCancel() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -79,7 +79,7 @@ public class AuthorizeDialog extends JDialog {
         setVisible(true);
     }
 
-    private void onOK() throws IOException {
+    private void onOK() {
         String hexedPassword = Protector.hexPassword(Protector.hexPassword(new String(passwordField.getPassword())));
         Protector.PASSWORD = hexedPassword.toCharArray();
 
@@ -87,11 +87,11 @@ public class AuthorizeDialog extends JDialog {
             Main.propertiesApplication = loadProperties(propertiesFilePath);
             if (isCorrect()) {
                 showProperties(Main.propertiesApplication);
-                //TODO send notification here.
                 System.out.println("Password is correct");
                 Main.isAuthorized = true;
                 Encryption.extractKey(new File(Main.propertiesApplication.getProperty(KEY_NAME) + Values.DEFAULT_KEY_FILE_NAME));
 
+                //TODO send notification here.
                 new CloudManager().synchronize();
 
                 new MainForm(new XmlParser().parseRecords());
@@ -112,7 +112,7 @@ public class AuthorizeDialog extends JDialog {
     private void onCancel() {
 // add your code here if necessary
         dispose();
-        System.exit(0);
+        Main.onQuit();
     }
 
     private void initTimer() {
