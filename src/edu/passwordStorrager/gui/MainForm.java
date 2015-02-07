@@ -384,11 +384,25 @@ public class MainForm extends JFrame {
 
     private void initTableListeners() {
         MouseListener copyMouseListener = new MouseAdapter() {
+            int count = 0;
+            Timer timer = new Timer(1000, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    count = 0;
+                }
+            });
+
             public void mousePressed(MouseEvent me) {
+                count++;
+                if (timer.isRunning()) {
+                    timer.restart();
+                } else {
+                    timer.start();
+                }
                 JTable table = (JTable) me.getSource();
                 Point p = me.getPoint();
                 int row = table.rowAtPoint(p);
-                if (me.getClickCount() == 2 && me.getButton() == MouseEvent.BUTTON1) {
+                if (count == 2 && me.getButton() == MouseEvent.BUTTON1) {
                     if (MainForm.this.table.getSelectedRow() >= 0) {
                         if (MainForm.this.table.getSelectedColumn() == table.getColumn(SITE_COLUMN_NAME).getModelIndex()) {
                             java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
