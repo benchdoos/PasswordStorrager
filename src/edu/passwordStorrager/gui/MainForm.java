@@ -141,7 +141,7 @@ public class MainForm extends JFrame {
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 if (isEdited) {
-                    //TODO ask befor close
+                    //TODO ask before close
                 }
                 FrameUtils.setFrameLocation(getClass().getEnclosingClass().getName(), getLocation());
                 FrameUtils.setFrameSize(getClass().getEnclosingClass().getName(), getSize());
@@ -392,19 +392,20 @@ public class MainForm extends JFrame {
                     if (MainForm.this.table.getSelectedRow() >= 0) {
                         if (MainForm.this.table.getSelectedColumn() == table.getColumn(SITE_COLUMN_NAME).getModelIndex()) {
                             java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
+                            String site = (String) MainForm.this.table.getModel()
+                                    .getValueAt(row, table.getColumn(SITE_COLUMN_NAME).getModelIndex());
                             try {
-                                desktop.browse(URI.create(StringUtils.parseUrl((String) MainForm.this.table.getModel()
-                                        .getValueAt(row, table.getColumn(SITE_COLUMN_NAME).getModelIndex()))));
+                                if (StringUtils.isUrl(site)) {
+                                    desktop.browse(URI.create(StringUtils.parseUrl(site)));
+                                }
                             } catch (IOException e) {
-                                log.warn("Can not open in browser: " + StringUtils.parseUrl((String) MainForm.this.table.getModel()
-                                        .getValueAt(row, table.getColumn(SITE_COLUMN_NAME).getModelIndex())));
+                                log.warn("Can not open in browser: " + StringUtils.parseUrl(site));
                             }
                         } else {
-                            String copy = (String) MainForm.this.table.getModel().getValueAt(row, 
+                            String copy = (String) MainForm.this.table.getModel().getValueAt(row,
                                     table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex());
                             copyToClipboard(copy);
-                            setStatus("Скопировано:" + copy, STATUS_SUCCESS);
-
+                            setStatus("Скопировано: " + copy, STATUS_SUCCESS);
                         }
                     }
                 }
@@ -426,7 +427,7 @@ public class MainForm extends JFrame {
                             String copy = (String) MainForm.this.table.getModel().getValueAt(table.getSelectedRow(),
                                     table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex());
                             copyToClipboard(copy);
-                            setStatus("Скопировано:" + copy, STATUS_SUCCESS);
+                            setStatus("Скопировано: " + copy, STATUS_SUCCESS);
 
                         }
                     }
@@ -457,7 +458,7 @@ public class MainForm extends JFrame {
                 if (selected == 0) {
                     moveUpButton.setEnabled(false);
                     moveUpItem.setEnabled(false);
-                }else{
+                } else {
                     moveUpButton.setEnabled(true);
                     moveUpItem.setEnabled(true);
                 }
@@ -468,7 +469,7 @@ public class MainForm extends JFrame {
                     moveDownButton.setEnabled(true);
                     moveDownItem.setEnabled(true);
                 }
-                
+
             }
         });
 
@@ -481,7 +482,7 @@ public class MainForm extends JFrame {
                 int col = table.getEditingColumn();
                 if (col == table.getColumn(SITE_COLUMN_NAME).getModelIndex()) {
                     Record rec = recordArrayList.get(row);
-                    rec.setSite(table.getValueAt(row, col)+"");
+                    rec.setSite(table.getValueAt(row, col) + "");
                     recordArrayList.set(row, rec);
                 }
                 if (col == table.getColumn(LOGIN_COLUMN_NAME).getModelIndex()) {
@@ -495,7 +496,7 @@ public class MainForm extends JFrame {
                     rec.setPassword(table.getValueAt(row, col) + "");
                     recordArrayList.set(row, rec);
                 }
-                
+
             }
         });
         //TODO add table change listener, fix the carret
@@ -728,7 +729,7 @@ public class MainForm extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String copy = (String) table.getModel().getValueAt(table.getSelectedRow(), table.getColumn(SITE_COLUMN_NAME).getModelIndex());
                 copyToClipboard(copy);
-                setStatus("Скопировано:" + copy, STATUS_SUCCESS);
+                setStatus("Скопировано: " + copy, STATUS_SUCCESS);
             }
         });
         menuItemCopyLogin.addActionListener(new ActionListener() {
@@ -737,7 +738,7 @@ public class MainForm extends JFrame {
                 if (table.getSelectedRow() != -1) {
                     String copy = (String) table.getModel().getValueAt(table.getSelectedRow(), table.getColumn(LOGIN_COLUMN_NAME).getModelIndex());
                     copyToClipboard(copy);
-                    setStatus("Скопировано:" + copy, STATUS_SUCCESS);
+                    setStatus("Скопировано: " + copy, STATUS_SUCCESS);
                 }
             }
         });
@@ -768,7 +769,7 @@ public class MainForm extends JFrame {
         if (table.getSelectedRow() >= 0) {
             String copy = (String) table.getModel().getValueAt(table.getSelectedRow(), column);
             copyToClipboard(copy);
-            setStatus("Скопировано:" + copy, STATUS_SUCCESS);
+            setStatus("Скопировано: " + copy, STATUS_SUCCESS);
         }
     }
 
@@ -838,10 +839,10 @@ public class MainForm extends JFrame {
             editModeJRadioButtonMenuItem.doClick();
         }
         isEditableLable.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage("NSImage://NSLockUnlockedTemplate")));
-        
+
         recordArrayList.add(index, new Record());
         loadList(recordArrayList);
-        
+
         table.clearSelection();
         table.setRowSelectionInterval(index, index);
         scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());

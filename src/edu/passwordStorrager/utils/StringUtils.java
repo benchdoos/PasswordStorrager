@@ -3,6 +3,7 @@ package edu.passwordStorrager.utils;
 import java.io.File;
 
 public class StringUtils {
+
     public static String fixFolder(String folder) {
         if (folder.endsWith(File.separator)) {
             return folder;
@@ -24,5 +25,14 @@ public class StringUtils {
         return value;
     }
 
+    public static boolean isUrl(String value) {
+
+        return value.contains("ru")
+                || value.contains("com")
+                || value.contains("org")
+                || value.contains("ua")
+                || value.contains("net")
+                || value.contains("info");
+    }
 
 }
