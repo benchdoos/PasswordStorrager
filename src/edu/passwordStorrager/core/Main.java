@@ -17,7 +17,7 @@ public class Main {
     private final static File JAR_FILE = new File(Main.class.getProtectionDomain()
             .getCodeSource().getLocation().getPath());
 
-    public static final String version = "0.1.b";
+    public static final String version = "0.1-beta.2";
 
     public static final Properties system = System.getProperties();
     public static final String OS_NAME = system.getProperty("os.name");
