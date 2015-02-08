@@ -79,8 +79,8 @@
             <properties>
               <focusPainted value="true"/>
               <focusable value="false"/>
-              <font size="14"/>
-              <foreground color="-16766982"/>
+              <font/>
+              <foreground color="-16777216"/>
               <margin top="0" left="2" bottom="0" right="2"/>
               <text value="up"/>
             </properties>
@@ -97,8 +97,8 @@
               <focusPainted value="true"/>
               <focusTraversalPolicyProvider value="false"/>
               <focusable value="false"/>
-              <font size="14"/>
-              <foreground color="-16766982"/>
+              <font/>
+              <foreground color="-16777216"/>
               <text value="down"/>
             </properties>
           </component>

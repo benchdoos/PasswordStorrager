@@ -114,6 +114,7 @@ public class AuthorizeDialog extends JDialog {
                 //TODO send notification here.
                 new CloudManager().synchronize();
 
+                setModal(false);
                 new MainForm(new XmlParser().parseRecords());
                 dispose();
             } else {

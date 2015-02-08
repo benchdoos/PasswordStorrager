@@ -84,6 +84,7 @@ public class MainForm extends JFrame {
         this.recordArrayList = recordArrayList;
         initComponents();
         setVisible(true);
+        requestFocus();
         Main.framesMainForm.add(this);
     }
 
@@ -502,6 +503,10 @@ public class MainForm extends JFrame {
                         searchField.setText(e.getKeyChar() + "");
                         searchField.setCaret(new DefaultCaret());
                         searchField.setCaretPosition(searchField.getText().length());
+                    }
+
+                    if (e.getKeyCode() == KeyEvent.VK_ESCAPE && isSearchMode) {
+                        searchField.requestFocus();
                     }
                 }
             }
