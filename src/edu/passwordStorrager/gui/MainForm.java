@@ -85,6 +85,7 @@ public class MainForm extends JFrame {
         initComponents();
         setVisible(true);
         requestFocus();
+        table.requestFocus();
         Main.framesMainForm.add(this);
     }
 
@@ -176,7 +177,6 @@ public class MainForm extends JFrame {
         //request focus on table
 
         pack();
-        table.requestFocus();
         if (table.getRowCount() > 0) {
             table.setRowSelectionInterval(0, 0);
         }
@@ -342,13 +342,13 @@ public class MainForm extends JFrame {
         moveDownButton.setText("");
         moveDownButton.setToolTipText("Переместить вниз");
         try {
-            Image img = ImageIO.read(getClass().getResource("/resources/icons/AddDown.png"));
+            Image img = ImageIO.read(getClass().getResource("/icons/controls/AddDown.png"));
             addDownButton.setIcon(new ImageIcon(img));
-            img = ImageIO.read(getClass().getResource("/resources/icons/AddUp.png"));
+            img = ImageIO.read(getClass().getResource("/icons/controls/AddUp.png"));
             addUpButton.setIcon(new ImageIcon(img));
-            img = ImageIO.read(getClass().getResource("/resources/icons/moveUp.png"));
+            img = ImageIO.read(getClass().getResource("/icons/controls/moveUp.png"));
             moveUpButton.setIcon(new ImageIcon(img));
-            img = ImageIO.read(getClass().getResource("/resources/icons/moveDown.png"));
+            img = ImageIO.read(getClass().getResource("/icons/controls/moveDown.png"));
             moveDownButton.setIcon(new ImageIcon(img));
         } catch (IOException ex) {
             log.warn("Can not load images for buttons");
@@ -637,7 +637,7 @@ public class MainForm extends JFrame {
                     loadList(recordArrayList);
                     setEdited(false);
                     editModeJRadioButtonMenuItem.setSelected(false);
-                    isEditableLable.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage("NSImage://NSLockLockedTemplate")));
+                    isEditableLable.setIcon(new ImageIcon(getClass().getResource("/icons/controls/lock.png")));
                 }
             }
         });
@@ -700,7 +700,7 @@ public class MainForm extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if (!isSearchMode) {
                     if (!editModeJRadioButtonMenuItem.isSelected()) {
-                        isEditableLable.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage("NSImage://NSLockLockedTemplate")));
+                        isEditableLable.setIcon(new ImageIcon(getClass().getResource("/icons/controls/lock.png")));
                         int index = table.getSelectedRow();
                         try {
                             table.getCellEditor().cancelCellEditing();
@@ -710,13 +710,13 @@ public class MainForm extends JFrame {
                         table.setRowSelectionInterval(index, index);
                         //table.clearSelection();
                     } else {
-                        isEditableLable.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage("NSImage://NSLockUnlockedTemplate")));
+                        isEditableLable.setIcon(new ImageIcon(getClass().getResource("/icons/controls/unlock.png")));
                     }
                 }
             }
         });
 
-        isEditableLable.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage("NSImage://NSLockLockedTemplate")));
+        isEditableLable.setIcon(new ImageIcon(getClass().getResource("/icons/controls/lock.png")));
         editJMenu.add(editModeJRadioButtonMenuItem);
 
         if (IS_MAC) {
@@ -995,7 +995,7 @@ public class MainForm extends JFrame {
         if (!editModeJRadioButtonMenuItem.isSelected()) {
             editModeJRadioButtonMenuItem.doClick();
         }
-        isEditableLable.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage("NSImage://NSLockUnlockedTemplate")));
+        isEditableLable.setIcon(new ImageIcon(getClass().getResource("/icons/controls/unlock.png")));
 
         recordArrayList.add(index, new Record());
         loadList(recordArrayList);
@@ -1025,7 +1025,7 @@ public class MainForm extends JFrame {
             table.clearSelection();
 
             editModeJRadioButtonMenuItem.setSelected(true);
-            isEditableLable.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage("NSImage://NSLockUnlockedTemplate")));
+            isEditableLable.setIcon(new ImageIcon(getClass().getResource("/icons/controls/unlock.png")));
 
             if (index >= 0 && recordArrayList.size() > 0) {
                 if (index < recordArrayList.size()) {

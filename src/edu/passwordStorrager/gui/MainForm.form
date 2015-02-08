@@ -72,19 +72,6 @@
               <text value=""/>
             </properties>
           </component>
-          <component id="b1ea" class="javax.swing.JButton" binding="addUpButton">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <focusPainted value="true"/>
-              <focusable value="false"/>
-              <font/>
-              <foreground color="-16777216"/>
-              <margin top="0" left="2" bottom="0" right="2"/>
-              <text value="up"/>
-            </properties>
-          </component>
           <component id="4a018" class="javax.swing.JButton" binding="addDownButton">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
@@ -153,6 +140,15 @@
               </component>
             </children>
           </grid>
+          <component id="f3311" class="javax.swing.JButton" binding="addUpButton">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <focusable value="false"/>
+              <text value="Button"/>
+            </properties>
+          </component>
         </children>
       </grid>
     </children>
