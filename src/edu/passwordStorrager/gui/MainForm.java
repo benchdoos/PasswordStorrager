@@ -281,12 +281,8 @@ public class MainForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 isSearchMode = true;
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressBar.setVisible(true);
-                    }
-                }).start();
+
+                progressBar.setVisible(true);
                 loadList(searchRecord(text));
 
                 setControlButtonsEnabled(false);
@@ -811,7 +807,7 @@ public class MainForm extends JFrame {
         if (IS_MAC) {
             copySiteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.META_MASK));
         } else if (IS_WINDOWS) {
-            copySiteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.META_MASK));
+            copySiteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.CTRL_MASK));
         }
         copySiteItem.setText("Копировать сайт");
         copySiteItem.addActionListener(new ActionListener() {
@@ -825,7 +821,7 @@ public class MainForm extends JFrame {
         if (IS_MAC) {
             copyLoginItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.META_MASK));
         } else if (IS_WINDOWS) {
-            copyLoginItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.META_MASK));
+            copyLoginItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.CTRL_MASK));
         }
         copyLoginItem.setText("Копировать логин");
         copyLoginItem.addActionListener(new ActionListener() {
@@ -839,7 +835,7 @@ public class MainForm extends JFrame {
         if (IS_MAC) {
             copyPasswordItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.META_MASK));
         } else if (IS_WINDOWS) {
-            copyPasswordItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.META_MASK));
+            copyPasswordItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.CTRL_MASK));
 
         }
         copyPasswordItem.setText("Копировать пароль");
@@ -888,9 +884,13 @@ public class MainForm extends JFrame {
     }
 
     private void copyToClipboard(String copy) {
-        if (!copy.isEmpty()) {
-            FrameUtils.copyToClipboard(copy);
-            setStatus("Скопировано: " + copy, STATUS_SUCCESS);
+        if(copy!=null) {
+            if (!copy.isEmpty()) {
+                FrameUtils.copyToClipboard(copy);
+                setStatus("Скопировано: " + copy, STATUS_SUCCESS);
+            } else {
+                setStatus("Нечего копировать!", STATUS_ERROR);
+            }
         } else {
             setStatus("Нечего копировать!", STATUS_ERROR);
         }
