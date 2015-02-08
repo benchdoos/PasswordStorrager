@@ -707,7 +707,9 @@ public class MainForm extends JFrame {
                         } catch (NullPointerException ignored) {
                         }
 //                    table.getCellEditor(table.getEditingRow(), table.getEditingColumn()).cancelCellEditing();
-                        table.setRowSelectionInterval(index, index);
+                        if (index > -1) {
+                            table.setRowSelectionInterval(index, index);
+                        }
                         //table.clearSelection();
                     } else {
                         isEditableLable.setIcon(new ImageIcon(getClass().getResource("/icons/controls/unlock.png")));
@@ -889,7 +891,7 @@ public class MainForm extends JFrame {
     }
 
     private void copyToClipboard(String copy) {
-        if(copy!=null) {
+        if (copy != null) {
             if (!copy.isEmpty()) {
                 FrameUtils.copyToClipboard(copy);
                 setStatus("Скопировано: " + copy, STATUS_SUCCESS);
