@@ -26,12 +26,12 @@ public class AboutApplication extends JFrame {
         icon.setSize(128,128);
         BufferedImage img = null;
         try {
-            img = ImageIO.read(getClass().getResource("/resources/icons/icon_black.png"));
+            img = ImageIO.read(getClass().getResource("/resources/icons/icon_black_256.png"));
             Image dimg =  img.getScaledInstance(icon.getWidth(), icon.getHeight(),
                     Image.SCALE_SMOOTH);
             icon.setIcon(new ImageIcon(dimg));
         } catch (IOException e) {
-            log.warn("Can not load file: /resources/icons/icon_black.png");
+            log.warn("Can not load file: /resources/icons/icon_black_256.png");
         }
 
         version.setText(version.getText()+ Main.version);
