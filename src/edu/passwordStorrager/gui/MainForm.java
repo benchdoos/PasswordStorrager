@@ -58,6 +58,7 @@ public class MainForm extends JFrame {
     private JMenuItem addItem;
     private JMenuItem addSomeItem;
     private JMenuItem deleteItem;
+    private JMenuItem deleteSomeItem;
     private JMenuItem addUpItem;
     private JMenuItem addDownItem;
     private JMenuItem moveUpItem;
@@ -617,6 +618,7 @@ public class MainForm extends JFrame {
         addItem = new JMenuItem();
         addSomeItem = new JMenuItem();
         deleteItem = new JMenuItem();
+        deleteSomeItem = new JMenuItem();
         addUpItem = new JMenuItem();
         addDownItem = new JMenuItem();
         moveUpItem = new JMenuItem();
@@ -740,28 +742,30 @@ public class MainForm extends JFrame {
         addSomeItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new InputForm("Добавить") {
-                    @Override
-                    void onOK() {
-                        int row = table.getSelectedRow();
-                        int count = 0;
-                        try {
-                            count = Integer.parseInt(this.value.getText());
-                        } catch (NumberFormatException ignored) {/*NOP*/}
+                if (!isSearchMode) {
+                    new InputForm("Добавить") {
+                        @Override
+                        void onOK() {
+                            int row = table.getSelectedRow();
+                            int count = 0;
+                            try {
+                                count = Integer.parseInt(this.value.getText());
+                            } catch (NumberFormatException ignored) {/*NOP*/}
 
-                        if (count > 0 && count <= 1_000_000) {
-                            if (table.getRowCount() < 1) {
-                                addNewRecord(0, count);
+                            if (count > 0 && count <= 1_000_000) {
+                                if (table.getRowCount() < 1) {
+                                    addNewRecord(0, count);
+                                } else {
+                                    addNewRecord(row + 1, count); //after selection //row = before
+                                }
+                                dispose();
                             } else {
-                                addNewRecord(row + 1, count); //after selection //row = before
+                                FrameUtils.shakeFrame(this);
                             }
-                            dispose();
-                        } else {
-                            FrameUtils.shakeFrame(this);
-                        }
 
-                    }
-                }.setVisible(true);
+                        }
+                    }.setVisible(true);
+                }
             }
         });
         editJMenu.add(addSomeItem);
@@ -774,11 +778,40 @@ public class MainForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!isSearchMode) {
-                    deleteSelectedRecord();
+                    deleteSelectedRecords(table.getSelectedRow(), table.getSelectedRow());
                 }
             }
         });
         editJMenu.add(deleteItem);
+
+        deleteSomeItem.setAccelerator(getAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.META_MASK | InputEvent.SHIFT_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK)));
+        deleteSomeItem.setText("Удалить несколько...");
+        deleteSomeItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!isSearchMode) {
+                    new InputForm("Удалить") {
+                        @Override
+                        void onOK() {
+                            try {
+                                String[] values = value.getText().split("-");
+                                int index1 = Integer.parseInt(values[0]);
+                                index1--;
+                                int index2 = Integer.parseInt(values[1]);
+                                index2--;
+                                deleteSelectedRecords(index1, index2);
+                                dispose();
+                            } catch (NumberFormatException e) {
+                                shakeFrame(this);
+                            }
+
+                        }
+                    }.setVisible(true);
+                }
+            }
+        });
+        editJMenu.add(deleteSomeItem);
 
         addUpItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.ALT_MASK | InputEvent.SHIFT_MASK));
         addUpItem.setText("Добавить запись сверху");
@@ -1062,9 +1095,43 @@ public class MainForm extends JFrame {
         setEdited(true);
     }
 
-    private void deleteSelectedRecord() {
-        int index = table.getSelectedRow();
-        if (index >= 0) {
+    private void deleteSelectedRecords(int index1, int index2) {
+//index1 - меньше index2
+        System.out.println("before:" + index1 + " " + index2);
+        if (index1 > index2) {
+            int i = index1;
+            index1 = index2;
+            index2 = i;
+        }
+
+        if (index1 < 0) {
+            index1 = 0;
+        }
+        if (index2 > table.getRowCount() - 1) {
+            index2 = table.getRowCount() - 1;
+        }
+
+        System.out.println("after:" + index1 + " " + index2);
+
+        if (recordArrayList.size() > 0) {
+            int diff = index2 - index1;
+            recordArrayList.remove(index1);
+            for (int i = 0; i < diff; i++) {
+                recordArrayList.remove(index1);
+            }
+            loadList(recordArrayList);
+            table.clearSelection();
+            
+            editModeJRadioButtonMenuItem.setSelected(true);
+            isEditableLable.setIcon(new ImageIcon(getClass().getResource("/icons/controls/unlock.png")));
+
+            if (index1 - 1 >= 0 && index1 - 1<recordArrayList.size()) {
+                table.setRowSelectionInterval(index1-1, index1-1);
+            }
+        }
+
+        //int index = table.getSelectedRow();
+        /*if (index >= 0) {
             recordArrayList.remove(index);
             loadList(recordArrayList);
             table.clearSelection();
@@ -1079,7 +1146,7 @@ public class MainForm extends JFrame {
                     table.setRowSelectionInterval(recordArrayList.size() - 1, recordArrayList.size() - 1);
                 }
             }
-        }
+        }*/
         setEdited(true);
     }
 
@@ -1162,6 +1229,7 @@ abstract class InputForm extends JDialog {
         setSize(new Dimension(50, 40));
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setTitle(title);
+        getRootPane().putClientProperty("Window.style", "small");
         setLayout(new BorderLayout());
         contentPane.registerKeyboardAction(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
