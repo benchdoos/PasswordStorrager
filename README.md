@@ -3,6 +3,7 @@ Store your passwords in secure
 
 **OS supported:**
 - MAC OS X (in development)
+- Windows (in development)
 
 ## Download:
 [Latest](https://github.com/benchdoos/PasswordStorrager/releases/tag/v0.1-beta.1) 0.1-beta.1
