@@ -58,12 +58,20 @@ public class AuthorizeDialog extends JDialog {
             }
         });
 
-        passwordField.registerKeyboardAction(new ActionListener() {
+        ActionListener deletePasswordActionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 passwordField.setText("");
             }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.META_MASK), JComponent.WHEN_FOCUSED);
+        };
+
+        if (Main.IS_MAC) {
+            passwordField.registerKeyboardAction(deletePasswordActionListener, 
+                    KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.META_MASK), JComponent.WHEN_FOCUSED);
+        } else if (Main.IS_WINDOWS) {
+            passwordField.registerKeyboardAction(deletePasswordActionListener, 
+                    KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
+        }
 
 // call onCancel() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);

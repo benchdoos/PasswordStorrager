@@ -25,6 +25,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.EventObject;
 
+import static edu.passwordStorrager.core.Main.IS_MAC;
+import static edu.passwordStorrager.core.Main.IS_WINDOWS;
 import static edu.passwordStorrager.utils.FrameUtils.*;
 
 public class MainForm extends JFrame {
@@ -262,8 +264,13 @@ public class MainForm extends JFrame {
         };
 
         searchField.registerKeyboardAction(clearSearchFieldAction, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_FOCUSED);
-        searchField.registerKeyboardAction(clearSearchFieldAction, KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE,
-                InputEvent.META_DOWN_MASK), JComponent.WHEN_FOCUSED);
+        if (IS_MAC) {
+            searchField.registerKeyboardAction(clearSearchFieldAction, KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE,
+                    InputEvent.META_MASK), JComponent.WHEN_FOCUSED);
+        } else if (IS_WINDOWS) {
+            searchField.registerKeyboardAction(clearSearchFieldAction, KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE,
+                    InputEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
+        }
     }
 
     private void initSearchTimer(final String text) {
@@ -476,15 +483,21 @@ public class MainForm extends JFrame {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (editModeJRadioButtonMenuItem.isSelected()) {
-                    if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.META_DOWN_MASK) != 0)) {
+                    //TODO what do i need here?
+                } else {
+                    int kEvent = -1;
+                    if (IS_MAC) {
+                        kEvent = KeyEvent.META_MASK;
+                    } else if (IS_WINDOWS) {
+                        kEvent = KeyEvent.CTRL_MASK;
+                    }
+                    if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & kEvent) != 0)) {
                         if (table.getSelectedRow() != -1) {
                             String copy = (String) MainForm.this.table.getModel().getValueAt(table.getSelectedRow(),
                                     table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex());
                             copyToClipboard(copy);
-
                         }
                     }
-                } else {
                     //TODO FIX IF NEEDED
                     int key = e.getKeyCode();
 
@@ -609,7 +622,11 @@ public class MainForm extends JFrame {
 
         fileJMenu.setText("Файл");
 
-        openItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.META_MASK));
+        if (IS_MAC) {
+            openItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.META_MASK));
+        } else if (IS_WINDOWS) {
+            openItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
+        }
         openItem.setText("Открыть");
         openItem.addActionListener(new ActionListener() {
             @Override
@@ -625,7 +642,11 @@ public class MainForm extends JFrame {
         });
         fileJMenu.add(openItem);
 
-        saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.META_MASK));
+        if (IS_MAC) {
+            saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.META_MASK));
+        } else if (IS_WINDOWS) {
+            saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
+        }
         saveItem.setText("Сохранить");
         saveItem.addActionListener(new ActionListener() {
             @Override
@@ -639,7 +660,11 @@ public class MainForm extends JFrame {
 
         jMenuBar1.add(fileJMenu);
 
-        settingsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, InputEvent.META_MASK));
+        if (IS_MAC) {
+            settingsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, InputEvent.META_MASK));
+        } else if (IS_WINDOWS) {
+            settingsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, InputEvent.CTRL_MASK));
+        }
         settingsItem.setText("Настройки");
         settingsItem.addActionListener(new ActionListener() {
             @Override
@@ -656,13 +681,17 @@ public class MainForm extends JFrame {
             }
         });
 
-        if (Main.IS_WINDOWS) {
+        if (IS_WINDOWS) {
             fileJMenu.add(settingsItem);
         }
 
         editJMenu.setText("Правка");
 
-        editModeJRadioButtonMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.META_MASK));
+        if (IS_MAC) {
+            editModeJRadioButtonMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.META_MASK));
+        } else if (IS_WINDOWS) {
+            editModeJRadioButtonMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK));
+        }
         editModeJRadioButtonMenuItem.setSelected(false);
         editModeJRadioButtonMenuItem.setText("Режим редактирования");
         editModeJRadioButtonMenuItem.addActionListener(new ActionListener() {
@@ -689,7 +718,11 @@ public class MainForm extends JFrame {
         isEditableLable.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage("NSImage://NSLockLockedTemplate")));
         editJMenu.add(editModeJRadioButtonMenuItem);
 
-        addItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.META_MASK));
+        if (IS_MAC) {
+            addItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.META_MASK));
+        } else if (IS_WINDOWS) {
+            addItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
+        }
         addItem.setText("Добавить");
         addItem.addActionListener(new ActionListener() {
             @Override
@@ -701,7 +734,11 @@ public class MainForm extends JFrame {
         });
         editJMenu.add(addItem);
 
-        deleteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.META_MASK));
+        if (IS_MAC) {
+            deleteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.META_MASK));
+        } else if (IS_WINDOWS) {
+            deleteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.CTRL_MASK));
+        }
         deleteItem.setText("Удалить");
         deleteItem.addActionListener(new ActionListener() {
             @Override
@@ -753,7 +790,11 @@ public class MainForm extends JFrame {
         });
         editJMenu.add(moveDownItem);
 
-        searchMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.META_MASK));
+        if (IS_MAC) {
+            searchMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.META_MASK));
+        } else if (IS_WINDOWS) {
+            searchMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK));
+        }
         searchMenuItem.setText("Поиск");
         searchMenuItem.addActionListener(new ActionListener() {
             @Override
@@ -767,7 +808,11 @@ public class MainForm extends JFrame {
 
         copyJMenu.setText("Копировать");
 
-        copySiteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.META_MASK));
+        if (IS_MAC) {
+            copySiteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.META_MASK));
+        } else if (IS_WINDOWS) {
+            copySiteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.META_MASK));
+        }
         copySiteItem.setText("Копировать сайт");
         copySiteItem.addActionListener(new ActionListener() {
             @Override
@@ -777,7 +822,11 @@ public class MainForm extends JFrame {
         });
         copyJMenu.add(copySiteItem);
 
-        copyLoginItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.META_MASK));
+        if (IS_MAC) {
+            copyLoginItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.META_MASK));
+        } else if (IS_WINDOWS) {
+            copyLoginItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.META_MASK));
+        }
         copyLoginItem.setText("Копировать логин");
         copyLoginItem.addActionListener(new ActionListener() {
             @Override
@@ -787,7 +836,12 @@ public class MainForm extends JFrame {
         });
         copyJMenu.add(copyLoginItem);
 
-        copyPasswordItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.META_MASK));
+        if (IS_MAC) {
+            copyPasswordItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.META_MASK));
+        } else if (IS_WINDOWS) {
+            copyPasswordItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.META_MASK));
+
+        }
         copyPasswordItem.setText("Копировать пароль");
         copyPasswordItem.addActionListener(new ActionListener() {
             @Override
