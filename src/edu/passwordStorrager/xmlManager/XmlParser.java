@@ -18,6 +18,8 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
@@ -99,8 +101,18 @@ public class XmlParser {
 
             byte[] data = byteArrayOutputStream.toByteArray();
 
-            Protector.encrypt(new ByteArrayInputStream(data), new FileOutputStream(pathStorageFile));
+            File file = new File(pathStorageFile);
+            File file2 = new File(pathStorageFile + "_");
+            if (file.exists()) {
+                Path path = file.toPath();
+                Path path2 = file.toPath();
 
+                Files.copy(path, path2);
+                file.delete();
+            }
+
+            Protector.encrypt(new ByteArrayInputStream(data), new FileOutputStream(file));
+            file2.delete();
             FileUtils.setFileHidden(pathStorageFile);
 
         } catch (ParserConfigurationException e) {

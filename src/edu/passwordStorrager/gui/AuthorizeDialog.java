@@ -1,6 +1,7 @@
 package edu.passwordStorrager.gui;
 
 import edu.passwordStorrager.cloud.CloudManager;
+import edu.passwordStorrager.core.Core;
 import edu.passwordStorrager.core.Main;
 import edu.passwordStorrager.protector.Encryption;
 import edu.passwordStorrager.protector.Protector;
@@ -39,6 +40,7 @@ public class AuthorizeDialog extends JDialog {
 
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                passwordField.setEnabled(false);
                 buttonOK.setVisible(false);
                 progressBar.setVisible(true);
                 new Thread(new Runnable() {
@@ -81,7 +83,9 @@ public class AuthorizeDialog extends JDialog {
         pack();
 
         setLocation(FrameUtils.setFrameOnCenter(getSize()));
-        Main.application.requestUserAttention(true);
+        if(Main.IS_MAC){
+            com.apple.eawt.Application.getApplication().requestUserAttention(true);
+        }
         //TODO request foreground here if is in settings??
         Main.framesAuthForm.add(this);
         setVisible(true);
@@ -122,7 +126,7 @@ public class AuthorizeDialog extends JDialog {
     private void onCancel() {
 // add your code here if necessary
         dispose();
-        Main.onQuit();
+        Core.onQuit();
     }
 
     private void initTimer() {
@@ -139,6 +143,8 @@ public class AuthorizeDialog extends JDialog {
                     if (counter == 10) {
                         buttonOK.setText("OK");
                         buttonOK.setEnabled(true);
+                        passwordField.setEnabled(true);
+                        passwordField.requestFocus();
                         counter = 0;
                         timer.stop();
                     } else {

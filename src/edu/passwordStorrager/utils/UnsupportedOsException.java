@@ -1,6 +1,7 @@
 package edu.passwordStorrager.utils;
 
 
+import edu.passwordStorrager.core.Core;
 import edu.passwordStorrager.core.Main;
 import edu.passwordStorrager.gui.NotificationDialog;
 import org.apache.log4j.Logger;
@@ -17,10 +18,10 @@ public class UnsupportedOsException extends RuntimeException {
             new NotificationDialog(title, message, NotificationDialog.NOTIFICATION_ERROR) {
                 @Override
                 public void onOK() {
-                    Main.onQuit();
+                    Core.onQuit();
                     dispose();
                 }
             };
-        //Main.onQuit();
+        //Core.onQuit();
     }
 }

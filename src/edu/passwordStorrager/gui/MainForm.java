@@ -1,5 +1,6 @@
 package edu.passwordStorrager.gui;
 
+import edu.passwordStorrager.core.Core;
 import edu.passwordStorrager.core.Main;
 import edu.passwordStorrager.core.PropertiesManager;
 import edu.passwordStorrager.objects.Record;
@@ -145,13 +146,13 @@ public class MainForm extends JFrame {
                 }
                 FrameUtils.setFrameLocation(getClass().getEnclosingClass().getName(), getLocation());
                 FrameUtils.setFrameSize(getClass().getEnclosingClass().getName(), getSize());
-                Main.onQuit();
+                Core.onQuit();
             }
 
             public void windowClosed(WindowEvent e) {
                 FrameUtils.setFrameLocation(getClass().getEnclosingClass().getName(), getLocation());
                 FrameUtils.setFrameSize(getClass().getEnclosingClass().getName(), getSize());
-                Main.onQuit();
+                Core.onQuit();
             }
         });
 
