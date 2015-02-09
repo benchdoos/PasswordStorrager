@@ -24,7 +24,7 @@ public class MacOsXUtils {
         if (IS_MAC) {
             Application application = com.apple.eawt.Application.getApplication();
             //application.requestForeground(false);
-            application.setDockIconImage(PlatformUtils.icon);
+            application.setDockIconImage(PlatformUtils.appIcon);
 
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "PasswordStorrager");

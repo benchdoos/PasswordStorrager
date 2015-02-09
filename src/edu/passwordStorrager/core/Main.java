@@ -36,17 +36,15 @@ public class Main {
 
     public static ArrayList<Window> frames = new ArrayList<Window>();
 
-    Main() {
-        new Core();
-    }
 
 
     public static void main(String[] args) {
+        //-Xdock:name=PasswordStorrager
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 createFolderForLog4J();
-                new Main();
+                new Core();
             }
         });
     }

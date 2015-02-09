@@ -90,7 +90,6 @@ public class MainForm extends JFrame {
     public MainForm(ArrayList<Record> recordArrayList) {
         this.recordArrayList = recordArrayList;
         initComponents();
-        setVisible(true);
         requestFocus();
         table.requestFocus();
         Main.framesMainForm.add(this);

@@ -7,6 +7,7 @@ import edu.passwordStorrager.protector.Encryption;
 import edu.passwordStorrager.protector.Protector;
 import edu.passwordStorrager.protector.Values;
 import edu.passwordStorrager.utils.FrameUtils;
+import edu.passwordStorrager.utils.platform.PlatformUtils;
 import edu.passwordStorrager.xmlManager.XmlParser;
 import org.apache.log4j.Logger;
 
@@ -35,6 +36,7 @@ public class AuthorizeDialog extends JDialog {
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
         setResizable(false);
+        setIconImage(PlatformUtils.appIcon);
         progressBar.setIndeterminate(true);
         progressBar.putClientProperty("JProgressBar.style", "circular");
 
@@ -66,10 +68,10 @@ public class AuthorizeDialog extends JDialog {
         };
 
         if (Main.IS_MAC) {
-            passwordField.registerKeyboardAction(deletePasswordActionListener, 
+            passwordField.registerKeyboardAction(deletePasswordActionListener,
                     KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.META_MASK), JComponent.WHEN_FOCUSED);
         } else if (Main.IS_WINDOWS) {
-            passwordField.registerKeyboardAction(deletePasswordActionListener, 
+            passwordField.registerKeyboardAction(deletePasswordActionListener,
                     KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
         }
 
@@ -91,7 +93,7 @@ public class AuthorizeDialog extends JDialog {
         pack();
 
         setLocation(FrameUtils.setFrameOnCenter(getSize()));
-        if(Main.IS_MAC){
+        if (Main.IS_MAC) {
             com.apple.eawt.Application.getApplication().requestUserAttention(true);
         }
         //TODO request foreground here if is in settings??
@@ -115,13 +117,15 @@ public class AuthorizeDialog extends JDialog {
                 new CloudManager().synchronize();
 
                 setModal(false);
-                new MainForm(new XmlParser().parseRecords());
+                MainForm mf = new MainForm(new XmlParser().parseRecords());
+                setVisible(false);
+                mf.setVisible(true);
                 dispose();
             } else {
                 //TODO send notification here.
                 System.out.println("Password is not correct");
                 Main.isAuthorized = false;
-                
+
                 buttonOK.setEnabled(false);
                 buttonOK.setVisible(true);
                 progressBar.setVisible(false);
