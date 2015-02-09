@@ -6,7 +6,7 @@ Store your passwords in secure
 - Windows (in development)
 
 ## Download:
-[Latest](https://github.com/benchdoos/PasswordStorrager/releases/tag/v0.1-beta.1) 0.1-beta.1
+[Latest](https://github.com/benchdoos/PasswordStorrager/releases/tag/v0.1-beta.1) 0.1-beta.1 (**Mac OS X only**)
 
 ### TODO LIST:
 - [TODO-List](TODOLIST.md)  - List of what should be done next (global)
