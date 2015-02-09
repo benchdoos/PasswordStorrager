@@ -42,7 +42,7 @@ public class FileUtils {
     }
 
     public static boolean exists(String filePath) {
-        return (Main.IS_MAC || Main.IS_WINDOWS) && new File(filePath).exists();
+        return new File(filePath).exists();
     }
 
     public static boolean validPath(String path) {
