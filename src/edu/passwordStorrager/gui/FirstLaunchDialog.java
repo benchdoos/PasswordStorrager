@@ -5,6 +5,7 @@ import edu.passwordStorrager.core.PropertiesManager;
 import edu.passwordStorrager.objects.Key;
 import edu.passwordStorrager.protector.Protector;
 import edu.passwordStorrager.protector.Values;
+import edu.passwordStorrager.utils.FrameUtils;
 import edu.passwordStorrager.utils.KeyUtils;
 import edu.passwordStorrager.utils.StorageUtils;
 import edu.passwordStorrager.utils.StringUtils;
@@ -15,7 +16,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
-import java.io.FilenameFilter;
 
 import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
 
@@ -46,12 +46,32 @@ public class FirstLaunchDialog extends JDialog {
         setResizable(false);
         /*storageField.setText(PropertiesManager.propertiesApplication.getProperty("Storage"));*/
 
+        browseKeyButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = FrameUtils.getFolderChooser("Выбрать папку с ключем...");
+
+                int result = fileChooser.showSaveDialog(null);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    String path = fileChooser.getSelectedFile().getAbsolutePath();
+                    keyField.setText(path + File.separator);
+                }
+            }
+        });
+
         browseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JFrame frame = new JFrame();
+                JFileChooser fileChooser = FrameUtils.getFolderChooser("Выбрать папку с хранилищем...");
 
+                int result = fileChooser.showSaveDialog(null);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    String path = fileChooser.getSelectedFile().getAbsolutePath();
+                    storageField.setText(path + File.separator);
+                }
+                /*JFrame frame = new JFrame();
                 FileDialog d = new FileDialog(frame);
+                d.setMode(FileDialog.SAVE);
                 d.setDirectory(Main.USER_HOME);
                 d.setFilenameFilter(new FilenameFilter() {
                     @Override
@@ -60,7 +80,7 @@ public class FirstLaunchDialog extends JDialog {
                     }
                 });
                 d.setVisible(true);
-                storageField.setText(d.getDirectory() + d.getFile() + File.separator);
+                storageField.setText(d.getDirectory() + d.getFile() + File.separator);*/
             }
         });
 
@@ -136,24 +156,6 @@ public class FirstLaunchDialog extends JDialog {
             }
         });
 
-        browseKeyButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JFrame frame = new JFrame();
-
-                FileDialog d = new FileDialog(frame);
-                d.setDirectory(Main.USER_HOME);
-                d.setFilenameFilter(new FilenameFilter() {
-                    @Override
-                    public boolean accept(File dir, String name) {
-                        return new File(dir.getAbsolutePath() + name).isDirectory();
-                    }
-                });
-                d.setVisible(true);
-                keyField.setText(d.getDirectory() + d.getFile() + File.separator);
-            }
-        });
-
         pack();
         int width = (Toolkit.getDefaultToolkit().getScreenSize().width / 2) - (this.getWidth() / 2);
         int height = (Toolkit.getDefaultToolkit().getScreenSize().height / 2) - (this.getHeight() / 2);
@@ -169,7 +171,7 @@ public class FirstLaunchDialog extends JDialog {
                 try {
                     Main.key = KeyUtils.loadKeyFile(StringUtils.fixFolder(keyField.getText()) + Values.DEFAULT_KEY_FILE_NAME);
                 } catch (Throwable e) {
-                    log.warn("Can not load key file: " 
+                    log.warn("Can not load key file: "
                             + StringUtils.fixFolder(keyField.getText()) + Values.DEFAULT_KEY_FILE_NAME, e);
                 }
                 dispose();
@@ -180,7 +182,6 @@ public class FirstLaunchDialog extends JDialog {
     private void onCancel() {
 // add your code here if necessary
         dispose();
-        System.exit(0); //NOT AUTHORIZED, DO NOT CHANGE TO MAIN.OnQUIT;
     }
 
     private boolean validatePath(String path) {
@@ -224,6 +225,5 @@ public class FirstLaunchDialog extends JDialog {
 
         PropertiesManager.changeProperties(key, storage);
     }
-
 
 }

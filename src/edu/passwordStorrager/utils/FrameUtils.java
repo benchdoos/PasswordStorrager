@@ -5,13 +5,16 @@ import edu.passwordStorrager.core.PropertiesManager;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class FrameUtils {
     private static final Logger log = Logger.getLogger(getCurrentClassName());
@@ -158,4 +161,39 @@ public class FrameUtils {
             clipboard.setContents(stringSelection, null);
         }
     }
+
+    public static JFileChooser getFolderChooser(String title) {
+        UIManager.put("FileChooser.updateButtonText", "true");
+        UIManager.put("FileChooser.filesOfTypeLabelText", "Выбрать:");
+        UIManager.put("FileChooser.newFolderToolTipText", "Новая папка");
+        UIManager.put("FileChooser.cancelButtonText", "Отмена");
+
+        JFileChooser fileChooser = new JFileChooser(Main.USER_HOME);
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fileChooser.setControlButtonsAreShown(true);
+        fileChooser.setDialogType(JFileChooser.SAVE_DIALOG);
+        fileChooser.setDialogTitle(title);
+        fileChooser.setApproveButtonText("Выбрать");
+        fileChooser.setFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                return f.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "Папки";
+            }
+        });
+
+        ArrayList<JPanel> panels = new ArrayList<JPanel>();
+        for (Component c : fileChooser.getComponents()) {
+            if (c instanceof JPanel) {
+                panels.add((JPanel) c);
+            }
+        }
+        panels.get(0).getComponent(0).setVisible(false);
+        return fileChooser;
+    }
+
 }
