@@ -13,7 +13,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
-import java.io.FilenameFilter;
 
 public abstract class ChangeKey extends JDialog {
     private JPanel contentPane;
@@ -35,7 +34,7 @@ public abstract class ChangeKey extends JDialog {
         setResizable(false);
         getRootPane().setDefaultButton(buttonOK);
 
-        final Component c = this;
+        
 
         buttonOK.addActionListener(new ActionListener() {
 
@@ -43,7 +42,8 @@ public abstract class ChangeKey extends JDialog {
                 if (checkFields()) {
                     onOK();
                 } else {
-                    FrameUtils.shakeFrame(c);
+                    Component button = (Component) e.getSource();
+                    FrameUtils.shakeFrame(button);
                 }
             }
         });
@@ -57,7 +57,15 @@ public abstract class ChangeKey extends JDialog {
         button1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JFrame frame = new JFrame();
+                JFileChooser fileChooser = FrameUtils.getFolderChooser("Выбрать папку с ключем...");
+
+                int result = fileChooser.showSaveDialog(null);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    String path = fileChooser.getSelectedFile().getAbsolutePath();
+                    textField1.setText(path + File.separator);
+                }
+
+                /*JFrame frame = new JFrame();
                 frame.getRootPane().putClientProperty("apple.awt.fileDialogForDirectories","true");
                 FileDialog d = new FileDialog(frame);
                 d.setDirectory(Main.USER_HOME);
@@ -68,14 +76,20 @@ public abstract class ChangeKey extends JDialog {
                     }
                 });
                 d.setVisible(true);
-                textField1.setText(d.getDirectory() != null ? d.getDirectory() + d.getFile() : "");
+                textField1.setText(d.getDirectory() != null ? d.getDirectory() + d.getFile() : "");*/
             }
         });
 
         button2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = FrameUtils.getFolderChooser("Выбрать папку с хранилищем...");
 
+                int result = fileChooser.showSaveDialog(null);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    String path = fileChooser.getSelectedFile().getAbsolutePath();
+                    textField2.setText(path + File.separator);
+                }
             }
         });
 
