@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 public class FrameUtils {
     private static final Logger log = Logger.getLogger(getCurrentClassName());
+    private static final Timer timer = new Timer(60, null);
 
     /**
      * Returns the name of called class. Made for usage in static methods.
@@ -95,37 +96,99 @@ public class FrameUtils {
         }
     }
 
+    /**
+     * timer.addActionListener(new ActionListener() {
+     * short counter = 0;
+     * final short maxRepeats = 6;
+     * short step = 14; //14 7 3
+     * final Point location = window.getLocation();
+     *
+     * @Override public void actionPerformed(ActionEvent e) {
+     * if (counter <= 2) {
+     * step = 14;
+     * } else if (counter <= 4) {
+     * step = 7;
+     * } else if (counter <= 6) {
+     * step = 3;
+     * }
+     * <p/>
+     * if (counter <= maxRepeats) {
+     * if (counter % 2 == 0) {
+     * window.setLocation(location.x + step, location.y);
+     * } else {
+     * window.setLocation(location.x - step, location.y);
+     * }
+     * } else {
+     * window.setLocation(location.x, location.y);
+     * timer.stop();
+     * }
+     * counter++;
+     * <p/>
+     * }
+     * });
+     */
     public static void shakeFrame(final Component component) {
-        final Timer timer = new Timer(60, null);
-        timer.addActionListener(new ActionListener() {
-            int counter = 0;
-            final int maxCounter = 6;
-            int step = 10;
-            final Point location = component.getLocation();
+        final Window window = findWindow(component);
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (counter <= 2) {
-                    step = 10;
-                } else if (counter <= 4) {
-                    step = 5;
-                } else if (counter <= 6) {
-                    step = 3;
-                }
-                if (counter <= maxCounter) {
-                    if (counter % 2 == 0) {
-                        component.setLocation(location.x + step, location.y);
-                    } else {
-                        component.setLocation(location.x - step, location.y);
+        if (!timer.isRunning()) {
+            timer.addActionListener(new ActionListener() {
+                Point location = window.getLocation();
+                int counter = 0;
+                final int maxCounter = 6;
+                int step = 14;
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.out.println("Count of listeners: " + ((Timer) e.getSource()).getActionListeners().length);
+                    if (counter <= 2) {
+                        step = 14;
+                    } else if (counter > 2 && counter <= 4) {
+                        step = 7;
+                    } else if (counter > 4 && counter <= 6) {
+                        step = 3;
                     }
-                } else {
-                    component.setLocation(location.x, location.y);
-                    timer.stop();
+                    System.out.println(location + " " + counter);
+                    if (counter <= maxCounter) {
+                        counter++;
+                        if (counter % 2 == 1) {
+                            Point newLocation = new Point(location.x + step, location.y);
+                            System.out.println("+" + newLocation);
+                            window.setLocation(newLocation);
+                            System.out.println("set:" + window.getLocation());
+                        } else {
+                            Point newLocation = new Point(location.x - step, location.y);
+                            System.out.println("-" + newLocation);
+                            window.setLocation(newLocation);
+                            System.out.println("set:" + window.getLocation());
+                        }
+                    } else {
+                        Point newLocation = new Point(location.x, location.y);
+                        System.out.println("final:" + newLocation);
+                        window.setLocation(newLocation);
+                        System.out.println("finalSet:" + window.getLocation());
+
+                        counter = 0;
+                        System.out.println("==============================");
+                        timer.removeActionListener(timer.getActionListeners()[0]);
+                        timer.stop();
+                    }
                 }
-                counter++;
-            }
-        });
-        timer.start();
+            });
+            timer.start();
+        }
+        Toolkit.getDefaultToolkit().beep();
+    }
+
+
+    public static Window findWindow(Component c) {
+        if (c == null) {
+            return JOptionPane.getRootFrame();
+        } else if (c instanceof Window) {
+            System.out.println("Window location: " + c.getLocation());
+            return (Window) c;
+        } else {
+            return findWindow(c.getParent());
+        }
     }
 
     public static Window getWindow(String frameClassName) {
