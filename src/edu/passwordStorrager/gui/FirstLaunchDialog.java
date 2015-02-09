@@ -9,6 +9,7 @@ import edu.passwordStorrager.utils.FrameUtils;
 import edu.passwordStorrager.utils.KeyUtils;
 import edu.passwordStorrager.utils.StorageUtils;
 import edu.passwordStorrager.utils.StringUtils;
+import edu.passwordStorrager.utils.platform.PlatformUtils;
 import edu.passwordStorrager.xmlManager.XmlParser;
 import org.apache.log4j.Logger;
 
@@ -44,6 +45,7 @@ public class FirstLaunchDialog extends JDialog {
 
     public FirstLaunchDialog() {
         setResizable(false);
+        setIconImage(PlatformUtils.appIcon);
         /*storageField.setText(PropertiesManager.propertiesApplication.getProperty("Storage"));*/
 
         browseKeyButton.addActionListener(new ActionListener() {
