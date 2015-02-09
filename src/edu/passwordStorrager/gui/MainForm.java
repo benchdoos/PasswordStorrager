@@ -758,7 +758,9 @@ public class MainForm extends JFrame {
                         isEditableLable.setIcon(new ImageIcon(getClass().getResource("/icons/controls/lock.png")));
                         int index = table.getSelectedRow();
                         try {
-                            table.getCellEditor().cancelCellEditing();
+                            if (table.isEditing()) {
+                                table.getCellEditor().cancelCellEditing();
+                            }
                         } catch (NullPointerException ignored) {
                         }
 //                    table.getCellEditor(table.getEditingRow(), table.getEditingColumn()).cancelCellEditing();
