@@ -96,37 +96,7 @@ public class FrameUtils {
         }
     }
 
-    /**
-     * timer.addActionListener(new ActionListener() {
-     * short counter = 0;
-     * final short maxRepeats = 6;
-     * short step = 14; //14 7 3
-     * final Point location = window.getLocation();
-     *
-     * @Override public void actionPerformed(ActionEvent e) {
-     * if (counter <= 2) {
-     * step = 14;
-     * } else if (counter <= 4) {
-     * step = 7;
-     * } else if (counter <= 6) {
-     * step = 3;
-     * }
-     * <p/>
-     * if (counter <= maxRepeats) {
-     * if (counter % 2 == 0) {
-     * window.setLocation(location.x + step, location.y);
-     * } else {
-     * window.setLocation(location.x - step, location.y);
-     * }
-     * } else {
-     * window.setLocation(location.x, location.y);
-     * timer.stop();
-     * }
-     * counter++;
-     * <p/>
-     * }
-     * });
-     */
+
     public static void shakeFrame(final Component component) {
         final Window window = findWindow(component);
 
