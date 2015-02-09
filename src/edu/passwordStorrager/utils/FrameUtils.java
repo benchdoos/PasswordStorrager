@@ -109,7 +109,6 @@ public class FrameUtils {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    System.out.println("Count of listeners: " + ((Timer) e.getSource()).getActionListeners().length);
                     if (counter <= 2) {
                         step = 14;
                     } else if (counter > 2 && counter <= 4) {
@@ -117,28 +116,21 @@ public class FrameUtils {
                     } else if (counter > 4 && counter <= 6) {
                         step = 3;
                     }
-                    System.out.println(location + " " + counter);
+                    
                     if (counter <= maxCounter) {
                         counter++;
                         if (counter % 2 == 1) {
                             Point newLocation = new Point(location.x + step, location.y);
-                            System.out.println("+" + newLocation);
                             window.setLocation(newLocation);
-                            System.out.println("set:" + window.getLocation());
                         } else {
                             Point newLocation = new Point(location.x - step, location.y);
-                            System.out.println("-" + newLocation);
                             window.setLocation(newLocation);
-                            System.out.println("set:" + window.getLocation());
                         }
                     } else {
                         Point newLocation = new Point(location.x, location.y);
-                        System.out.println("final:" + newLocation);
                         window.setLocation(newLocation);
-                        System.out.println("finalSet:" + window.getLocation());
-
+                        
                         counter = 0;
-                        System.out.println("==============================");
                         timer.removeActionListener(timer.getActionListeners()[0]);
                         timer.stop();
                     }
@@ -154,7 +146,6 @@ public class FrameUtils {
         if (c == null) {
             return JOptionPane.getRootFrame();
         } else if (c instanceof Window) {
-            System.out.println("Window location: " + c.getLocation());
             return (Window) c;
         } else {
             return findWindow(c.getParent());
@@ -165,13 +156,8 @@ public class FrameUtils {
         if (Main.frames != null) {
             for (int i = 0; i < Main.frames.size(); i++) {
                 Window window = Main.frames.get(i);
-                System.out.println(i + "current:" + getCurrentClassName(window.getClass()) +
-                        "\ninc:" + frameClassName);
                 if (frameClassName != null && getCurrentClassName(window.getClass()) != null) {
-                    System.out.println("[][]3[" + getCurrentClassName(window.getClass()));
-                    System.out.println("[][]4[" + frameClassName);
                     if (getCurrentClassName(window.getClass()).equals(frameClassName)) {
-                        System.out.println("returning window");
                         return window;
                     }
                 }
