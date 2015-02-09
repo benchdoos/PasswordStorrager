@@ -32,6 +32,7 @@ public class AuthorizeDialog extends JDialog {
     public AuthorizeDialog() {
         initTimer();
         setContentPane(contentPane);
+        setIconImage(PlatformUtils.appIcon);
         setTitle("Вход");
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);

@@ -1,6 +1,7 @@
 package edu.passwordStorrager.gui;
 
 import edu.passwordStorrager.utils.FrameUtils;
+import edu.passwordStorrager.utils.platform.PlatformUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,6 +34,7 @@ public abstract class NotificationDialog extends JDialog {
 
     private void init() {
         setContentPane(contentPane);
+        setIconImage(PlatformUtils.appIcon);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
         setMinimumSize(new Dimension(300, 200));

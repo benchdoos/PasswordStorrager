@@ -1,5 +1,7 @@
 package edu.passwordStorrager.gui;
 
+import edu.passwordStorrager.utils.platform.PlatformUtils;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -13,6 +15,7 @@ public abstract class AccountEnterDialog extends JDialog {
 
     public AccountEnterDialog(String windowName, String login, String password) {
         setContentPane(contentPane);
+        setIconImage(PlatformUtils.appIcon);
         setTitle(windowName);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);

@@ -2,6 +2,7 @@ package edu.passwordStorrager.gui;
 
 import edu.passwordStorrager.core.Main;
 import edu.passwordStorrager.utils.FrameUtils;
+import edu.passwordStorrager.utils.platform.PlatformUtils;
 import org.apache.log4j.Logger;
 
 import javax.imageio.ImageIO;
@@ -22,6 +23,7 @@ public class AboutApplication extends JFrame {
     public AboutApplication() {
         setTitle("О программе");
         setContentPane(contentPane);
+        setIconImage(PlatformUtils.appIcon);
         setResizable(false);
         icon.setSize(128,128);
         BufferedImage img = null;

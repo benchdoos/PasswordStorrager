@@ -7,6 +7,7 @@ import edu.passwordStorrager.objects.Record;
 import edu.passwordStorrager.protector.Values;
 import edu.passwordStorrager.utils.FrameUtils;
 import edu.passwordStorrager.utils.StringUtils;
+import edu.passwordStorrager.utils.platform.PlatformUtils;
 import edu.passwordStorrager.xmlManager.XmlParser;
 import org.apache.log4j.Logger;
 
@@ -158,6 +159,7 @@ public class MainForm extends JFrame {
     private void initComponents() {
         updateTitle(new File(Main.propertiesApplication.getProperty(PropertiesManager.KEY_NAME) + Values.DEFAULT_STORAGE_FILE_NAME));
         setContentPane(panel1);
+        setIconImage(PlatformUtils.appIcon);
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         //setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
