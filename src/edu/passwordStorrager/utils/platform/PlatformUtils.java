@@ -1,5 +1,6 @@
 package edu.passwordStorrager.utils.platform;
 
+import edu.passwordStorrager.core.Main;
 import edu.passwordStorrager.utils.UnsupportedOsException;
 import org.apache.log4j.Logger;
 
@@ -16,9 +17,10 @@ public class PlatformUtils {
 
     public static void initializeOS() {
         log.info("System - OS: " + OS_NAME
-                + " v." + system.getProperty("os.version")
+                + " v" + system.getProperty("os.version")
                 + " " + system.getProperty("os.arch")
-                + "; Java v." + system.getProperty("java.version"));
+                + "; Java v" + system.getProperty("java.version")
+                + "; Program v" + Main.version);
         if (!PlatformUtils.isOsSupported()) {
             throw new UnsupportedOsException();
         }
@@ -28,7 +30,7 @@ public class PlatformUtils {
         } catch (ClassNotFoundException | InstantiationException | UnsupportedLookAndFeelException | IllegalAccessException e) {
             e.printStackTrace();
         }
-        
+
         if (IS_MAC) {
             MacOsXUtils.initializeMacOSX();
         } else if (IS_WINDOWS) {
@@ -45,10 +47,10 @@ public class PlatformUtils {
     public static void printOSParameters() {
         System.out.println("==========================System=========================");
         System.out.println("System:");
-        System.out.println("\tOS: " + OS_NAME + " v." + system.getProperty("os.version") + " arch: " + system.getProperty("os.arch"));
+        System.out.println("\tOS: " + OS_NAME + " v" + system.getProperty("os.version") + " arch: " + system.getProperty("os.arch"));
         System.out.println("Java:");
         System.out.println("\tJava version: " + system.getProperty("java.specification.version") + "(" + system.getProperty("java.version") + ")");
-        System.out.println("\t" + system.getProperty("java.runtime.name") + " v." + system.getProperty("java.vm.version"));
+        System.out.println("\t" + system.getProperty("java.runtime.name") + " v" + system.getProperty("java.vm.version"));
         System.out.println("User:");
         System.out.println("\tName: " + system.getProperty("user.name") + " Home: " + USER_HOME);
         System.out.println("\tTime zone: " + system.getProperty("user.timezone") + " (" + system.getProperty("user.country") + ") language: " + system.getProperty("user.language"));
