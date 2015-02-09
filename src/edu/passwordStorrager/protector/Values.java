@@ -1,6 +1,6 @@
 package edu.passwordStorrager.protector;
 
-import edu.passwordStorrager.core.Main;
+import edu.passwordStorrager.core.Application;
 
 import java.io.File;
 
@@ -10,9 +10,9 @@ public interface Values {
     String DEFAULT_STORAGE_FILE_NAME = "storage";
     String DEFAULT_FRAME_PROPERTIES_FILE_NAME = "frames.properties";
 
-    String DEFAULT_MAC_PROPERTIES_FILE_FOLDER = Main.USER_HOME + File.separator + "Library" + File.separator +
-            "Application Support" + File.separator + "PasswordStorrager" + File.separator;
+    String DEFAULT_MAC_PROPERTIES_FILE_FOLDER = Application.USER_HOME + File.separator + "Library" + File.separator +
+            "Application Support" + File.separator + Application.APPLICATION_FOLDER_NAME + File.separator;
 
-    String DEFAULT_WINDOWS_PROPERTIES_FILE_FOLDER = Main.USER_HOME + File.separator + "AppData" + File.separator +
-            "Local" + File.separator + "PasswordStorrager" + File.separator;
+    String DEFAULT_WINDOWS_PROPERTIES_FILE_FOLDER = Application.USER_HOME + File.separator + "AppData" + File.separator +
+            "Local" + File.separator + Application.APPLICATION_FOLDER_NAME + File.separator;
 }

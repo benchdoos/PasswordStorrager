@@ -28,8 +28,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EventObject;
 
-import static edu.passwordStorrager.core.Main.IS_MAC;
-import static edu.passwordStorrager.core.Main.IS_WINDOWS;
+import static edu.passwordStorrager.core.Application.IS_MAC;
+import static edu.passwordStorrager.core.Application.IS_WINDOWS;
 import static edu.passwordStorrager.utils.FrameUtils.*;
 
 public class MainForm extends JFrame {

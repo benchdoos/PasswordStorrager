@@ -1,13 +1,13 @@
 package edu.passwordStorrager.utils.platform;
 
-import edu.passwordStorrager.core.Main;
+import edu.passwordStorrager.core.Application;
 import edu.passwordStorrager.utils.UnsupportedOsException;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.*;
 
-import static edu.passwordStorrager.core.Main.*;
+import static edu.passwordStorrager.core.Application.*;
 import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
 
 public class PlatformUtils {
@@ -17,10 +17,10 @@ public class PlatformUtils {
 
     public static void initializeOS() {
         log.info("System - OS: " + OS_NAME
-                + " v" + system.getProperty("os.version")
-                + " " + system.getProperty("os.arch")
-                + "; Java v" + system.getProperty("java.version")
-                + "; Program v" + Main.version);
+                + " v" + OS_VERSION
+                + " " + OS_ARCH
+                + "; Java v" + JAVA_VERSION
+                + "; Program v" + Application.APPLICATION_VERSION);
         if (!PlatformUtils.isOsSupported()) {
             throw new UnsupportedOsException();
         }
@@ -47,14 +47,14 @@ public class PlatformUtils {
     public static void printOSParameters() {
         System.out.println("==========================System=========================");
         System.out.println("System:");
-        System.out.println("\tOS: " + OS_NAME + " v" + system.getProperty("os.version") + " arch: " + system.getProperty("os.arch"));
+        System.out.println("\tOS: " + OS_NAME + " v" + OS_VERSION + " arch: " + OS_ARCH);
         System.out.println("Java:");
-        System.out.println("\tJava version: " + system.getProperty("java.specification.version") + "(" + system.getProperty("java.version") + ")");
-        System.out.println("\t" + system.getProperty("java.runtime.name") + " v" + system.getProperty("java.vm.version"));
+        System.out.println("\tJava version: " + SYSTEM.getProperty("java.specification.version") + "(" + JAVA_VERSION + ")");
+        System.out.println("\t" + SYSTEM.getProperty("java.runtime.name") + " v" + SYSTEM.getProperty("java.vm.version"));
         System.out.println("User:");
-        System.out.println("\tName: " + system.getProperty("user.name") + " Home: " + USER_HOME);
-        System.out.println("\tTime zone: " + system.getProperty("user.timezone") + " (" + system.getProperty("user.country") + ") language: " + system.getProperty("user.language"));
-        System.out.println("Logging to: " + system.getProperty("java.io.tmpdir") + "PasswordStorrager/Logs/");
+        System.out.println("\tName: " + USER_NAME + " Home: " + USER_HOME);
+        System.out.println("\tTime zone: " + SYSTEM.getProperty("user.timezone") + " (" + SYSTEM.getProperty("user.country") + ") language: " + SYSTEM.getProperty("user.language"));
+        System.out.println("Logging to: " + SYSTEM.get(APPLICATION_LOG_FOLDER_PROPERTY));
         System.out.println("=========================================================");
     }
 }

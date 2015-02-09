@@ -74,7 +74,7 @@ public class FirstLaunchDialog extends JDialog {
                 /*JFrame frame = new JFrame();
                 FileDialog d = new FileDialog(frame);
                 d.setMode(FileDialog.SAVE);
-                d.setDirectory(Main.USER_HOME);
+                d.setDirectory(Application.USER_HOME);
                 d.setFilenameFilter(new FilenameFilter() {
                     @Override
                     public boolean accept(File dir, String name) {

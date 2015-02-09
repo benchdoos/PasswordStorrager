@@ -1,11 +1,12 @@
 package edu.passwordStorrager.utils;
 
-import edu.passwordStorrager.core.Main;
 import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
 
+import static edu.passwordStorrager.core.Application.IS_MAC;
+import static edu.passwordStorrager.core.Application.IS_WINDOWS;
 import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
 
 public class FileUtils {
@@ -13,7 +14,7 @@ public class FileUtils {
 
 
     /**
-     * Set File on file system hidden.
+     * Set File on file SYSTEM hidden.
      *
      * @param file <code>File</code> that needs to be hidden.
      */
@@ -22,18 +23,18 @@ public class FileUtils {
     }
 
     /**
-     * Set <code>File</code> on file system hidden.
+     * Set <code>File</code> on file SYSTEM hidden.
      *
      * @param filePath Path to <code>File</code> that needs to be hidden.
      */
     public static void setFileHidden(String filePath) {
         try {
-            if (Main.IS_MAC) {
+            if (IS_MAC) {
                 Runtime.getRuntime().exec("setfile -a V " + filePath);
                 //Runtime.getRuntime().exec("chflags hidden " + filePath);
             }
 
-            if (Main.IS_WINDOWS) {
+            if (IS_WINDOWS) {
                 Runtime.getRuntime().exec("attrib +H " + filePath);
             }
         } catch (IOException e) {

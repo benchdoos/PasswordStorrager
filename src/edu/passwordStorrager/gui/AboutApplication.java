@@ -1,6 +1,6 @@
 package edu.passwordStorrager.gui;
 
-import edu.passwordStorrager.core.Main;
+import edu.passwordStorrager.core.Application;
 import edu.passwordStorrager.utils.FrameUtils;
 import edu.passwordStorrager.utils.platform.PlatformUtils;
 import org.apache.log4j.Logger;
@@ -36,7 +36,7 @@ public class AboutApplication extends JFrame {
             log.warn("Can not load file: /resources/icons/icon_black_256.png");
         }
 
-        version.setText(version.getText()+ Main.version);
+        version.setText(version.getText()+ Application.APPLICATION_VERSION);
         pack();
         setPreferredSize(new Dimension(getWidth(), getHeight() + 20));
         pack();

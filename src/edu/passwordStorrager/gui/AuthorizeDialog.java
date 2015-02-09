@@ -15,6 +15,8 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.io.File;
 
+import static edu.passwordStorrager.core.Application.IS_MAC;
+import static edu.passwordStorrager.core.Application.IS_WINDOWS;
 import static edu.passwordStorrager.core.PropertiesManager.*;
 import static edu.passwordStorrager.utils.FileUtils.exists;
 import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
@@ -68,10 +70,10 @@ public class AuthorizeDialog extends JDialog {
             }
         };
 
-        if (Main.IS_MAC) {
+        if (IS_MAC) {
             passwordField.registerKeyboardAction(deletePasswordActionListener,
                     KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.META_MASK), JComponent.WHEN_FOCUSED);
-        } else if (Main.IS_WINDOWS) {
+        } else if (IS_WINDOWS) {
             passwordField.registerKeyboardAction(deletePasswordActionListener,
                     KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
         }
@@ -94,7 +96,7 @@ public class AuthorizeDialog extends JDialog {
         pack();
 
         setLocation(FrameUtils.setFrameOnCenter(getSize()));
-        if (Main.IS_MAC) {
+        if (IS_MAC) {
             com.apple.eawt.Application.getApplication().requestUserAttention(true);
         }
         //TODO request foreground here if is in settings??

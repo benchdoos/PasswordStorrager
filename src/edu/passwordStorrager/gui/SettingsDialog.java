@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 
+import static edu.passwordStorrager.core.Application.APPLICATION_NAME;
+import static edu.passwordStorrager.core.Application.USER_HOME;
 import static edu.passwordStorrager.utils.FrameUtils.*;
 
 public abstract class SettingsDialog extends JDialog {
@@ -61,7 +63,7 @@ public abstract class SettingsDialog extends JDialog {
         setMinimumSize(new Dimension(380, 320));
         setIconImage(PlatformUtils.appIcon);
 
-        setTitle("Настройки PasswordStorrager");
+        setTitle("Настройки " + APPLICATION_NAME);
 
         setPreferredSize(getFrameSize(getCurrentClassName()));
         setLocation(getFrameLocation(getCurrentClassName()));
@@ -86,7 +88,7 @@ public abstract class SettingsDialog extends JDialog {
                 JFrame frame = new JFrame();
 
                 FileDialog d = new FileDialog(frame);
-                d.setDirectory(Main.USER_HOME);
+                d.setDirectory(USER_HOME);
                 d.setFilenameFilter(new FilenameFilter() {
                     @Override
                     public boolean accept(File dir, String name) {
@@ -104,7 +106,7 @@ public abstract class SettingsDialog extends JDialog {
                 JFrame frame = new JFrame();
 
                 FileDialog d = new FileDialog(frame);
-                d.setDirectory(Main.USER_HOME);
+                d.setDirectory(USER_HOME);
                 d.setFilenameFilter(new FilenameFilter() {
                     @Override
                     public boolean accept(File dir, String name) {

@@ -1,5 +1,6 @@
 package edu.passwordStorrager.utils;
 
+import edu.passwordStorrager.core.Application;
 import edu.passwordStorrager.core.Main;
 import edu.passwordStorrager.core.PropertiesManager;
 import org.apache.log4j.Logger;
@@ -187,7 +188,7 @@ public class FrameUtils {
         UIManager.put("FileChooser.newFolderToolTipText", "Новая папка");
         UIManager.put("FileChooser.cancelButtonText", "Отмена");
 
-        JFileChooser fileChooser = new JFileChooser(Main.USER_HOME);
+        JFileChooser fileChooser = new JFileChooser(Application.USER_HOME);
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         fileChooser.setControlButtonsAreShown(true);
         fileChooser.setDialogType(JFileChooser.SAVE_DIALOG);

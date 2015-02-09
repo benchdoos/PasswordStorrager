@@ -21,9 +21,9 @@ public class PropertiesManager {
     public static String framePropertiesFilePath;
 
     public PropertiesManager() {
-        if (Main.IS_MAC) {
+        if (Application.IS_MAC) {
             folder = Values.DEFAULT_MAC_PROPERTIES_FILE_FOLDER;
-        } else if (Main.IS_WINDOWS) {
+        } else if (Application.IS_WINDOWS) {
             folder = Values.DEFAULT_WINDOWS_PROPERTIES_FILE_FOLDER;
         } else {
             throw new UnsupportedOperationException("This OS is not supported yet");

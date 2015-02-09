@@ -104,7 +104,7 @@
             </constraints>
             <properties>
               <font size="18" style="1"/>
-              <text value="PasswordStorrager"/>
+              <text value="Password Storrager"/>
             </properties>
           </component>
         </children>

@@ -12,7 +12,7 @@ import java.util.Properties;
 import static edu.passwordStorrager.utils.FileUtils.exists;
 import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
 
-public class Core {
+public class Core implements Application {
     private static final Logger log = Logger.getLogger(getCurrentClassName());
     
     public Core() {

@@ -23,7 +23,7 @@ public abstract class NotificationDialog extends JDialog {
         this.title = title;
         this.message = message;
         this.type = type;
-        /*if (!Main.IS_MAC) {
+        /*if (!Application.IS_MAC) {
             init();
         } else {
             System.out.println("NOTIF: " + type + " " + title + " " + message);

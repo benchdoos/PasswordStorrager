@@ -1,8 +1,8 @@
 package edu.passwordStorrager.utils.platform;
 
 import com.apple.eawt.*;
-import edu.passwordStorrager.core.Main;
-import edu.passwordStorrager.core.PropertiesManager;
+import com.apple.eawt.Application;
+import edu.passwordStorrager.core.*;
 import edu.passwordStorrager.gui.AboutApplication;
 import edu.passwordStorrager.gui.ChangeKey;
 import edu.passwordStorrager.gui.MainForm;
@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 
 import java.io.File;
 
+import static edu.passwordStorrager.core.Application.*;
 import static edu.passwordStorrager.core.Core.onQuit;
 import static edu.passwordStorrager.core.Main.*;
 import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
@@ -27,7 +28,7 @@ public class MacOsXUtils {
             application.setDockIconImage(PlatformUtils.appIcon);
 
             System.setProperty("apple.laf.useScreenMenuBar", "true");
-            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "PasswordStorrager");
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", edu.passwordStorrager.core.Application.APPLICATION_NAME);
             System.setProperty("com.apple.laf.AquaLookAndFeel", "true");
             System.setProperty("apple.awt.fileDialogForDirectories", "true");
             System.setProperty("apple.awt.UIElement", "true");

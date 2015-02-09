@@ -17,15 +17,6 @@ public class Main {
     private final static File JAR_FILE = new File(Main.class.getProtectionDomain()
             .getCodeSource().getLocation().getPath());
 
-    public static final String version = "0.1-beta.2";
-
-    public static final Properties system = System.getProperties();
-    public static final String OS_NAME = system.getProperty("os.name");
-    public static final String USER_HOME = system.getProperty("user.home");
-    public static final boolean IS_MAC = OS_NAME.toLowerCase().contains("mac");
-    public static final boolean IS_WINDOWS = OS_NAME.toLowerCase().contains("windows");
-
-
     public static Key key = new Key();
     public static boolean isAuthorized = false;
     public static Properties propertiesApplication = new Properties();
@@ -35,7 +26,6 @@ public class Main {
     public static ArrayList<AuthorizeDialog> framesAuthForm = new ArrayList<AuthorizeDialog>();
 
     public static ArrayList<Window> frames = new ArrayList<Window>();
-
 
 
     public static void main(String[] args) {
@@ -50,8 +40,10 @@ public class Main {
     }
 
     private static void createFolderForLog4J() {
-        String tmp = System.getProperty("java.io.tmpdir");
-        String PS = tmp + "PasswordStorrager" + File.separator;
+        String tmp = Application.APPLICATION_TMP_FOLDER;
+        System.setProperty(Application.APPLICATION_LOG_FOLDER_PROPERTY, Application.APPLICATION_LOG_FOLDER);
+                
+        String PS = tmp + Application.APPLICATION_FOLDER_NAME + File.separator;
         boolean status = false;
         if (!new File(PS).exists()) {
             new File(PS).mkdir();
