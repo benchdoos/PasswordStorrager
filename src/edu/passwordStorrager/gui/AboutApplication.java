@@ -2,6 +2,7 @@ package edu.passwordStorrager.gui;
 
 import edu.passwordStorrager.core.Application;
 import edu.passwordStorrager.utils.FrameUtils;
+import edu.passwordStorrager.utils.StringUtils;
 import edu.passwordStorrager.utils.platform.PlatformUtils;
 import org.apache.log4j.Logger;
 
@@ -23,7 +24,7 @@ public class AboutApplication extends JFrame {
     private JLabel version;
     private JLabel name;
     private JButton buttonOK;
-    private boolean isJeSuisDonbassActive = true;
+    private boolean isJeSuisDonbassActive = false;
 
     public AboutApplication() {
         setTitle("О программе");
@@ -42,7 +43,17 @@ public class AboutApplication extends JFrame {
 
             @Override
             public void mousePressed(MouseEvent e) {
+
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    if (e.getClickCount() == 2) {
+                        if (isJeSuisDonbassActive) {
+                            String site = "http://www.google.ru/search?q=donbass+war+people&newwindow=1&es_sm=119&qscrl=1&tbm=isch&tbo=u&source=univ&sa=X&ei=_HfaVOjCCoH9ywPY3ICQAg&ved=0CCMQsAQ&biw=1180&bih=598#imgdii=_";
+                            StringUtils.openWebPage(site);
+                        }
+                    }
+                }
                 if (e.getButton() == MouseEvent.BUTTON3) {
+                    isJeSuisDonbassActive = !isJeSuisDonbassActive;
                     if (!isJeSuisDonbassActive) {
                         name.setText(Application.APPLICATION_NAME);
                         setNewIcon(getClass().getResource("/resources/icons/icon_black_256.png"));
@@ -50,8 +61,8 @@ public class AboutApplication extends JFrame {
                         name.setText("Je Suis Donbass");
                         setNewIcon(getClass().getResource("/resources/icons/JSD/saveDonbassPeople.png"));
                     }
-                    isJeSuisDonbassActive = !isJeSuisDonbassActive;
                 }
+
             }
 
             @Override
