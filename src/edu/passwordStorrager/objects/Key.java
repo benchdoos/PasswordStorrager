@@ -121,14 +121,6 @@ public class Key {
         }
     }
 
-    public boolean isEncrypted() {
-        return isEncrypted;
-    }
-
-    public void setEncrypted(boolean isEncrypted) {
-        this.isEncrypted = isEncrypted;
-    }
-
 
     @Override
     public String toString() {
@@ -140,7 +132,7 @@ public class Key {
                 Key.megaPwd + " : " + getMegaPassword() + "\n\t" +
                 Key.dropBoxAcc + " : " + getDropBoxLogin() + "\n\t" +
                 Key.dropBoxPwd + " : " + getDropBoxPassword() + "\n" +
-                "] encrypted: " + isEncrypted() + ";";
+                "];";
     }
 
 }

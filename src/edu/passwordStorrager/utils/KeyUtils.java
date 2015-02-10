@@ -46,7 +46,6 @@ public class KeyUtils {
             key.setICloud(properties.getProperty(Key.iCloudAcc), properties.getProperty(Key.iCloudPwd));
             key.setMega(properties.getProperty(Key.megaAcc), properties.getProperty(Key.megaPwd));
             key.setDropBox(properties.getProperty(Key.dropBoxAcc), properties.getProperty(Key.dropBoxPwd));
-            key.setEncrypted(true);
 
             System.out.println(key);
             return key;

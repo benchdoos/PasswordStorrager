@@ -27,7 +27,7 @@ import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
 public class XmlParser {
     private static final Logger log = Logger.getLogger(getCurrentClassName());
 
-    String pathStorageFile;
+    private String pathStorageFile;
 
 
     public XmlParser() {
@@ -35,23 +35,21 @@ public class XmlParser {
     }
 
     public ArrayList<Record> parseRecords() {
-        ArrayList<Record> records = new ArrayList<Record>();
+        ArrayList<Record> records = new ArrayList<>();
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = null;
         Document document;
 
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-
         try {
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             Protector.decrypt(new FileInputStream(pathStorageFile), byteArrayOutputStream);
             byte data[] = byteArrayOutputStream.toByteArray();
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data);
 
-            builder = factory.newDocumentBuilder();
+            DocumentBuilder builder = factory.newDocumentBuilder();
             document = builder.parse(byteArrayInputStream);
             NodeList list = document.getElementsByTagName("Record");
 
-            records = new ArrayList<Record>(list.getLength());
+            records = new ArrayList<>(list.getLength());
             for (int i = 0; i < list.getLength(); i++) {
                 Record record = new Record();
                 record.setLogin(list.item(i).getAttributes().getNamedItem("login").getNodeValue());

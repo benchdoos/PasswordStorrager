@@ -70,6 +70,7 @@
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
+                  <labelFor value="d1ab"/>
                   <text value="Пароль:"/>
                 </properties>
               </component>
@@ -96,6 +97,7 @@
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
+                  <labelFor value="1de2f"/>
                   <text value="Папка с файлом ключа:"/>
                 </properties>
               </component>
@@ -130,6 +132,7 @@
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
+                  <labelFor value="e4956"/>
                   <text value="Папка с файлом сохранненых ключей:"/>
                 </properties>
               </component>
@@ -165,7 +168,7 @@
           <editable value="false"/>
           <focusable value="false"/>
           <font size="12" style="0"/>
-          <text value="&lt;html&gt;&#10;  &lt;head&gt;&#10;    &#10;  &lt;/head&gt;&#10;  &lt;body&gt;&#10;  &lt;/body&gt;&#10;&lt;/html&gt;&#10;"/>
+          <text value="&lt;html&gt;&#10;  &lt;head&gt;&#10;&#10;  &lt;/head&gt;&#10;  &lt;body&gt;&#10;    &lt;p style=&quot;margin-top: 0&quot;&gt;&#10;      &#10;    &lt;/p&gt;&#10;  &lt;/body&gt;&#10;&lt;/html&gt;&#10;"/>
         </properties>
       </component>
     </children>

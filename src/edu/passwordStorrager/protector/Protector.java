@@ -64,7 +64,7 @@ public class Protector {
         encryptOrDecrypt(Cipher.DECRYPT_MODE, is, os);
     }
 
-    public static void encryptOrDecrypt(int mode, InputStream is, OutputStream os) throws Throwable {
+    private static void encryptOrDecrypt(int mode, InputStream is, OutputStream os) throws Throwable {
 
         DESKeySpec dks = new DESKeySpec(new String(PASSWORD).getBytes());
         SecretKeyFactory skf = SecretKeyFactory.getInstance("DES");
@@ -82,7 +82,7 @@ public class Protector {
         }
     }
 
-    public static void doCopy(InputStream is, OutputStream os) throws IOException {
+    private static void doCopy(InputStream is, OutputStream os) throws IOException {
         byte[] bytes = new byte[64];
         int numBytes;
         while ((numBytes = is.read(bytes)) != -1) {

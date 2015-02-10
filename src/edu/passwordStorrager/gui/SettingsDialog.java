@@ -28,14 +28,16 @@ import static edu.passwordStorrager.utils.FrameUtils.*;
 public abstract class SettingsDialog extends JDialog {
     private static final Logger log = Logger.getLogger(getCurrentClassName());
 
-    String iCloudLogin = "";
-    String iCloudPassword = "";
-    String megaLogin = "";
-    String megaPassword = "";
-    String dropBoxLogin = "";
-    String dropBoxPassword = "";
+    private String iCloudLogin = "";
+    private String iCloudPassword = "";
+    private String megaLogin = "";
+    private String megaPassword = "";
+    private String dropBoxLogin = "";
+    private String dropBoxPassword = "";
 
-    boolean isICloudChanged = false, isMegaChanged = false, isDropBoxChanged = false;
+    private boolean isICloudChanged = false;
+    private boolean isMegaChanged = false;
+    private boolean isDropBoxChanged = false;
 
     private JPanel contentPane;
     private JButton buttonOK;
@@ -48,7 +50,7 @@ public abstract class SettingsDialog extends JDialog {
     private JButton browseKeyButton;
     private JTextField storageField;
     private JButton changeKey;
-    public static boolean isCreated = false;
+    private static boolean isCreated = false;
 
     public SettingsDialog() {
         if (!isCreated) {
@@ -267,7 +269,6 @@ public abstract class SettingsDialog extends JDialog {
         String keyFilePath = Main.propertiesApplication.getProperty(PropertiesManager.KEY_NAME) + Values.DEFAULT_KEY_FILE_NAME;
         try {
             key.setENC(Main.key.getENC());
-            key.setEncrypted(true);
             KeyUtils.createKeyFile(key, keyFilePath);
             Main.key = KeyUtils.loadKeyFile(keyFilePath);
         } catch (Throwable e) {

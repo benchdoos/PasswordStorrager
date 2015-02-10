@@ -25,18 +25,17 @@ public class AboutApplication extends JFrame {
         setContentPane(contentPane);
         setIconImage(PlatformUtils.appIcon);
         setResizable(false);
-        icon.setSize(128,128);
-        BufferedImage img = null;
+        icon.setSize(128, 128);
         try {
-            img = ImageIO.read(getClass().getResource("/resources/icons/icon_black_256.png"));
-            Image scaledImage =  img.getScaledInstance(icon.getWidth(), icon.getHeight(),
+            BufferedImage img = ImageIO.read(getClass().getResource("/resources/icons/icon_black_256.png"));
+            Image scaledImage = img.getScaledInstance(icon.getWidth(), icon.getHeight(),
                     Image.SCALE_SMOOTH);
             icon.setIcon(new ImageIcon(scaledImage));
         } catch (IOException e) {
             log.warn("Can not load file: /resources/icons/icon_black_256.png");
         }
 
-        version.setText(version.getText()+ Application.APPLICATION_VERSION);
+        version.setText(version.getText() + Application.APPLICATION_VERSION);
         pack();
         setPreferredSize(new Dimension(getWidth(), getHeight() + 20));
         pack();

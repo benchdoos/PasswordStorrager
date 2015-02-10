@@ -343,7 +343,7 @@ public class MainForm extends JFrame {
         //start
         progressBar.setValue(0);
 
-        ArrayList<Record> foundRecords = new ArrayList<Record>(recordArrayList.size());
+        ArrayList<Record> foundRecords = new ArrayList<>(recordArrayList.size());
 
         int total = recordArrayList.size();
         int current = 0;
@@ -659,7 +659,7 @@ public class MainForm extends JFrame {
                 setControlButtonsEnabled(false);
             }
         });
-        //TODO add table change listener, fix the carret
+        //TODO add table change listener, fix the caret
         /*scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
             public void adjustmentValueChanged(AdjustmentEvent e) {
                 e.getAdjustable().setValue(e.getAdjustable().getMaximum());
@@ -1147,7 +1147,7 @@ public class MainForm extends JFrame {
     private void saveStorage() {
         int rows = table.getRowCount();
         System.out.println("rows to save:" + rows);
-        recordArrayList = new ArrayList<Record>(rows);
+        recordArrayList = new ArrayList<>(rows);
         for (int i = 0; i < rows; i++) {
             Record record = new Record();
             record.setSite((String) table.getModel().getValueAt(i, table.getColumn(SITE_COLUMN_NAME).getModelIndex()));

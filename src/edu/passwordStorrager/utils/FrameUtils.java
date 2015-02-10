@@ -103,7 +103,7 @@ public class FrameUtils {
 
         if (!timer.isRunning()) {
             timer.addActionListener(new ActionListener() {
-                Point location = window.getLocation();
+                final Point location = window.getLocation();
                 int counter = 0;
                 final int maxCounter = 6;
                 int step = 14;
@@ -206,7 +206,7 @@ public class FrameUtils {
             }
         });
 
-        ArrayList<JPanel> panels = new ArrayList<JPanel>();
+        ArrayList<JPanel> panels = new ArrayList<>();
         for (Component c : fileChooser.getComponents()) {
             if (c instanceof JPanel) {
                 panels.add((JPanel) c);

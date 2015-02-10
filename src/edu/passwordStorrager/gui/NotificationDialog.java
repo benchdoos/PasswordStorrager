@@ -16,8 +16,9 @@ public abstract class NotificationDialog extends JDialog {
     private JLabel iconLabel;
     private JTextPane messageLabel;
 
-    String title, message;
-    int type;
+    private String title;
+    private String message;
+    private int type;
 
     public NotificationDialog(String title, String message, int type) {
         this.title = title;
@@ -37,8 +38,10 @@ public abstract class NotificationDialog extends JDialog {
         setIconImage(PlatformUtils.appIcon);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
+        setPreferredSize(new Dimension(300, 200));
         setMinimumSize(new Dimension(300, 200));
-        setMaximumSize(new Dimension(400, 250));
+        setMaximumSize(new Dimension(300, 200));
+        setResizable(false);
 
         titleLabel.setText(title);
         messageLabel.setContentType("text/html");

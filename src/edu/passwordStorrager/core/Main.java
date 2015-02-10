@@ -22,10 +22,10 @@ public class Main {
     public static Properties propertiesApplication = new Properties();
     public static Properties propertiesFrames = new Properties();
 
-    public static ArrayList<MainForm> framesMainForm = new ArrayList<MainForm>();
-    public static ArrayList<AuthorizeDialog> framesAuthForm = new ArrayList<AuthorizeDialog>();
+    public static ArrayList<MainForm> framesMainForm = new ArrayList<>();
+    public static ArrayList<AuthorizeDialog> framesAuthForm = new ArrayList<>();
 
-    public static ArrayList<Window> frames = new ArrayList<Window>();
+    public static ArrayList<Window> frames = new ArrayList<>();
 
 
     public static void main(String[] args) {
