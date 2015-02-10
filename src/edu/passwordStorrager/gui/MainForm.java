@@ -1196,7 +1196,7 @@ public class MainForm extends JFrame {
             recordArrayList = new ArrayList<>(Arrays.asList(rec));
         } else {
             for (int i = 0; i < count; i++) {
-                recordArrayList.add(index,new Record());
+                recordArrayList.add(index, new Record());
             }
         }
         loadList(recordArrayList);
@@ -1220,7 +1220,6 @@ public class MainForm extends JFrame {
 
     private void deleteSelectedRecords(int index1, int index2) {
 //index1 - меньше index2
-        System.out.println("before:" + index1 + " " + index2);
         if (index1 > index2) {
             int i = index1;
             index1 = index2;
@@ -1234,7 +1233,6 @@ public class MainForm extends JFrame {
             index2 = table.getRowCount() - 1;
         }
 
-        System.out.println("after:" + index1 + " " + index2);
 
         if (recordArrayList.size() > 0) {
             int diff = index2 - index1;
@@ -1249,8 +1247,14 @@ public class MainForm extends JFrame {
             isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/unlock.png")));
 
             if (index1 >= 0) {
-                if (index1 < recordArrayList.size()) {
-                    table.setRowSelectionInterval(index1, index1);
+                if (index1 <= recordArrayList.size()) {
+                    if (index1 == recordArrayList.size()) {
+                        if (index1 != 0) {
+                            table.setRowSelectionInterval(index1 - 1, index1 - 1);
+                        }
+                    } else {
+                        table.setRowSelectionInterval(index1, index1);
+                    }
                 }
             }
         }
