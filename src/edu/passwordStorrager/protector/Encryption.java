@@ -1,8 +1,8 @@
 package edu.passwordStorrager.protector;
 
 
-import edu.passwordStorrager.core.Core;
 import edu.passwordStorrager.core.Main;
+import edu.passwordStorrager.gui.FirstLaunchDialog;
 import edu.passwordStorrager.gui.NotificationDialog;
 import edu.passwordStorrager.utils.KeyUtils;
 import org.apache.log4j.Logger;
@@ -42,7 +42,8 @@ public class Encryption {
                     NotificationDialog.NOTIFICATION_ERROR){
                 @Override
                 public void onOK() {
-                    Core.onQuit();
+                    new FirstLaunchDialog();
+                    dispose();
                 }
             };
         }
