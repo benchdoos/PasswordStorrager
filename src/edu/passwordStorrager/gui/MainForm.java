@@ -855,7 +855,11 @@ public class MainForm extends JFrame {
                                 if (table.getRowCount() < 1) {
                                     addNewRecord(0, count);
                                 } else {
-                                    addNewRecord(row + 1, count); //after selection //row = before
+                                    if (row >=0) {
+                                        addNewRecord(row + 1, count); //after selection //row = before
+                                    }else{
+                                        addNewRecord(table.getRowCount(), count); //after selection //row = before
+                                    }
                                 }
                                 dispose();
                             } else {
