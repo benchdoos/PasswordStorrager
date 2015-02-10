@@ -51,27 +51,29 @@ public class MainForm extends JFrame {
 
 
     private JPopupMenu popupMenu;
-    public static JMenuBar jMenuBar1;
     public static boolean isFirstLaunch = true;
-    private JMenu fileJMenu;
-    private JMenuItem openItem;
-    private JMenuItem saveItem;
-    private JMenuItem settingsItem;
-    private JMenu editJMenu;
-    private JMenuItem addItem;
-    private JMenuItem addSomeItem;
-    private JMenuItem deleteItem;
-    private JMenuItem deleteSomeItem;
-    private JMenuItem addUpItem;
-    private JMenuItem addDownItem;
-    private JMenuItem moveUpItem;
-    private JMenuItem moveDownItem;
-    private JMenuItem searchMenuItem;
-    private JMenu copyJMenu;
-    private JMenuItem copySiteItem;
-    private JMenuItem copyLoginItem;
-    private JMenuItem copyPasswordItem;
-    private JMenu aboutItem;
+    public JMenuBar jMenuBar1 = new JMenuBar();
+    ;
+    private JMenu fileJMenu = new JMenu("Файл");
+    private JMenuItem openItem = new JMenuItem("Открыть");
+    private JMenuItem saveItem = new JMenuItem("Сохранить");
+    private JMenuItem settingsItem = new JMenuItem("Настройки");
+    private JMenu editJMenu = new JMenu("Правка");
+    private JMenuItem addItem = new JMenuItem("Добавить");
+    private JMenuItem addSomeItem = new JMenuItem("Добавить несколько...");
+    private JMenuItem deleteItem = new JMenuItem("Удалить");
+    private JMenuItem deleteSomeItem = new JMenuItem("Удалить несколько...");
+    private JMenuItem addUpItem = new JMenuItem("Добавить запись сверху");
+    private JMenuItem addDownItem = new JMenuItem("Добавить запись снизу");
+    private JMenuItem moveUpItem = new JMenuItem("Переместить вверх");
+    private JMenuItem moveDownItem = new JMenuItem("Переместить вниз");
+    private JMenuItem searchMenuItem = new JMenuItem("Поиск");
+    private JMenu copyJMenu = new JMenu("Копировать");
+    private JMenuItem copySiteItem = new JMenuItem("Копировать сайт");
+    private JMenuItem copyLoginItem = new JMenuItem("Копировать логин");
+    private JMenuItem copyPasswordItem = new JMenuItem("Копировать пароль");
+    private JMenu referenceMenu = new JMenu("Справка");
+    private JMenuItem aboutItem = new JMenuItem("О программе");
 
     private JPanel panel1;
     private JScrollPane scrollPane;
@@ -118,6 +120,8 @@ public class MainForm extends JFrame {
         setPreferredSize(getFrameSize(getCurrentClassName()));
         setLocation(getFrameLocation(getCurrentClassName()));
 
+        isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/lock.png")));
+
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 if (isEdited) {
@@ -151,9 +155,8 @@ public class MainForm extends JFrame {
 
         initTable();
 
-        //request focus on table
-
         pack();
+        
         if (table.getRowCount() > 0) {
             table.setRowSelectionInterval(0, 0);
         }
@@ -698,37 +701,11 @@ public class MainForm extends JFrame {
     }
 
     private void initMenu() {
-        jMenuBar1 = new JMenuBar();
-
-        fileJMenu = new JMenu();
-        openItem = new JMenuItem();
-        saveItem = new JMenuItem();
-        settingsItem = new JMenuItem();
-
-        editJMenu = new JMenu();
         editModeJRadioButtonMenuItem = new JRadioButtonMenuItem();
-        addItem = new JMenuItem();
-        addSomeItem = new JMenuItem();
-        deleteItem = new JMenuItem();
-        deleteSomeItem = new JMenuItem();
-        addUpItem = new JMenuItem();
-        addDownItem = new JMenuItem();
-        moveUpItem = new JMenuItem();
-        moveDownItem = new JMenuItem();
-        searchMenuItem = new JMenuItem();
-
-        copyJMenu = new JMenu();
-        copySiteItem = new JMenuItem();
-        copyLoginItem = new JMenuItem();
-        copyPasswordItem = new JMenuItem();
-
-        aboutItem = new JMenu();
-
-        fileJMenu.setText("Файл");
 
         openItem.setAccelerator(getAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.META_MASK),
                 KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK)));
-        openItem.setText("Открыть");
+
         openItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -746,8 +723,6 @@ public class MainForm extends JFrame {
 
         saveItem.setAccelerator(getAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.META_MASK),
                 KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK)));
-
-        saveItem.setText("Сохранить");
         saveItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -763,7 +738,6 @@ public class MainForm extends JFrame {
         settingsItem.setAccelerator(getAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, InputEvent.META_MASK),
                 KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, InputEvent.CTRL_MASK)));
 
-        settingsItem.setText("Настройки");
         settingsItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -782,8 +756,6 @@ public class MainForm extends JFrame {
         if (IS_WINDOWS) {
             fileJMenu.add(settingsItem);
         }
-
-        editJMenu.setText("Правка");
 
         editModeJRadioButtonMenuItem.setAccelerator(getAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.META_MASK),
                 KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK)));
@@ -817,13 +789,10 @@ public class MainForm extends JFrame {
             }
         });
 
-        isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/lock.png")));
         editJMenu.add(editModeJRadioButtonMenuItem);
 
         addItem.setAccelerator(getAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.META_MASK),
                 KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK)));
-
-        addItem.setText("Добавить");
         addItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -833,11 +802,10 @@ public class MainForm extends JFrame {
             }
         });
         editJMenu.add(addItem);
+        
 
         addSomeItem.setAccelerator(getAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.META_MASK | InputEvent.SHIFT_MASK),
                 KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK)));
-
-        addSomeItem.setText("Добавить несколько...");
         addSomeItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -855,9 +823,9 @@ public class MainForm extends JFrame {
                                 if (table.getRowCount() < 1) {
                                     addNewRecord(0, count);
                                 } else {
-                                    if (row >=0) {
+                                    if (row >= 0) {
                                         addNewRecord(row + 1, count); //after selection //row = before
-                                    }else{
+                                    } else {
                                         addNewRecord(table.getRowCount(), count); //after selection //row = before
                                     }
                                 }
@@ -876,8 +844,6 @@ public class MainForm extends JFrame {
 
         deleteItem.setAccelerator(getAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.META_MASK),
                 KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.CTRL_MASK)));
-
-        deleteItem.setText("Удалить");
         deleteItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -890,7 +856,6 @@ public class MainForm extends JFrame {
 
         deleteSomeItem.setAccelerator(getAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.META_MASK | InputEvent.SHIFT_MASK),
                 KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK)));
-        deleteSomeItem.setText("Удалить несколько...");
         deleteSomeItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -931,7 +896,6 @@ public class MainForm extends JFrame {
         editJMenu.add(deleteSomeItem);
 
         addUpItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.ALT_MASK | InputEvent.SHIFT_MASK));
-        addUpItem.setText("Добавить запись сверху");
         addUpItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -941,7 +905,6 @@ public class MainForm extends JFrame {
         editJMenu.add(addUpItem);
 
         addDownItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.ALT_MASK | InputEvent.SHIFT_MASK));
-        addDownItem.setText("Добавить запись снизу");
         addDownItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -951,7 +914,6 @@ public class MainForm extends JFrame {
         editJMenu.add(addDownItem);
 
         moveUpItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_MASK | InputEvent.ALT_MASK | InputEvent.SHIFT_MASK));
-        moveUpItem.setText("Переместить вверх");
         moveUpItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -961,7 +923,6 @@ public class MainForm extends JFrame {
         editJMenu.add(moveUpItem);
 
         moveDownItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.CTRL_MASK | InputEvent.ALT_MASK | InputEvent.SHIFT_MASK));
-        moveDownItem.setText("Переместить вниз");
         moveDownItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -972,8 +933,6 @@ public class MainForm extends JFrame {
 
         searchMenuItem.setAccelerator(getAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.META_MASK),
                 KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK)));
-
-        searchMenuItem.setText("Поиск");
         searchMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -984,12 +943,8 @@ public class MainForm extends JFrame {
 
         jMenuBar1.add(editJMenu);
 
-        copyJMenu.setText("Копировать");
-
         copySiteItem.setAccelerator(getAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.META_MASK),
                 KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.CTRL_MASK)));
-
-        copySiteItem.setText("Копировать сайт");
         copySiteItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -1000,8 +955,6 @@ public class MainForm extends JFrame {
 
         copyLoginItem.setAccelerator(getAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.META_MASK),
                 KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.CTRL_MASK)));
-
-        copyLoginItem.setText("Копировать логин");
         copyLoginItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -1012,8 +965,6 @@ public class MainForm extends JFrame {
 
         copyPasswordItem.setAccelerator(getAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.META_MASK),
                 KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.CTRL_MASK)));
-
-        copyPasswordItem.setText("Копировать пароль");
         copyPasswordItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -1024,24 +975,16 @@ public class MainForm extends JFrame {
 
         jMenuBar1.add(copyJMenu);
 
-        aboutItem.setText("О программе");
-        aboutItem.addMenuListener(new MenuListener() {
+        aboutItem.addActionListener(new ActionListener() {
             @Override
-            public void menuSelected(MenuEvent e) {
+            public void actionPerformed(ActionEvent e) {
                 new AboutApplication();
             }
-
-            @Override
-            public void menuDeselected(MenuEvent e) {
-            }
-
-            @Override
-            public void menuCanceled(MenuEvent e) {
-            }
         });
+        referenceMenu.add(aboutItem);
 
         if (IS_WINDOWS) {
-            jMenuBar1.add(aboutItem);
+            jMenuBar1.add(referenceMenu);
         }
 
         setJMenuBar(jMenuBar1);
