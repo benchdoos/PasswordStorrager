@@ -29,9 +29,9 @@ public class AboutApplication extends JFrame {
         BufferedImage img = null;
         try {
             img = ImageIO.read(getClass().getResource("/resources/icons/icon_black_256.png"));
-            Image dimg =  img.getScaledInstance(icon.getWidth(), icon.getHeight(),
+            Image scaledImage =  img.getScaledInstance(icon.getWidth(), icon.getHeight(),
                     Image.SCALE_SMOOTH);
-            icon.setIcon(new ImageIcon(dimg));
+            icon.setIcon(new ImageIcon(scaledImage));
         } catch (IOException e) {
             log.warn("Can not load file: /resources/icons/icon_black_256.png");
         }
