@@ -40,7 +40,10 @@ public class MainForm extends JFrame {
     protected static JRadioButtonMenuItem editModeJRadioButtonMenuItem; //if checked - can edit existing
     static Timer timer;
 
-    static final String NUMBER_COLUMN_NAME = "#", SITE_COLUMN_NAME = "Сайт", LOGIN_COLUMN_NAME = "Логин", PASSWORD_COLUMN_NAME = "Пароль";
+    static final String NUMBER_COLUMN_NAME = "#",
+            SITE_COLUMN_NAME = "Сайт",
+            LOGIN_COLUMN_NAME = "Логин",
+            PASSWORD_COLUMN_NAME = "Пароль";
 
     private boolean isEdited = false;
 
@@ -68,21 +71,25 @@ public class MainForm extends JFrame {
     private JMenuItem copySiteItem;
     private JMenuItem copyLoginItem;
     private JMenuItem copyPasswordItem;
+    private JMenu aboutItem;
+
     private JPanel panel1;
     private JScrollPane scrollPane;
     private JTable table;
     private JPanel statusPanel;
     private JTextField searchField;
-    private JLabel isEditableLable;
     private JButton moveUpButton;
     private JButton moveDownButton;
     private JButton addUpButton;
     private JButton addDownButton;
+
     private JPanel controlPanel;
     private JProgressBar progressBar;
     private JLabel bar;
     private JProgressBar statusProgressBar;
     private JLabel rowCount;
+    private JLabel isEditableIcon;
+
     private Timer searchTimer;
     private static TableModelListener tableModelListener;
     private boolean isSearchMode = false;
@@ -94,6 +101,57 @@ public class MainForm extends JFrame {
         requestFocus();
         table.requestFocus();
         Main.framesMainForm.add(this);
+    }
+
+    private void initComponents() {
+        updateTitle(new File(Main.propertiesApplication.getProperty(PropertiesManager.KEY_NAME) + Values.DEFAULT_STORAGE_FILE_NAME));
+        setContentPane(panel1);
+        setIconImage(PlatformUtils.appIcon);
+
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        //setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        setMinimumSize(new java.awt.Dimension(600, 430));
+        setPreferredSize(getFrameSize(getCurrentClassName()));
+        setLocation(getFrameLocation(getCurrentClassName()));
+
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                if (isEdited) {
+                    //TODO ask before close
+                }
+                FrameUtils.setFrameLocation(getClass().getEnclosingClass().getName(), getLocation());
+                FrameUtils.setFrameSize(getClass().getEnclosingClass().getName(), getSize());
+                Core.onQuit();
+            }
+
+            public void windowClosed(WindowEvent e) {
+                FrameUtils.setFrameLocation(getClass().getEnclosingClass().getName(), getLocation());
+                FrameUtils.setFrameSize(getClass().getEnclosingClass().getName(), getSize());
+                Core.onQuit();
+            }
+        });
+
+        initTableListeners();
+
+        initMenu();
+
+        initPopUp();
+
+        initControlBar();
+
+        initSearchBarListeners();
+
+        initStatusBar();
+
+        loadList(recordArrayList);
+
+        //request focus on table
+
+        pack();
+        if (table.getRowCount() > 0) {
+            table.setRowSelectionInterval(0, 0);
+        }
+        isFirstLaunch = false; //to fix isEdited on start
     }
 
 
@@ -155,57 +213,6 @@ public class MainForm extends JFrame {
         rowCount.setText("Записей: " + count);
     }
 
-
-    private void initComponents() {
-        updateTitle(new File(Main.propertiesApplication.getProperty(PropertiesManager.KEY_NAME) + Values.DEFAULT_STORAGE_FILE_NAME));
-        setContentPane(panel1);
-        setIconImage(PlatformUtils.appIcon);
-
-        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        //setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        setMinimumSize(new java.awt.Dimension(600, 430));
-        setPreferredSize(getFrameSize(getCurrentClassName()));
-        setLocation(getFrameLocation(getCurrentClassName()));
-
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                if (isEdited) {
-                    //TODO ask before close
-                }
-                FrameUtils.setFrameLocation(getClass().getEnclosingClass().getName(), getLocation());
-                FrameUtils.setFrameSize(getClass().getEnclosingClass().getName(), getSize());
-                Core.onQuit();
-            }
-
-            public void windowClosed(WindowEvent e) {
-                FrameUtils.setFrameLocation(getClass().getEnclosingClass().getName(), getLocation());
-                FrameUtils.setFrameSize(getClass().getEnclosingClass().getName(), getSize());
-                Core.onQuit();
-            }
-        });
-
-        initTableListeners();
-
-        initMenu();
-
-        initPopUp();
-
-        initControlBar();
-
-        initSearchBarListeners();
-
-        initStatusBar();
-
-        loadList(recordArrayList);
-
-        //request focus on table
-
-        pack();
-        if (table.getRowCount() > 0) {
-            table.setRowSelectionInterval(0, 0);
-        }
-        isFirstLaunch = false; //to fix isEdited on start
-    }
 
     private void initSearchBarListeners() {
         /*panel1.registerKeyboardAction(
@@ -685,6 +692,8 @@ public class MainForm extends JFrame {
         copyLoginItem = new JMenuItem();
         copyPasswordItem = new JMenuItem();
 
+        aboutItem = new JMenu();
+
         fileJMenu.setText("Файл");
 
         openItem.setAccelerator(getAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.META_MASK),
@@ -698,7 +707,8 @@ public class MainForm extends JFrame {
                     loadList(recordArrayList);
                     setEdited(false);
                     editModeJRadioButtonMenuItem.setSelected(false);
-                    isEditableLable.setIcon(new ImageIcon(getClass().getResource("/icons/controls/lock.png")));
+                    isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/lock.png")));
+                    isEditableIcon.setToolTipText("Режим редактирования выключен");
                 }
             }
         });
@@ -755,7 +765,8 @@ public class MainForm extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if (!isSearchMode) {
                     if (!editModeJRadioButtonMenuItem.isSelected()) {
-                        isEditableLable.setIcon(new ImageIcon(getClass().getResource("/icons/controls/lock.png")));
+                        isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/lock.png")));
+                        isEditableIcon.setToolTipText("Режим редактирования выключен");
                         int index = table.getSelectedRow();
                         try {
                             if (table.isEditing()) {
@@ -769,13 +780,14 @@ public class MainForm extends JFrame {
                         }
                         //table.clearSelection();
                     } else {
-                        isEditableLable.setIcon(new ImageIcon(getClass().getResource("/icons/controls/unlock.png")));
+                        isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/unlock.png")));
+                        isEditableIcon.setToolTipText("Режим редактирования включен");
                     }
                 }
             }
         });
 
-        isEditableLable.setIcon(new ImageIcon(getClass().getResource("/icons/controls/lock.png")));
+        isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/lock.png")));
         editJMenu.add(editModeJRadioButtonMenuItem);
 
         addItem.setAccelerator(getAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.META_MASK),
@@ -978,6 +990,26 @@ public class MainForm extends JFrame {
 
         jMenuBar1.add(copyJMenu);
 
+        aboutItem.setText("О программе");
+        aboutItem.addMenuListener(new MenuListener() {
+            @Override
+            public void menuSelected(MenuEvent e) {
+                new AboutApplication();
+            }
+
+            @Override
+            public void menuDeselected(MenuEvent e) {
+            }
+
+            @Override
+            public void menuCanceled(MenuEvent e) {
+            }
+        });
+        
+        if (IS_WINDOWS) {
+            jMenuBar1.add(aboutItem);
+        }
+
         setJMenuBar(jMenuBar1);
     }
 
@@ -1135,7 +1167,7 @@ public class MainForm extends JFrame {
             editModeJRadioButtonMenuItem.doClick();
         }
         setStatus(bar.getText(), STATUS_MESSAGE);
-        isEditableLable.setIcon(new ImageIcon(getClass().getResource("/icons/controls/unlock.png")));
+        isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/unlock.png")));
 
         Record[] tmp = new Record[recordArrayList.size()];
         tmp = recordArrayList.toArray(tmp);
@@ -1201,7 +1233,7 @@ public class MainForm extends JFrame {
             table.clearSelection();
 
             editModeJRadioButtonMenuItem.setSelected(true);
-            isEditableLable.setIcon(new ImageIcon(getClass().getResource("/icons/controls/unlock.png")));
+            isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/unlock.png")));
 
             if (index1 - 1 >= 0 && index1 - 1 < recordArrayList.size()) {
                 table.setRowSelectionInterval(index1 - 1, index1 - 1);
@@ -1215,7 +1247,7 @@ public class MainForm extends JFrame {
             table.clearSelection();
 
             editModeJRadioButtonMenuItem.setSelected(true);
-            isEditableLable.setIcon(new ImageIcon(getClass().getResource("/icons/controls/unlock.png")));
+            isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/unlock.png")));
 
             if (index >= 0 && recordArrayList.size() > 0) {
                 if (index < recordArrayList.size()) {
