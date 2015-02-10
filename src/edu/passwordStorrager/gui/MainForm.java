@@ -611,13 +611,16 @@ public class MainForm extends JFrame {
         ListSelectionModel cellSelectionModel = table.getSelectionModel();
         cellSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         cellSelectionModel.addListSelectionListener(new ListSelectionListener() {
+            
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 int selected = table.getSelectedRow();
-                if (table.isFocusOwner()) {
                     if (selected > -1) {
                         if (!isSearchMode) {
-                            if (selected == 0) {
+                                moveUpButton.setEnabled(hasPrevious());
+                                moveDownButton.setEnabled(hasNext());
+
+                            /*if (selected == 0) {
                                 moveUpButton.setEnabled(false);
                                 moveUpItem.setEnabled(false);
                             } else {
@@ -630,11 +633,10 @@ public class MainForm extends JFrame {
                             } else {
                                 moveDownButton.setEnabled(true);
                                 moveDownItem.setEnabled(true);
-                            }
+                            }*/
                         }
                     }
-
-                }
+                
 
             }
         });
@@ -676,6 +678,8 @@ public class MainForm extends JFrame {
             public void focusGained(FocusEvent e) {
                 if (!isSearchMode) {
                     setControlButtonsEnabled(true);
+                    moveUpButton.setEnabled(hasPrevious());
+                    moveDownButton.setEnabled(hasNext());
                 }
             }
 
@@ -1294,6 +1298,14 @@ public class MainForm extends JFrame {
         System.arraycopy(b, 0, c, aLen, bLen);
 
         return c;
+    }
+
+    boolean hasNext() {
+        return table.getSelectedRow() >= 0 && table.getSelectedRow() < table.getRowCount() - 1;
+    }
+
+    boolean hasPrevious() {
+        return table.getSelectedRow() >= 0 && table.getSelectedRow() > 0;
     }
 }
 
