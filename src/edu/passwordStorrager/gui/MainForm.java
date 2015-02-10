@@ -145,6 +145,8 @@ public class MainForm extends JFrame {
 
         loadList(recordArrayList);
 
+        initTable();
+
         //request focus on table
 
         pack();
@@ -152,6 +154,30 @@ public class MainForm extends JFrame {
             table.setRowSelectionInterval(0, 0);
         }
         isFirstLaunch = false; //to fix isEdited on start
+    }
+
+    private void initTable() {
+        TableColumn number = table.getColumnModel().getColumn(0);
+        number.setHeaderValue(NUMBER_COLUMN_NAME);
+        number.setMinWidth(20);
+        number.setMaxWidth(40);
+        number.setPreferredWidth(number.getPreferredWidth());
+        number.sizeWidthToFit();
+
+        TableColumn site = table.getColumnModel().getColumn(1);
+        site.setHeaderValue(SITE_COLUMN_NAME);
+        site.setWidth(150);
+        site.setResizable(false);
+
+        TableColumn login = table.getColumnModel().getColumn(2);
+        login.setHeaderValue(LOGIN_COLUMN_NAME);
+        login.setWidth(150);
+        login.setResizable(false);
+
+        TableColumn password = table.getColumnModel().getColumn(3);
+        password.setHeaderValue(PASSWORD_COLUMN_NAME);
+        password.setResizable(false);
+//        scrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, null); //square, квадрат между table и scrollpane
     }
 
 
@@ -1005,7 +1031,7 @@ public class MainForm extends JFrame {
             public void menuCanceled(MenuEvent e) {
             }
         });
-        
+
         if (IS_WINDOWS) {
             jMenuBar1.add(aboutItem);
         }
@@ -1103,26 +1129,7 @@ public class MainForm extends JFrame {
         table.setModel(createTableModel(recordArrayList));
         table.setRowHeight(25);
 
-        TableColumn number = table.getColumnModel().getColumn(0);
-        number.setHeaderValue(NUMBER_COLUMN_NAME);
-        number.setMinWidth(20);
-        number.setMaxWidth(40);
-        number.setPreferredWidth(number.getPreferredWidth());
-        number.sizeWidthToFit();
-
-        TableColumn site = table.getColumnModel().getColumn(1);
-        site.setHeaderValue(SITE_COLUMN_NAME);
-        site.setWidth(150);
-        site.setResizable(false);
-
-        TableColumn login = table.getColumnModel().getColumn(2);
-        login.setHeaderValue(LOGIN_COLUMN_NAME);
-        login.setWidth(150);
-        login.setResizable(false);
-
-        TableColumn password = table.getColumnModel().getColumn(3);
-        password.setHeaderValue(PASSWORD_COLUMN_NAME);
-        password.setResizable(false);
+        initTable();
 
         table.getColumn(NUMBER_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField(NUMBER_COLUMN_NAME)));
         table.getColumn(SITE_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField(SITE_COLUMN_NAME)));
@@ -1147,6 +1154,7 @@ public class MainForm extends JFrame {
     private void saveStorage() {
         int rows = table.getRowCount();
         System.out.println("rows to save:" + rows);
+        editModeJRadioButtonMenuItem.doClick();
         recordArrayList = new ArrayList<>(rows);
         for (int i = 0; i < rows; i++) {
             Record record = new Record();
@@ -1155,7 +1163,6 @@ public class MainForm extends JFrame {
             record.setPassword((String) table.getModel().getValueAt(i, table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex()));
             recordArrayList.add(record);
         }
-        editModeJRadioButtonMenuItem.doClick();
         new XmlParser().saveRecords(recordArrayList);
         loadList(recordArrayList);
         setEdited(false);
@@ -1169,23 +1176,29 @@ public class MainForm extends JFrame {
         setStatus(bar.getText(), STATUS_MESSAGE);
         isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/unlock.png")));
 
-        Record[] tmp = new Record[recordArrayList.size()];
-        tmp = recordArrayList.toArray(tmp);
+        if (count > 100) {
+            Record[] tmp = new Record[recordArrayList.size()];
+            tmp = recordArrayList.toArray(tmp);
 
-        Record[] rec1 = Arrays.copyOfRange(tmp, 0, index);
+            Record[] rec1 = Arrays.copyOfRange(tmp, 0, index);
 
-        Record[] rec2 = new Record[count];
-        for (int i = 0; i < count; i++) {
-            rec2[i] = new Record();
-            statusProgressBar.setValue((int) ((double) i / count) * 100);
-            statusProgressBar.setToolTipText(statusProgressBar.getValue() + "%");
+            Record[] rec2 = new Record[count];
+            for (int i = 0; i < count; i++) {
+                rec2[i] = new Record();
+                statusProgressBar.setValue((int) ((double) i / count) * 100);
+                statusProgressBar.setToolTipText(statusProgressBar.getValue() + "%");
+            }
+            Record[] rec3 = Arrays.copyOfRange(tmp, index, tmp.length);
+            Record[] rec;
+            rec = concatenate(rec1, rec2);
+            rec = concatenate(rec, rec3);
+
+            recordArrayList = new ArrayList<>(Arrays.asList(rec));
+        } else {
+            for (int i = 0; i < count; i++) {
+                recordArrayList.add(index,new Record());
+            }
         }
-        Record[] rec3 = Arrays.copyOfRange(tmp, index, tmp.length);
-        Record[] rec;
-        rec = concatenate(rec1, rec2);
-        rec = concatenate(rec, rec3);
-
-        recordArrayList = new ArrayList<>(Arrays.asList(rec));
         loadList(recordArrayList);
 
         table.clearSelection();
@@ -1235,8 +1248,10 @@ public class MainForm extends JFrame {
             editModeJRadioButtonMenuItem.setSelected(true);
             isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/unlock.png")));
 
-            if (index1 - 1 >= 0 && index1 - 1 < recordArrayList.size()) {
-                table.setRowSelectionInterval(index1 - 1, index1 - 1);
+            if (index1 >= 0) {
+                if (index1 < recordArrayList.size()) {
+                    table.setRowSelectionInterval(index1, index1);
+                }
             }
         }
 
