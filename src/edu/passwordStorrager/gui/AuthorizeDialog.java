@@ -30,6 +30,7 @@ public class AuthorizeDialog extends JDialog {
     private JPasswordField passwordField;
     private JProgressBar progressBar;
     private static Timer timer;
+    private boolean isBlocked = false;
 
     public AuthorizeDialog() {
         initTimer();
@@ -82,14 +83,18 @@ public class AuthorizeDialog extends JDialog {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                onCancel();
+                if (!isBlocked) {
+                    onCancel();
+                }
             }
         });
 
 // call onCancel() on ESCAPE
         contentPane.registerKeyboardAction(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                onCancel();
+                if (!isBlocked) {
+                    onCancel();
+                }
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
@@ -131,6 +136,7 @@ public class AuthorizeDialog extends JDialog {
 
                 buttonOK.setEnabled(false);
                 buttonOK.setVisible(true);
+                buttonCancel.setEnabled(false);
                 progressBar.setVisible(false);
 
                 timer.start();
@@ -147,28 +153,31 @@ public class AuthorizeDialog extends JDialog {
 
     private void initTimer() {
 
-//        ActionListener timerListener =
+        ActionListener timerListener = new ActionListener() {
+            int counter = 0;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                counter++;
+                if (counter == 10) {
+                    buttonOK.setText("OK");
+                    buttonOK.setEnabled(true);
+                    buttonCancel.setEnabled(true);
+                    passwordField.setEnabled(true);
+                    passwordField.requestFocus();
+                    counter = 0;
+                    isBlocked = false;
+                    timer.stop();
+                } else {
+                    buttonOK.setEnabled(false);
+                    isBlocked = true;
+                    buttonOK.setText(10 - counter + "");
+                }
+            }
+        };
 
         if (timer == null) {
-            timer = new Timer(1000, new ActionListener() {
-                int counter = 0;
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    counter++;
-                    if (counter == 10) {
-                        buttonOK.setText("OK");
-                        buttonOK.setEnabled(true);
-                        passwordField.setEnabled(true);
-                        passwordField.requestFocus();
-                        counter = 0;
-                        timer.stop();
-                    } else {
-                        buttonOK.setEnabled(false);
-                        buttonOK.setText(10 - counter + "");
-                    }
-                }
-            });
+            timer = new Timer(1000, timerListener);
         }
     }
 }
