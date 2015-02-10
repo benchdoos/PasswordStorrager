@@ -1,8 +1,15 @@
 package edu.passwordStorrager.utils;
 
+import org.apache.log4j.Logger;
+
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+
+import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
 
 public class StringUtils {
+    private static final Logger log = Logger.getLogger(getCurrentClassName());
 
     public static String fixFolder(String folder) {
         if (folder.endsWith(File.separator)) {
@@ -12,6 +19,7 @@ public class StringUtils {
         }
     }
 
+    
     public static String parseUrl(String value) {
         if (!value.isEmpty()) {
             if (value.length() > 7) {
@@ -33,6 +41,17 @@ public class StringUtils {
                 || value.contains("ua")
                 || value.contains("net")
                 || value.contains("info");
+    }
+
+    public static void openWebPage(String string) {
+        try {
+            java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
+            if (StringUtils.isUrl(string)) {
+                desktop.browse(URI.create(StringUtils.parseUrl(string)));
+            }
+        } catch (IOException e) {
+            log.warn("Can not open in browser: " + StringUtils.parseUrl(string));
+        }
     }
 
 }
