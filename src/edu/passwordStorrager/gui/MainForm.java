@@ -1,5 +1,6 @@
 package edu.passwordStorrager.gui;
 
+import edu.passwordStorrager.core.Application;
 import edu.passwordStorrager.core.Core;
 import edu.passwordStorrager.core.Main;
 import edu.passwordStorrager.core.PropertiesManager;
@@ -28,8 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EventObject;
 
-import static edu.passwordStorrager.core.Application.IS_MAC;
-import static edu.passwordStorrager.core.Application.IS_WINDOWS;
+import static edu.passwordStorrager.core.Application.*;
 import static edu.passwordStorrager.utils.FrameUtils.*;
 
 public class MainForm extends JFrame {
@@ -104,7 +104,11 @@ public class MainForm extends JFrame {
     }
 
     private void initComponents() {
-        updateTitle(new File(Main.propertiesApplication.getProperty(PropertiesManager.KEY_NAME) + Values.DEFAULT_STORAGE_FILE_NAME));
+        if (IS_MAC) {
+            updateTitle(new File(Main.propertiesApplication.getProperty(PropertiesManager.KEY_NAME) + Values.DEFAULT_STORAGE_FILE_NAME));
+        } else {
+            setTitle(Application.APPLICATION_NAME);
+        }
         setContentPane(panel1);
         setIconImage(PlatformUtils.appIcon);
 
@@ -786,9 +790,9 @@ public class MainForm extends JFrame {
 
         editModeJRadioButtonMenuItem.setSelected(false);
         editModeJRadioButtonMenuItem.setText("Режим редактирования");
-        editModeJRadioButtonMenuItem.addActionListener(new ActionListener() {
+        editModeJRadioButtonMenuItem.addChangeListener(new ChangeListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void stateChanged(ChangeEvent e) {
                 if (!isSearchMode) {
                     if (!editModeJRadioButtonMenuItem.isSelected()) {
                         isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/lock.png")));
@@ -1154,7 +1158,9 @@ public class MainForm extends JFrame {
     private void saveStorage() {
         int rows = table.getRowCount();
         System.out.println("rows to save:" + rows);
-        editModeJRadioButtonMenuItem.doClick();
+
+        editModeJRadioButtonMenuItem.setSelected(false);
+
         recordArrayList = new ArrayList<>(rows);
         for (int i = 0; i < rows; i++) {
             Record record = new Record();
@@ -1233,7 +1239,6 @@ public class MainForm extends JFrame {
             index2 = table.getRowCount() - 1;
         }
 
-
         if (recordArrayList.size() > 0) {
             int diff = index2 - index1;
             recordArrayList.remove(index1);
@@ -1291,7 +1296,11 @@ public class MainForm extends JFrame {
 
     public void updateTitle(File file) {
         getRootPane().putClientProperty("Window.documentFile", file);
-        setTitle(file.getName());
+        if (IS_MAC) {
+            setTitle(file.getName());
+        } else {
+            setTitle(APPLICATION_NAME);
+        }
     }
 
 
