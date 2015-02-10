@@ -24,7 +24,6 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EventObject;
@@ -156,7 +155,7 @@ public class MainForm extends JFrame {
         initTable();
 
         pack();
-        
+
         if (table.getRowCount() > 0) {
             table.setRowSelectionInterval(0, 0);
         }
@@ -550,16 +549,9 @@ public class MainForm extends JFrame {
                 if (count >= 2 && me.getButton() == MouseEvent.BUTTON1) {
                     if (MainForm.this.table.getSelectedRow() >= 0) {
                         if (MainForm.this.table.getSelectedColumn() == table.getColumn(SITE_COLUMN_NAME).getModelIndex()) {
-                            java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
                             String site = (String) MainForm.this.table.getModel()
                                     .getValueAt(row, table.getColumn(SITE_COLUMN_NAME).getModelIndex());
-                            try {
-                                if (StringUtils.isUrl(site)) {
-                                    desktop.browse(URI.create(StringUtils.parseUrl(site)));
-                                }
-                            } catch (IOException e) {
-                                log.warn("Can not open in browser: " + StringUtils.parseUrl(site));
-                            }
+                            StringUtils.openWebPage(site);
                         } else {
                             String copy = (String) MainForm.this.table.getModel().getValueAt(row,
                                     table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex());
@@ -802,7 +794,6 @@ public class MainForm extends JFrame {
             }
         });
         editJMenu.add(addItem);
-        
 
         addSomeItem.setAccelerator(getAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.META_MASK | InputEvent.SHIFT_MASK),
                 KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK)));
