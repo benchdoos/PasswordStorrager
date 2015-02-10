@@ -82,5 +82,12 @@ public class AboutApplication extends JFrame {
         } catch (IOException e) {
             log.warn("Can not load file: /resources/icons/icon_black_256.png");
         }
+
+        version.setText(version.getText() + Application.APPLICATION_VERSION);
+        pack();
+        setPreferredSize(new Dimension(getWidth(), getHeight() + 20));
+        pack();
+        setLocation(FrameUtils.setFrameOnCenter(getSize()));
+        setVisible(true);
     }
 }
