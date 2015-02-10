@@ -1,5 +1,6 @@
 package edu.passwordStorrager.gui;
 
+import edu.passwordStorrager.core.Application;
 import edu.passwordStorrager.core.Main;
 import edu.passwordStorrager.core.PropertiesManager;
 import edu.passwordStorrager.objects.Key;
@@ -46,6 +47,7 @@ public class FirstLaunchDialog extends JDialog {
     public FirstLaunchDialog() {
         setResizable(false);
         setIconImage(PlatformUtils.appIcon);
+        setTitle("Регистрация хранилища - " + Application.APPLICATION_NAME);
         /*storageField.setText(PropertiesManager.propertiesApplication.getProperty("Storage"));*/
 
         browseKeyButton.addActionListener(new ActionListener() {
