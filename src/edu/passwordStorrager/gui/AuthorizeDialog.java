@@ -165,12 +165,14 @@ public class AuthorizeDialog extends JDialog {
                     buttonCancel.setEnabled(true);
                     passwordField.setEnabled(true);
                     passwordField.requestFocus();
+                    passwordField.setToolTipText("");
                     counter = 0;
                     isBlocked = false;
                     timer.stop();
                 } else {
                     buttonOK.setEnabled(false);
                     isBlocked = true;
+                    passwordField.setToolTipText("Неверный пароль");
                     buttonOK.setText(10 - counter + "");
                 }
             }
