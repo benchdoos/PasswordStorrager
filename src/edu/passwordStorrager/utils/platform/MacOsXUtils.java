@@ -1,21 +1,17 @@
 package edu.passwordStorrager.utils.platform;
 
 import com.apple.eawt.*;
-import com.apple.eawt.Application;
-import edu.passwordStorrager.core.*;
 import edu.passwordStorrager.gui.AboutApplication;
 import edu.passwordStorrager.gui.ChangeKey;
 import edu.passwordStorrager.gui.MainForm;
 import edu.passwordStorrager.gui.SettingsDialog;
-import edu.passwordStorrager.protector.Values;
 import edu.passwordStorrager.xmlManager.XmlParser;
 import org.apache.log4j.Logger;
 
-import java.io.File;
-
-import static edu.passwordStorrager.core.Application.*;
+import static edu.passwordStorrager.core.Application.IS_MAC;
 import static edu.passwordStorrager.core.Core.onQuit;
-import static edu.passwordStorrager.core.Main.*;
+import static edu.passwordStorrager.core.Main.framesMainForm;
+import static edu.passwordStorrager.core.Main.isAuthorized;
 import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
 
 public class MacOsXUtils {
@@ -53,7 +49,6 @@ public class MacOsXUtils {
                                     MainForm currentForm = framesMainForm.get(framesMainForm.size() - 1);
                                     currentForm.recordArrayList = new XmlParser().parseRecords();
                                     currentForm.loadList(currentForm.recordArrayList);
-                                    currentForm.updateTitle(new File(Main.propertiesApplication.getProperty(PropertiesManager.KEY_NAME) + Values.DEFAULT_STORAGE_FILE_NAME));
                                     currentForm.setEdited(false);
                                 }
                                 this.dispose();
