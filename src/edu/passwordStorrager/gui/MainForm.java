@@ -350,6 +350,7 @@ public class MainForm extends JFrame {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
+                        //что то тут не так (при добавлении новых элементов - они не ищутся)
                         loadList(searchRecord(text));
                     }
                 }).start();
@@ -372,7 +373,7 @@ public class MainForm extends JFrame {
         if (text.isEmpty()) {
             return recordArrayList;
         }
-        //start
+
         progressBar.setValue(0);
 
         ArrayList<Record> foundRecords = new ArrayList<>(recordArrayList.size());
@@ -382,11 +383,8 @@ public class MainForm extends JFrame {
 
         for (Record record : recordArrayList) {
             current++;
-            try {
-                if (record.getSite().contains(text) || record.getLogin().contains(text)) {
-                    foundRecords.add(record);
-                }
-            } catch (NullPointerException ignored) {
+            if (record.getSite().contains(text) || record.getLogin().contains(text)) {
+                foundRecords.add(record);
             }
             progressBar.setValue((int) ((double) current / total) * 100);
         }
@@ -611,14 +609,14 @@ public class MainForm extends JFrame {
         ListSelectionModel cellSelectionModel = table.getSelectionModel();
         cellSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         cellSelectionModel.addListSelectionListener(new ListSelectionListener() {
-            
+
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 int selected = table.getSelectedRow();
-                    if (selected > -1) {
-                        if (!isSearchMode) {
-                                moveUpButton.setEnabled(hasPrevious());
-                                moveDownButton.setEnabled(hasNext());
+                if (selected > -1) {
+                    if (!isSearchMode) {
+                        moveUpButton.setEnabled(hasPrevious());
+                        moveDownButton.setEnabled(hasNext());
 
                             /*if (selected == 0) {
                                 moveUpButton.setEnabled(false);
@@ -634,9 +632,8 @@ public class MainForm extends JFrame {
                                 moveDownButton.setEnabled(true);
                                 moveDownItem.setEnabled(true);
                             }*/
-                        }
                     }
-                
+                }
 
             }
         });
@@ -647,6 +644,7 @@ public class MainForm extends JFrame {
                 int row = table.getEditingRow();
                 int col = table.getEditingColumn();
                 String value = (String) table.getValueAt(row, col);
+                System.out.println("<<.<" + row + " " + col + " >> " + value);
 
                 Record oldRec = recordArrayList.get(row);
                 Record newRec = new Record();
@@ -663,7 +661,11 @@ public class MainForm extends JFrame {
                 if (col == table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex()) {
                     newRec.setPassword(value);
                 }
+
                 recordArrayList.set(row, newRec);
+                System.out.println("LL>" + oldRec);
+                System.out.println("L:>" + newRec);
+                System.out.println("LM>" + recordArrayList.get(row));
 
                 if (isFirstLaunch) {
                     setEdited(false);
