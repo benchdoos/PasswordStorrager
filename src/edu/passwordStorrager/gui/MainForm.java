@@ -159,6 +159,7 @@ public class MainForm extends JFrame {
 
         if (table.getRowCount() > 0) {
             table.setRowSelectionInterval(0, 0);
+            table.setColumnSelectionInterval(1, 1);
         }
         isFirstLaunch = false; //to fix isEdited on start
     }
@@ -184,6 +185,8 @@ public class MainForm extends JFrame {
         TableColumn password = table.getColumnModel().getColumn(3);
         password.setHeaderValue(PASSWORD_COLUMN_NAME);
         password.setResizable(false);
+
+        table.setCellSelectionEnabled(true);
 //        scrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, null); //square, квадрат между table и scrollpane
     }
 
@@ -248,13 +251,6 @@ public class MainForm extends JFrame {
 
 
     private void initSearchBarListeners() {
-        /*panel1.registerKeyboardAction(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        searchField.requestFocus();
-                    }
-                }, KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.META_MASK),
-                JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);*/
 
         searchField.putClientProperty("JTextField.variant", "search");
 
@@ -611,17 +607,63 @@ public class MainForm extends JFrame {
 
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                int selected = table.getSelectedRow();
-                if (selected > -1) {
+                int row = table.getSelectedRow();
+                int col = table.getSelectedColumn();
+                if (row > -1) {
                     if (!isSearchMode) {
                         moveUpButton.setEnabled(hasPrevious());
                         moveDownButton.setEnabled(hasNext());
                     }
                 }
-
+                if (col == 0) {
+                    table.setRowSelectionInterval(row,row);
+                    table.setColumnSelectionInterval(col+1,col+1);
+                }
             }
         });
+/*
+        ListSelectionModel listSelectionModel = table.getColumnModel().getSelectionModel();
+        listSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        listSelectionModel.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                //3->0->1 (calling 0) -> 3
+                System.out.println("PP.>>>" + e.getFirstIndex() + " " + e.getLastIndex() + " " + e.getValueIsAdjusting());
+                
+                
+                if (e.getFirstIndex() == 0) {
+                    int pwd = table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex();
+                    int sit = table.getColumn(SITE_COLUMN_NAME).getModelIndex();
+                    int rows = table.getRowCount();
+                    int selected = table.getSelectedRow();
+                    int lastIndex = e.getLastIndex();
 
+                    if (lastIndex != 0) {
+                        if (lastIndex == pwd) {
+                            if (rows > selected + 1) {
+                                table.setRowSelectionInterval(selected + 1, selected + 1);
+                            } else {
+                                table.setRowSelectionInterval(0, 0);
+                            }
+                            table.setColumnSelectionInterval(2, 2);
+                            table.setColumnSelectionInterval(1, 1);
+                        }
+                        if (lastIndex == sit) {
+                            if (selected - 1 > -1) {
+                                table.setRowSelectionInterval(selected - 1, selected - 1);
+                            } else {
+                                table.setRowSelectionInterval(rows - 1, rows - 1);
+                            }
+                                table.setColumnSelectionInterval(2, 2);
+                                table.setColumnSelectionInterval(pwd, pwd);
+
+                        }
+
+                    }
+                }
+            }
+        });
+*/
         tableModelListener = new TableModelListener() {
             @Override
             public void tableChanged(TableModelEvent e) {
