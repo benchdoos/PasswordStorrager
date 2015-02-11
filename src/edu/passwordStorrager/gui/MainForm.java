@@ -186,7 +186,7 @@ public class MainForm extends JFrame {
         password.setHeaderValue(PASSWORD_COLUMN_NAME);
         password.setResizable(false);
 
-        table.setCellSelectionEnabled(true);
+//        table.setCellSelectionEnabled(true); //test
 //        scrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, null); //square, квадрат между table и scrollpane
     }
 
