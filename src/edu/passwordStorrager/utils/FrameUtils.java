@@ -5,6 +5,7 @@ import edu.passwordStorrager.core.Main;
 import edu.passwordStorrager.core.PropertiesManager;
 import org.apache.log4j.Logger;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
@@ -12,9 +13,11 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class FrameUtils {
@@ -117,7 +120,7 @@ public class FrameUtils {
                     } else if (counter > 4 && counter <= 6) {
                         step = 3;
                     }
-                    
+
                     if (counter <= maxCounter) {
                         counter++;
                         if (counter % 2 == 1) {
@@ -130,7 +133,7 @@ public class FrameUtils {
                     } else {
                         Point newLocation = new Point(location.x, location.y);
                         window.setLocation(newLocation);
-                        
+
                         counter = 0;
                         timer.removeActionListener(timer.getActionListeners()[0]);
                         timer.stop();
@@ -216,4 +219,19 @@ public class FrameUtils {
         return fileChooser;
     }
 
+    public static Icon resizeIcon(URL url, Dimension size) {
+        try {
+            BufferedImage img = ImageIO.read(url);
+            return resizeIcon(img, size);
+        } catch (IOException e){
+            log.warn("Can not load file: /resources/icons/icon_black_256.png");
+            return null;
+        }
+    }
+
+    public static Icon resizeIcon(Image image, Dimension size) {
+        Image scaledImage = image.getScaledInstance(size.width, size.height,
+                Image.SCALE_SMOOTH);
+        return new ImageIcon(scaledImage);
+    }
 }
