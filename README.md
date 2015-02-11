@@ -1,9 +1,17 @@
 # PasswordStorrager
 Store your passwords in secure
 
+## Introduction:
+Save your passwords in safety. All your passwords will be under MD5 encryption in safe storage.
+Remember only one password to access all your secret data.
+
 **OS supported:**
 - MAC OS X (in development)
 - Windows (in development)
+
+**Requirements:**
+- [Java 1.7 or newer](http://java.com/ru/download/)
+- MAC OS X 10.7.3 (Lion) or newer / Windows XP or newer
 
 ## Download:
 [Latest](https://github.com/benchdoos/PasswordStorrager/releases/tag/v0.1-beta.1) 0.1-beta.1 (**Mac OS X only**)
