@@ -113,8 +113,7 @@ public class MainForm extends JFrame {
         setContentPane(panel1);
         setIconImage(PlatformUtils.appIcon);
 
-        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        //setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(600, 430));
         setPreferredSize(getFrameSize(getCurrentClassName()));
         setLocation(getFrameLocation(getCurrentClassName()));
@@ -124,16 +123,18 @@ public class MainForm extends JFrame {
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 if (isEdited) {
-                    //TODO ask before close
+                    SaveOnExitDialog saveOnExitDialog = new SaveOnExitDialog();
+                    new MovingTogether((JFrame) e.getWindow(), saveOnExitDialog);
+                    saveOnExitDialog.setVisible(true);
+                } else {
+                    disposeForm();
                 }
                 FrameUtils.setFrameLocation(getClass().getEnclosingClass().getName(), getLocation());
                 FrameUtils.setFrameSize(getClass().getEnclosingClass().getName(), getSize());
-                Core.onQuit();
             }
 
-            public void windowClosed(WindowEvent e) {
-                FrameUtils.setFrameLocation(getClass().getEnclosingClass().getName(), getLocation());
-                FrameUtils.setFrameSize(getClass().getEnclosingClass().getName(), getSize());
+            public void disposeForm() {
+                dispose();
                 Core.onQuit();
             }
         });
@@ -1078,7 +1079,7 @@ public class MainForm extends JFrame {
         setStatus("Количество записей: " + table.getModel().getRowCount(), STATUS_MESSAGE);
     }
 
-    private void saveStorage() {
+    public void saveStorage() {
         int rows = table.getRowCount();
         System.out.println("rows to save:" + rows);
 
@@ -1271,7 +1272,7 @@ public class MainForm extends JFrame {
         public void addCellEditorListener(CellEditorListener l) {
             textField.setCaret(new DefaultCaret());
             textField.setCaretPosition(textField.getText().length());
-            
+
             super.addCellEditorListener(l);
         }
     }
@@ -1359,4 +1360,33 @@ abstract class InputForm extends JDialog {
         value.setEnabled(true);
 
     }
+}
+
+class MovingTogether extends ComponentAdapter {
+    private Window window, dialog;
+
+    public MovingTogether(JFrame window, JDialog dialog) {
+        this.window = window;
+        this.dialog = dialog;
+        if (window.getComponentListeners().length > 1) {
+            window.removeComponentListener(this);
+        }
+        window.addComponentListener(this);
+    }
+
+    public void componentMoved(ComponentEvent e) {
+        Window win = (Window) e.getComponent();
+        Dimension size = dialog.getSize();
+        if (win == window && dialog.isVisible()) {
+            dialog.setLocationRelativeTo(window);
+            Point location = window.getLocation();
+            Dimension dim = window.getSize();
+            int centerWidth = location.x + dim.width / 2;
+            centerWidth = centerWidth - size.width / 2;
+            int height = location.y + 22;
+            dialog.setLocation(centerWidth, height);
+
+        }
+    }
+
 }
