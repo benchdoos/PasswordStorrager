@@ -18,6 +18,7 @@ Mac OS X / Windows:
 
 [Latest](https://github.com/benchdoos/PasswordStorrager/releases/tag/v0.1-beta.2) 0.1-beta.2
 
+Old releases:
 - [0.1-beta.1](https://github.com/benchdoos/PasswordStorrager/releases/tag/v0.1-beta.1) (**Mac OS X only**)
 
 ### TODO LIST:
