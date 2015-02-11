@@ -627,7 +627,6 @@ public class MainForm extends JFrame {
                 int row = table.getEditingRow();
                 int col = table.getEditingColumn();
                 String value = (String) table.getValueAt(row, col);
-                System.out.println("<<.<" + row + " " + col + " >> " + value);
 
                 Record oldRec = recordArrayList.get(row);
                 Record newRec = new Record();
@@ -1266,6 +1265,14 @@ public class MainForm extends JFrame {
         public boolean isCellEditable(EventObject anEvent) {
             return textField != null && !textField.getText().equals(NUMBER_COLUMN_NAME)
                     && editModeJRadioButtonMenuItem.isSelected();
+        }
+
+        @Override
+        public void addCellEditorListener(CellEditorListener l) {
+            textField.setCaret(new DefaultCaret());
+            textField.setCaretPosition(textField.getText().length());
+            
+            super.addCellEditorListener(l);
         }
     }
 
