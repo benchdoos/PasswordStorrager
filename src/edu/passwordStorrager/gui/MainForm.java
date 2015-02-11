@@ -124,7 +124,7 @@ public class MainForm extends JFrame {
             public void windowClosing(WindowEvent e) {
                 if (isEdited) {
                     SaveOnExitDialog saveOnExitDialog = new SaveOnExitDialog();
-                    new MovingTogether((JFrame) e.getWindow(), saveOnExitDialog);
+                    if (IS_MAC) new MovingTogether((JFrame) e.getWindow(), saveOnExitDialog);
                     saveOnExitDialog.setVisible(true);
                 } else {
                     disposeForm();
