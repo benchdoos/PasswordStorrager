@@ -1,9 +1,9 @@
 package edu.passwordStorrager.objects;
 
 public class Record {
-    private String login;
-    private String password;
-    private String site;
+    private String login = "";
+    private String password = "";
+    private String site = "";
 
     public String getLogin() {
         return login;
