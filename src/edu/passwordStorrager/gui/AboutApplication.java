@@ -6,14 +6,10 @@ import edu.passwordStorrager.utils.StringUtils;
 import edu.passwordStorrager.utils.platform.PlatformUtils;
 import org.apache.log4j.Logger;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.URL;
 
 import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
 
@@ -32,7 +28,7 @@ public class AboutApplication extends JFrame {
         setIconImage(PlatformUtils.appIcon);
         setResizable(false);
         icon.setSize(128, 128);
-        setNewIcon(getClass().getResource("/resources/icons/icon_black_256.png"));
+        icon.setIcon(FrameUtils.resizeIcon(getClass().getResource("/resources/icons/icon_black_256.png"),icon.getSize()));
 
         final String original = version.getText() + Application.APPLICATION_VERSION;
         version.setText(original);
@@ -56,10 +52,10 @@ public class AboutApplication extends JFrame {
                     isJeSuisDonbassActive = !isJeSuisDonbassActive;
                     if (!isJeSuisDonbassActive) {
                         name.setText(Application.APPLICATION_NAME);
-                        setNewIcon(getClass().getResource("/resources/icons/icon_black_256.png"));
+                        icon.setIcon(FrameUtils.resizeIcon(getClass().getResource("/resources/icons/icon_black_256.png"), icon.getSize()));
                     } else {
                         name.setText("Je Suis Donbass");
-                        setNewIcon(getClass().getResource("/resources/icons/JSD/saveDonbassPeople.png"));
+                        icon.setIcon(FrameUtils.resizeIcon(getClass().getResource("/resources/icons/JSD/saveDonbassPeople.png"), icon.getSize()));
                     }
                 }
 
@@ -84,14 +80,4 @@ public class AboutApplication extends JFrame {
         setVisible(true);
     }
 
-    private void setNewIcon(URL url) {
-        try {
-            BufferedImage img = ImageIO.read(url);
-            Image scaledImage = img.getScaledInstance(icon.getWidth(), icon.getHeight(),
-                    Image.SCALE_SMOOTH);
-            icon.setIcon(new ImageIcon(scaledImage));
-        } catch (IOException e) {
-            log.warn("Can not load file: /resources/icons/icon_black_256.png");
-        }
-    }
 }
