@@ -11,7 +11,7 @@ Remember only one password to access all your secret data.
 
 **Requirements:**
 - [Java 1.7 or newer](http://java.com/ru/download/)
-- MAC OS X 10.7.3 (Lion) or newer / Windows XP or newer
+- MAC OS X 10.7.3 (Lion) or newer / Windows 7 or newer
 
 ## Download:
 [Latest](https://github.com/benchdoos/PasswordStorrager/releases/tag/v0.1-beta.1) 0.1-beta.1 (**Mac OS X only**)
