@@ -296,15 +296,12 @@ public class MainForm extends JFrame {
             public void focusGained(FocusEvent e) {
                 int width = 300;
                 changeSearchFieldSize(width);
-
-                System.out.println("gained");
             }
 
             @Override
             public void focusLost(FocusEvent e) {
                 int width = 150;
                 changeSearchFieldSize(width);
-                System.out.println("lost");
             }
         });
 
@@ -618,21 +615,6 @@ public class MainForm extends JFrame {
                     if (!isSearchMode) {
                         moveUpButton.setEnabled(hasPrevious());
                         moveDownButton.setEnabled(hasNext());
-
-                            /*if (selected == 0) {
-                                moveUpButton.setEnabled(false);
-                                moveUpItem.setEnabled(false);
-                            } else {
-                                moveUpButton.setEnabled(true);
-                                moveUpItem.setEnabled(true);
-                            }
-                            if (selected == table.getRowCount() - 1) {
-                                moveDownButton.setEnabled(false);
-                                moveDownItem.setEnabled(false);
-                            } else {
-                                moveDownButton.setEnabled(true);
-                                moveDownItem.setEnabled(true);
-                            }*/
                     }
                 }
 
@@ -664,9 +646,6 @@ public class MainForm extends JFrame {
                 }
 
                 recordArrayList.set(row, newRec);
-                System.out.println("LL>" + oldRec);
-                System.out.println("L:>" + newRec);
-                System.out.println("LM>" + recordArrayList.get(row));
 
                 if (isFirstLaunch) {
                     setEdited(false);
