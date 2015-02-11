@@ -352,6 +352,7 @@ public class MainForm extends JFrame {
                     public void run() {
                         //что то тут не так (при добавлении новых элементов - они не ищутся)
                         loadList(searchRecord(text));
+                        setStatus("Найдено записей: " + table.getRowCount(), STATUS_MESSAGE);
                     }
                 }).start();
                 setControlButtonsEnabled(false);
