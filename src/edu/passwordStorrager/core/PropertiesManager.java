@@ -12,10 +12,10 @@ import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
 
 public class PropertiesManager {
     private static final Logger log = Logger.getLogger(getCurrentClassName());
-    
+
     public static final String STORAGE_NAME = "Storage";
     public static final String KEY_NAME = "Key";
-    
+
     public static String folder;
     public static String propertiesFilePath;
     public static String framePropertiesFilePath;
@@ -51,14 +51,14 @@ public class PropertiesManager {
             log.warn("Can not create encrypted File: " + propertiesFilePath);
         }
     }
-    
+
     public static void saveProperties(Properties properties, String filePath) throws IOException {
-        properties.store(new FileOutputStream(filePath),"");
+        properties.store(new FileOutputStream(filePath), "");
     }
 
     private static void createFolderDirectory() {
         File folder_ = new File(folder);
-        if(folder_.exists()) {
+        if (folder_.exists()) {
             if (!folder_.isDirectory()) {
                 try {
                     Files.copy(folder_.toPath(), new FileOutputStream(folder + "_bak"));
@@ -73,6 +73,13 @@ public class PropertiesManager {
     }
 
     public static Properties loadProperties(String propertiesPath) {
+        if (Application.IS_APPLICATION_DEV_MODE) {
+            String dev = Main.JAR_FILE + "/edu/passwordStorrager/core/storage.properties";
+            if (new File(dev).exists()) {
+                System.err.println("DEV_MODE:" + dev);
+                propertiesPath = dev;
+            }
+        }
         try {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             Protector.decrypt(new FileInputStream(propertiesPath), byteArrayOutputStream);
@@ -96,7 +103,6 @@ public class PropertiesManager {
     }
 
 
-
     public static boolean isCorrect() {
         return Main.propertiesApplication.containsKey(KEY_NAME);
     }
@@ -105,7 +111,7 @@ public class PropertiesManager {
         System.out.println("Properties[");
         for (String key : properties.stringPropertyNames()) {
             String value = properties.getProperty(key);
-            System.out.println("\t"+key + " => " + value);
+            System.out.println("\t" + key + " => " + value);
         }
         System.out.println("]");
     }

@@ -14,7 +14,7 @@ import java.util.Properties;
 public class Main {
 
 
-    private final static File JAR_FILE = new File(Main.class.getProtectionDomain()
+    protected final static File JAR_FILE = new File(Main.class.getProtectionDomain()
             .getCodeSource().getLocation().getPath());
 
     public static Key key = new Key();
@@ -33,6 +33,7 @@ public class Main {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
+                System.out.println("JAR: " + JAR_FILE);
                 createFolderForLog4J();
                 new Core();
             }
@@ -42,7 +43,7 @@ public class Main {
     private static void createFolderForLog4J() {
         String tmp = Application.APPLICATION_TMP_FOLDER;
         System.setProperty(Application.APPLICATION_LOG_FOLDER_PROPERTY, Application.APPLICATION_LOG_FOLDER);
-                
+
         String PS = tmp + Application.APPLICATION_FOLDER_NAME + File.separator;
         boolean status = false;
         if (!new File(PS).exists()) {
