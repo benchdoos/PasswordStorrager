@@ -8,6 +8,8 @@ import edu.passwordStorrager.objects.Record;
 import edu.passwordStorrager.protector.Values;
 import edu.passwordStorrager.utils.FrameUtils;
 import edu.passwordStorrager.utils.StringUtils;
+import edu.passwordStorrager.utils.history.ChangeCellValueAction;
+import edu.passwordStorrager.utils.history.History;
 import edu.passwordStorrager.utils.platform.PlatformUtils;
 import edu.passwordStorrager.xmlManager.XmlParser;
 import org.apache.log4j.Logger;
@@ -39,10 +41,10 @@ public class MainForm extends JFrame {
     protected static JRadioButtonMenuItem editModeJRadioButtonMenuItem; //if checked - can edit existing
     static Timer timer;
 
-    static final String NUMBER_COLUMN_NAME = "#",
-            SITE_COLUMN_NAME = "Сайт",
-            LOGIN_COLUMN_NAME = "Логин",
-            PASSWORD_COLUMN_NAME = "Пароль";
+    static final String NUMBER_COLUMN_NAME = "#", SITE_COLUMN_NAME = "Сайт",
+            LOGIN_COLUMN_NAME = "Логин", PASSWORD_COLUMN_NAME = "Пароль";
+
+    private History history;
 
     private boolean isEdited = false;
 
@@ -59,6 +61,10 @@ public class MainForm extends JFrame {
     private JMenuItem blockItem = new JMenuItem("Блокировать");
     private JMenuItem settingsItem = new JMenuItem("Настройки");
     private JMenu editJMenu = new JMenu("Правка");
+
+    private JMenuItem undoItem = new JMenuItem("Отменить");
+    private JMenuItem redoItem = new JMenuItem("Повторить");
+
     private JMenuItem addItem = new JMenuItem("Добавить");
     private JMenuItem addSomeItem = new JMenuItem("Добавить несколько...");
     private JMenuItem deleteItem = new JMenuItem("Удалить");
@@ -77,7 +83,7 @@ public class MainForm extends JFrame {
 
     private JPanel panel1;
     private JScrollPane scrollPane;
-    private JTable table;
+    public JTable table;
     private JPanel statusPanel;
     private JTextField searchField;
     private JButton moveUpButton;
@@ -89,7 +95,7 @@ public class MainForm extends JFrame {
     private Point mouse = new Point(0, 0);
     private MouseListener controlPanelMouseListener;
     private MouseMotionAdapter controlPanelMouseMotionAdapter;
-    
+
     private JProgressBar progressBar;
     private JLabel bar;
     private JProgressBar statusProgressBar;
@@ -107,6 +113,7 @@ public class MainForm extends JFrame {
         initComponents();
         requestFocus();
         table.requestFocus();
+        history = new History(this);
         PasswordStorrager.frames.add(this);
     }
 
@@ -504,7 +511,7 @@ public class MainForm extends JFrame {
             }
         });
 
-         controlPanelMouseListener = new MouseListener() {
+        controlPanelMouseListener = new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
 
@@ -530,7 +537,7 @@ public class MainForm extends JFrame {
             public void mouseExited(MouseEvent e) {
 
             }
-        };        
+        };
         controlPanelMouseMotionAdapter = new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
@@ -750,32 +757,43 @@ public class MainForm extends JFrame {
         tableModelListener = new TableModelListener() {
             @Override
             public void tableChanged(TableModelEvent e) {
-                int row = table.getEditingRow();
-                int col = table.getEditingColumn();
-                String value = (String) table.getValueAt(row, col);
+                int row = e.getFirstRow();
+                int col = e.getColumn();
+                if (row > -1 && col > -1) {
 
-                Record oldRec = recordArrayList.get(row);
-                Record newRec = new Record();
-                newRec.setSite(oldRec.getSite());
-                newRec.setLogin(oldRec.getLogin());
-                newRec.setPassword(oldRec.getPassword());
-                if (col == table.getColumn(SITE_COLUMN_NAME).getModelIndex()) {
-                    newRec.setSite(value);
-                }
-                if (col == table.getColumn(LOGIN_COLUMN_NAME).getModelIndex()) {
-                    newRec.setLogin(value);
-                }
+                    String value = (String) table.getValueAt(row, col);
 
-                if (col == table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex()) {
-                    newRec.setPassword(value);
-                }
+                    Record oldRec = recordArrayList.get(row);
+                    Record newRec = new Record();
+                    newRec.setSite(oldRec.getSite());
+                    newRec.setLogin(oldRec.getLogin());
+                    newRec.setPassword(oldRec.getPassword());
 
-                recordArrayList.set(row, newRec);
+                    String prevValue = "";
+                    if (col == table.getColumn(SITE_COLUMN_NAME).getModelIndex()) {
+                        newRec.setSite(value);
+                        prevValue = oldRec.getSite();
+                    }
+                    if (col == table.getColumn(LOGIN_COLUMN_NAME).getModelIndex()) {
+                        newRec.setLogin(value);
+                        prevValue = oldRec.getLogin();
+                    }
 
-                if (isFirstLaunch) {
-                    setEdited(false);
-                } else {
-                    setEdited(true);
+                    if (col == table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex()) {
+                        newRec.setPassword(value);
+                        prevValue = oldRec.getPassword();
+                    }
+
+                    recordArrayList.set(row, newRec);
+
+                    if (isFirstLaunch) {
+                        setEdited(false);
+                    } else {
+                        setEdited(true);
+                    }
+                    if (table.getEditingRow() > -1 && table.getEditingColumn() > -1) {
+                        history.register(new ChangeCellValueAction(new Point(row, col), prevValue, value));
+                    }
                 }
             }
         };
@@ -874,6 +892,28 @@ public class MainForm extends JFrame {
         }
 
         jMenuBar1.add(fileJMenu);
+
+        undoItem.setAccelerator(getAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.META_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK)));
+        undoItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                history.undo();
+            }
+        });
+        editJMenu.add(undoItem);
+
+        redoItem.setAccelerator(getAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.META_DOWN_MASK | InputEvent.SHIFT_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK)));
+        redoItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                history.redo();
+            }
+        });
+        editJMenu.add(redoItem);
+
+        editJMenu.add(new JSeparator());
 
         editModeJRadioButtonMenuItem.setAccelerator(getAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.META_MASK),
                 KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK)));
@@ -1215,6 +1255,7 @@ public class MainForm extends JFrame {
         table.getModel().addTableModelListener(tableModelListener);
         statusProgressBar.setVisible(false);
 
+//        history = new History(this);
         updateRowCount(recordArrayList.size());
         setStatus("Количество записей: " + table.getModel().getRowCount(), STATUS_MESSAGE);
     }
@@ -1236,6 +1277,7 @@ public class MainForm extends JFrame {
         new XmlParser().saveRecords(recordArrayList);
         loadList(recordArrayList);
         setEdited(false);
+        history.save();
         setStatus("Сохранено", STATUS_SUCCESS);
     }
 
@@ -1412,8 +1454,26 @@ public class MainForm extends JFrame {
         public void addCellEditorListener(CellEditorListener l) {
             textField.setCaret(new DefaultCaret());
             textField.setCaretPosition(textField.getText().length());
-
+            MainForm mf = (MainForm)findWindow(textField);
+            mf.undoItem.setEnabled(false);
+            mf.redoItem.setEnabled(false);
             super.addCellEditorListener(l);
+        }
+
+        @Override
+        public boolean stopCellEditing() {
+            MainForm mf = (MainForm) findWindow(textField);
+            mf.undoItem.setEnabled(true);
+            mf.redoItem.setEnabled(true);
+            return super.stopCellEditing();
+        }
+
+        @Override
+        public void cancelCellEditing() {
+            MainForm mf = (MainForm) findWindow(textField);
+            mf.undoItem.setEnabled(true);
+            mf.redoItem.setEnabled(true);
+            super.cancelCellEditing();
         }
     }
 
