@@ -323,6 +323,7 @@ public class MainForm extends JFrame {
 
             @Override
             public void focusGained(FocusEvent e) {
+                isSearchMode = true;
                 int width = 300;
                 changeSearchFieldSize(width);
             }
@@ -331,6 +332,9 @@ public class MainForm extends JFrame {
             public void focusLost(FocusEvent e) {
                 int width = 150;
                 changeSearchFieldSize(width);
+                if (searchField.getText().isEmpty()) {
+                    isSearchMode = false;
+                }
             }
         });
 
@@ -678,6 +682,7 @@ public class MainForm extends JFrame {
                         searchField.setText(e.getKeyChar() + "");
                         searchField.setCaret(new DefaultCaret());
                         searchField.setCaretPosition(searchField.getText().length());
+                        isSearchMode = true;
                     }
 
                     if (e.getKeyCode() == KeyEvent.VK_ESCAPE && isSearchMode) {
@@ -793,7 +798,7 @@ public class MainForm extends JFrame {
                         setEdited(true);
                     }
 //                    if (table.getEditingRow() > -1 && table.getEditingColumn() > -1) {
-                    if(!history.isHistoryCall()){
+                    if (!history.isHistoryCall()) {
                         history.register(new ChangeCellValueAction(new Point(row, col), prevValue, value));
                     }
                 }
@@ -840,6 +845,8 @@ public class MainForm extends JFrame {
                     isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/lock.png")));
                     isEditableIcon.setToolTipText("Режим редактирования выключен");
                     initHistory();
+                    moveUpButton.setEnabled(false);
+                    moveDownButton.setEnabled(false);
                 }
             }
         });
@@ -901,7 +908,9 @@ public class MainForm extends JFrame {
         undoItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                history.undo();
+                if (!isSearchMode) {
+                    history.undo();
+                }
             }
         });
         editJMenu.add(undoItem);
@@ -911,7 +920,9 @@ public class MainForm extends JFrame {
         redoItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                history.redo();
+                if (!isSearchMode) {
+                    history.redo();
+                }
             }
         });
         editJMenu.add(redoItem);
@@ -951,6 +962,7 @@ public class MainForm extends JFrame {
         });
 
         editJMenu.add(editModeJRadioButtonMenuItem);
+        editJMenu.add(new JSeparator());
 
         addItem.setAccelerator(getAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.META_MASK),
                 KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK)));
@@ -1054,12 +1066,13 @@ public class MainForm extends JFrame {
             }
         });
         editJMenu.add(deleteSomeItem);
+        editJMenu.add(new JSeparator());
 
         addUpItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.ALT_MASK | InputEvent.SHIFT_MASK));
         addUpItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                addUpButton.doClick();
+                addUpButton.getActionListeners()[0].actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
             }
         });
         editJMenu.add(addUpItem);
@@ -1068,7 +1081,7 @@ public class MainForm extends JFrame {
         addDownItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                addDownButton.doClick();
+                addDownButton.getActionListeners()[0].actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
             }
         });
         editJMenu.add(addDownItem);
@@ -1077,7 +1090,7 @@ public class MainForm extends JFrame {
         moveUpItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                moveUpButton.doClick();
+                moveUpButton.getActionListeners()[0].actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
             }
         });
         editJMenu.add(moveUpItem);
@@ -1086,16 +1099,20 @@ public class MainForm extends JFrame {
         moveDownItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                moveDownButton.doClick();
+                moveDownButton.getActionListeners()[0].actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
             }
         });
         editJMenu.add(moveDownItem);
+        editJMenu.add(new JSeparator());
 
         searchMenuItem.setAccelerator(getAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.META_MASK),
                 KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK)));
         searchMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (editModeJRadioButtonMenuItem.isSelected()) {
+                    editModeJRadioButtonMenuItem.setSelected(false);
+                }
                 searchField.requestFocus();
             }
         });
@@ -1261,7 +1278,7 @@ public class MainForm extends JFrame {
         table.setSurrendersFocusOnKeystroke(true);
         table.getModel().addTableModelListener(tableModelListener);
         statusProgressBar.setVisible(false);
-        
+
         updateRowCount(recordArrayList.size());
         setStatus("Количество записей: " + table.getModel().getRowCount(), STATUS_MESSAGE);
     }
@@ -1289,7 +1306,8 @@ public class MainForm extends JFrame {
 
     public void addNewRecord(int index, int count) {
         if (!editModeJRadioButtonMenuItem.isSelected()) {
-            editModeJRadioButtonMenuItem.doClick();
+//            editModeJRadioButtonMenuItem.doClick();
+            editModeJRadioButtonMenuItem.getChangeListeners()[0].stateChanged(new ChangeEvent(this));
         }
         setStatus(bar.getText(), STATUS_MESSAGE);
         isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/unlock.png")));
@@ -1322,6 +1340,7 @@ public class MainForm extends JFrame {
         table.clearSelection();
         table.setRowSelectionInterval(index, index);
         scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
+        table.requestFocus();
         setEdited(true);
         if (!history.isHistoryCall()) {
             history.register(new AddRowAction(index, count));
@@ -1463,7 +1482,7 @@ public class MainForm extends JFrame {
         public void addCellEditorListener(CellEditorListener l) {
             textField.setCaret(new DefaultCaret());
             textField.setCaretPosition(textField.getText().length());
-            MainForm mf = (MainForm)findWindow(textField);
+            MainForm mf = (MainForm) findWindow(textField);
             mf.undoItem.setEnabled(false);
             mf.redoItem.setEnabled(false);
             super.addCellEditorListener(l);
