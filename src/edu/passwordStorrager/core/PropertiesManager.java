@@ -36,11 +36,11 @@ public class PropertiesManager {
     private static void createProperties(String keyPath, String storagePath) {
         createFolderDirectory();
         try {
-            Main.propertiesApplication.setProperty(STORAGE_NAME, storagePath);
-            Main.propertiesApplication.setProperty(KEY_NAME, keyPath);
+            PasswordStorrager.propertiesApplication.setProperty(STORAGE_NAME, storagePath);
+            PasswordStorrager.propertiesApplication.setProperty(KEY_NAME, keyPath);
 
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            Main.propertiesApplication.store(byteArrayOutputStream, "");
+            PasswordStorrager.propertiesApplication.store(byteArrayOutputStream, "");
             byte prop[] = byteArrayOutputStream.toByteArray();
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(prop);
             Protector.encrypt(byteArrayInputStream, new FileOutputStream(propertiesFilePath));
@@ -74,7 +74,7 @@ public class PropertiesManager {
 
     public static Properties loadProperties(String propertiesPath) {
         if (Application.IS_APPLICATION_DEV_MODE) {
-            String dev = Main.JAR_FILE + "/edu/passwordStorrager/core/storage.properties";
+            String dev = PasswordStorrager.JAR_FILE + "/edu/passwordStorrager/core/storage.properties";
             if (new File(dev).exists()) {
                 System.err.println("DEV_MODE:" + dev);
                 propertiesPath = dev;
@@ -104,7 +104,7 @@ public class PropertiesManager {
 
 
     public static boolean isCorrect() {
-        return Main.propertiesApplication.containsKey(KEY_NAME);
+        return PasswordStorrager.propertiesApplication.containsKey(KEY_NAME);
     }
 
     public static void showProperties(Properties properties) {

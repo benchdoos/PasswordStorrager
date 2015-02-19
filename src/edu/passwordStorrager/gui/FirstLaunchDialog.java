@@ -1,7 +1,7 @@
 package edu.passwordStorrager.gui;
 
 import edu.passwordStorrager.core.Application;
-import edu.passwordStorrager.core.Main;
+import edu.passwordStorrager.core.PasswordStorrager;
 import edu.passwordStorrager.core.PropertiesManager;
 import edu.passwordStorrager.objects.Key;
 import edu.passwordStorrager.protector.Protector;
@@ -173,7 +173,7 @@ public class FirstLaunchDialog extends JDialog {
             if (validatePath(keyField.getText()) && validatePath(storageField.getText())) {
                 registerNewStorage();
                 try {
-                    Main.key = KeyUtils.loadKeyFile(StringUtils.fixFolder(keyField.getText()) + Values.DEFAULT_KEY_FILE_NAME);
+                    PasswordStorrager.key = KeyUtils.loadKeyFile(StringUtils.fixFolder(keyField.getText()) + Values.DEFAULT_KEY_FILE_NAME);
                 } catch (Throwable e) {
                     log.warn("Can not load key file: "
                             + StringUtils.fixFolder(keyField.getText()) + Values.DEFAULT_KEY_FILE_NAME, e);

@@ -10,8 +10,8 @@ import org.apache.log4j.Logger;
 
 import static edu.passwordStorrager.core.Application.IS_MAC;
 import static edu.passwordStorrager.core.Core.onQuit;
-import static edu.passwordStorrager.core.Main.framesMainForm;
-import static edu.passwordStorrager.core.Main.isAuthorized;
+import static edu.passwordStorrager.core.PasswordStorrager.framesMainForm;
+import static edu.passwordStorrager.core.PasswordStorrager.isAuthorized;
 import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
 
 public class MacOsXUtils {

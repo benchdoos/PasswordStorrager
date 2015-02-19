@@ -2,7 +2,7 @@ package edu.passwordStorrager.gui;
 
 import edu.passwordStorrager.core.Application;
 import edu.passwordStorrager.core.Core;
-import edu.passwordStorrager.core.Main;
+import edu.passwordStorrager.core.PasswordStorrager;
 import edu.passwordStorrager.core.PropertiesManager;
 import edu.passwordStorrager.objects.Record;
 import edu.passwordStorrager.protector.Values;
@@ -101,12 +101,12 @@ public class MainForm extends JFrame {
         initComponents();
         requestFocus();
         table.requestFocus();
-        Main.framesMainForm.add(this);
+        PasswordStorrager.framesMainForm.add(this);
     }
 
     private void initComponents() {
         if (IS_MAC) {
-            updateTitle(new File(Main.propertiesApplication.getProperty(PropertiesManager.KEY_NAME) + Values.DEFAULT_STORAGE_FILE_NAME));
+            updateTitle(new File(PasswordStorrager.propertiesApplication.getProperty(PropertiesManager.KEY_NAME) + Values.DEFAULT_STORAGE_FILE_NAME));
         } else {
             setTitle(Application.APPLICATION_NAME);
         }

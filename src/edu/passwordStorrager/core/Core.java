@@ -21,15 +21,15 @@ public class Core implements Application {
         initSystem();
 
         if (exists(PropertiesManager.framePropertiesFilePath)) {
-            Main.propertiesFrames = new Properties();
+            PasswordStorrager.propertiesFrames = new Properties();
             try {
-                Main.propertiesFrames.load(new FileInputStream(PropertiesManager.framePropertiesFilePath));
+                PasswordStorrager.propertiesFrames.load(new FileInputStream(PropertiesManager.framePropertiesFilePath));
                 log.debug("Frames properties loaded from " + PropertiesManager.framePropertiesFilePath);
             } catch (IOException e) {
                 log.warn("Can not load Frames properties", e);
             }
         } else {
-            Main.propertiesFrames = new Properties();
+            PasswordStorrager.propertiesFrames = new Properties();
             log.debug("Creating new Frames properties");
         }
 

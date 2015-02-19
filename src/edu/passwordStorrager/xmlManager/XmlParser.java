@@ -1,6 +1,6 @@
 package edu.passwordStorrager.xmlManager;
 
-import edu.passwordStorrager.core.Main;
+import edu.passwordStorrager.core.PasswordStorrager;
 import edu.passwordStorrager.objects.Record;
 import edu.passwordStorrager.protector.Protector;
 import edu.passwordStorrager.protector.Values;
@@ -31,7 +31,7 @@ public class XmlParser {
 
 
     public XmlParser() {
-        pathStorageFile = Main.propertiesApplication.getProperty("Storage") + Values.DEFAULT_STORAGE_FILE_NAME;
+        pathStorageFile = PasswordStorrager.propertiesApplication.getProperty("Storage") + Values.DEFAULT_STORAGE_FILE_NAME;
     }
 
     public ArrayList<Record> parseRecords() {

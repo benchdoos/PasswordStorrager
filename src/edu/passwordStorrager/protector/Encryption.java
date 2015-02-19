@@ -1,7 +1,7 @@
 package edu.passwordStorrager.protector;
 
 
-import edu.passwordStorrager.core.Main;
+import edu.passwordStorrager.core.PasswordStorrager;
 import edu.passwordStorrager.gui.FirstLaunchDialog;
 import edu.passwordStorrager.gui.NotificationDialog;
 import edu.passwordStorrager.utils.KeyUtils;
@@ -29,7 +29,7 @@ public class Encryption {
     public static void extractKey(File file) {
         if (file.exists()) {
             try {
-                Main.key = KeyUtils.loadKeyFile(file.getAbsolutePath());
+                PasswordStorrager.key = KeyUtils.loadKeyFile(file.getAbsolutePath());
             } catch (Throwable e) {
                 log.warn("Can not load file: " + file.getAbsolutePath(), e);
             }

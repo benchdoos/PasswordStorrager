@@ -1,7 +1,7 @@
 package edu.passwordStorrager.utils;
 
 import edu.passwordStorrager.core.Application;
-import edu.passwordStorrager.core.Main;
+import edu.passwordStorrager.core.PasswordStorrager;
 import edu.passwordStorrager.core.PropertiesManager;
 import org.apache.log4j.Logger;
 
@@ -44,35 +44,35 @@ public class FrameUtils {
 
 
     public static void setFrameLocation(String className, Point point) {
-        Main.propertiesFrames.setProperty(className + "LX", new Double(point.getX()).intValue() + "");
-        Main.propertiesFrames.setProperty(className + "LY", new Double(point.getY()).intValue() + "");
+        PasswordStorrager.propertiesFrames.setProperty(className + "LX", new Double(point.getX()).intValue() + "");
+        PasswordStorrager.propertiesFrames.setProperty(className + "LY", new Double(point.getY()).intValue() + "");
         try {
-            PropertiesManager.saveProperties(Main.propertiesFrames, PropertiesManager.framePropertiesFilePath);
-            Main.propertiesFrames.load(new FileInputStream(PropertiesManager.framePropertiesFilePath));
+            PropertiesManager.saveProperties(PasswordStorrager.propertiesFrames, PropertiesManager.framePropertiesFilePath);
+            PasswordStorrager.propertiesFrames.load(new FileInputStream(PropertiesManager.framePropertiesFilePath));
         } catch (IOException e) {
             log.warn("Can not write frame location", e);
         }
     }
 
     public static void setFrameSize(String className, Dimension dimension) {
-        Main.propertiesFrames.setProperty(className + "SW", new Double(dimension.getWidth()).intValue() + "");
-        Main.propertiesFrames.setProperty(className + "SH", new Double(dimension.getHeight()).intValue() + "");
+        PasswordStorrager.propertiesFrames.setProperty(className + "SW", new Double(dimension.getWidth()).intValue() + "");
+        PasswordStorrager.propertiesFrames.setProperty(className + "SH", new Double(dimension.getHeight()).intValue() + "");
         try {
-            PropertiesManager.saveProperties(Main.propertiesFrames, PropertiesManager.framePropertiesFilePath);
+            PropertiesManager.saveProperties(PasswordStorrager.propertiesFrames, PropertiesManager.framePropertiesFilePath);
 
-            Main.propertiesFrames.load(new FileInputStream(PropertiesManager.framePropertiesFilePath));
+            PasswordStorrager.propertiesFrames.load(new FileInputStream(PropertiesManager.framePropertiesFilePath));
         } catch (IOException e) {
             log.warn("Can not write frame size", e);
         }
     }
 
     public static Point getFrameLocation(String className) {
-        if (Main.propertiesFrames != null) {
+        if (PasswordStorrager.propertiesFrames != null) {
             try {
-                Main.propertiesFrames.load(new FileInputStream(PropertiesManager.framePropertiesFilePath));
+                PasswordStorrager.propertiesFrames.load(new FileInputStream(PropertiesManager.framePropertiesFilePath));
 
-                int x = Integer.parseInt(Main.propertiesFrames.getProperty(className + "LX"));
-                int y = Integer.parseInt(Main.propertiesFrames.getProperty(className + "LY"));
+                int x = Integer.parseInt(PasswordStorrager.propertiesFrames.getProperty(className + "LX"));
+                int y = Integer.parseInt(PasswordStorrager.propertiesFrames.getProperty(className + "LY"));
                 return new Point(x, y);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -84,12 +84,12 @@ public class FrameUtils {
     }
 
     public static Dimension getFrameSize(String className) {
-        if (Main.propertiesFrames != null) {
+        if (PasswordStorrager.propertiesFrames != null) {
             try {
-                Main.propertiesFrames.load(new FileInputStream(PropertiesManager.framePropertiesFilePath));
+                PasswordStorrager.propertiesFrames.load(new FileInputStream(PropertiesManager.framePropertiesFilePath));
 
-                int width = Integer.parseInt(Main.propertiesFrames.getProperty(className + "SW"));
-                int height = Integer.parseInt(Main.propertiesFrames.getProperty(className + "SH"));
+                int width = Integer.parseInt(PasswordStorrager.propertiesFrames.getProperty(className + "SW"));
+                int height = Integer.parseInt(PasswordStorrager.propertiesFrames.getProperty(className + "SH"));
                 return new Dimension(width, height);
             } catch (Exception e) {
                 return new Dimension(100, 100);
@@ -157,9 +157,9 @@ public class FrameUtils {
     }
 
     public static Window getWindow(String frameClassName) {
-        if (Main.frames != null) {
-            for (int i = 0; i < Main.frames.size(); i++) {
-                Window window = Main.frames.get(i);
+        if (PasswordStorrager.frames != null) {
+            for (int i = 0; i < PasswordStorrager.frames.size(); i++) {
+                Window window = PasswordStorrager.frames.get(i);
                 if (frameClassName != null && getCurrentClassName(window.getClass()) != null) {
                     if (getCurrentClassName(window.getClass()).equals(frameClassName)) {
                         return window;

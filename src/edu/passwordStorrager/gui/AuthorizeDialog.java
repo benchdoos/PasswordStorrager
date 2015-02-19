@@ -2,7 +2,7 @@ package edu.passwordStorrager.gui;
 
 import edu.passwordStorrager.cloud.CloudManager;
 import edu.passwordStorrager.core.Core;
-import edu.passwordStorrager.core.Main;
+import edu.passwordStorrager.core.PasswordStorrager;
 import edu.passwordStorrager.protector.Encryption;
 import edu.passwordStorrager.protector.Protector;
 import edu.passwordStorrager.protector.Values;
@@ -106,7 +106,7 @@ public class AuthorizeDialog extends JDialog {
             com.apple.eawt.Application.getApplication().requestUserAttention(true);
         }
         //TODO request foreground here if is in settings??
-        Main.framesAuthForm.add(this);
+        PasswordStorrager.framesAuthForm.add(this);
         setVisible(true);
     }
 
@@ -115,12 +115,12 @@ public class AuthorizeDialog extends JDialog {
         Protector.PASSWORD = hexedPassword.toCharArray();
 
         if (exists(propertiesFilePath)) {
-            Main.propertiesApplication = loadProperties(propertiesFilePath);
+            PasswordStorrager.propertiesApplication = loadProperties(propertiesFilePath);
             if (isCorrect()) {
-                showProperties(Main.propertiesApplication);
+                showProperties(PasswordStorrager.propertiesApplication);
                 System.out.println("Password is correct");
-                Main.isAuthorized = true;
-                Encryption.extractKey(new File(Main.propertiesApplication.getProperty(KEY_NAME) + Values.DEFAULT_KEY_FILE_NAME));
+                PasswordStorrager.isAuthorized = true;
+                Encryption.extractKey(new File(PasswordStorrager.propertiesApplication.getProperty(KEY_NAME) + Values.DEFAULT_KEY_FILE_NAME));
 
                 //TODO send notification here.
                 new CloudManager().synchronize();
@@ -133,7 +133,7 @@ public class AuthorizeDialog extends JDialog {
             } else {
                 //TODO send notification here.
                 System.out.println("Password is not correct");
-                Main.isAuthorized = false;
+                PasswordStorrager.isAuthorized = false;
 
                 buttonOK.setEnabled(false);
                 buttonOK.setVisible(true);

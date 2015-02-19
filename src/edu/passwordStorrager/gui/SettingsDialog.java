@@ -1,6 +1,6 @@
 package edu.passwordStorrager.gui;
 
-import edu.passwordStorrager.core.Main;
+import edu.passwordStorrager.core.PasswordStorrager;
 import edu.passwordStorrager.core.PropertiesManager;
 import edu.passwordStorrager.objects.Key;
 import edu.passwordStorrager.protector.Protector;
@@ -77,8 +77,8 @@ public abstract class SettingsDialog extends JDialog {
             }
         });
 
-        storageField.setText(Main.propertiesApplication.getProperty("Storage"));
-        keyField.setText(Main.propertiesApplication.getProperty("Key"));
+        storageField.setText(PasswordStorrager.propertiesApplication.getProperty("Storage"));
+        keyField.setText(PasswordStorrager.propertiesApplication.getProperty("Key"));
 
         setContentPane(contentPane);
         setModal(true);
@@ -152,11 +152,11 @@ public abstract class SettingsDialog extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 String login = "", password = "";
                 if (iCloudLogin.isEmpty()) {
-                    if (Main.key != null) {
-                        if (!Main.key.getICloudLogin().isEmpty()) {
+                    if (PasswordStorrager.key != null) {
+                        if (!PasswordStorrager.key.getICloudLogin().isEmpty()) {
                             try {
-                                login = Protector.decrypt(Main.key.getICloudLogin());
-                                password = Protector.decrypt(Main.key.getICloudPassword());
+                                login = Protector.decrypt(PasswordStorrager.key.getICloudLogin());
+                                password = Protector.decrypt(PasswordStorrager.key.getICloudPassword());
                             } catch (GeneralSecurityException | IOException ignored) {
                             }
                         }
@@ -183,10 +183,10 @@ public abstract class SettingsDialog extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 String login = "", password = "";
                 if (megaLogin.isEmpty()) {
-                    if (Main.key != null && !Main.key.getMegaLogin().isEmpty()) {
+                    if (PasswordStorrager.key != null && !PasswordStorrager.key.getMegaLogin().isEmpty()) {
                         try {
-                            login = Protector.decrypt(Main.key.getMegaLogin());
-                            password = Protector.decrypt(Main.key.getMegaPassword());
+                            login = Protector.decrypt(PasswordStorrager.key.getMegaLogin());
+                            password = Protector.decrypt(PasswordStorrager.key.getMegaPassword());
                         } catch (GeneralSecurityException | IOException ignored) {
                         }
                     }
@@ -211,10 +211,10 @@ public abstract class SettingsDialog extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 String login = "", password = "";
                 if (dropBoxLogin.isEmpty()) {
-                    if (Main.key != null && !Main.key.getDropBoxLogin().isEmpty()) {
+                    if (PasswordStorrager.key != null && !PasswordStorrager.key.getDropBoxLogin().isEmpty()) {
                         try {
-                            login = Protector.decrypt(Main.key.getDropBoxLogin());
-                            password = Protector.decrypt(Main.key.getDropBoxPassword());
+                            login = Protector.decrypt(PasswordStorrager.key.getDropBoxLogin());
+                            password = Protector.decrypt(PasswordStorrager.key.getDropBoxPassword());
                         } catch (GeneralSecurityException | IOException ignored) {
                         }
                     }
@@ -266,11 +266,11 @@ public abstract class SettingsDialog extends JDialog {
     }
 
     private void pushSettings(Key key) {
-        String keyFilePath = Main.propertiesApplication.getProperty(PropertiesManager.KEY_NAME) + Values.DEFAULT_KEY_FILE_NAME;
+        String keyFilePath = PasswordStorrager.propertiesApplication.getProperty(PropertiesManager.KEY_NAME) + Values.DEFAULT_KEY_FILE_NAME;
         try {
-            key.setENC(Main.key.getENC());
+            key.setENC(PasswordStorrager.key.getENC());
             KeyUtils.createKeyFile(key, keyFilePath);
-            Main.key = KeyUtils.loadKeyFile(keyFilePath);
+            PasswordStorrager.key = KeyUtils.loadKeyFile(keyFilePath);
         } catch (Throwable e) {
             log.warn("Can not create file: " + keyFilePath, e);
         }
@@ -280,28 +280,28 @@ public abstract class SettingsDialog extends JDialog {
         //TODO divide this into two checks and methods
         if (FileUtils.validPath(keyField.getText()) && FileUtils.validPath(storageField.getText())) {
             PropertiesManager.changeProperties(StringUtils.fixFolder(keyField.getText()), StringUtils.fixFolder(storageField.getText()));
-            Main.propertiesApplication = PropertiesManager.loadProperties(PropertiesManager.propertiesFilePath);
+            PasswordStorrager.propertiesApplication = PropertiesManager.loadProperties(PropertiesManager.propertiesFilePath);
         }
 
         if (isICloudChanged) {
             key.setICloud(Protector.encrypt(iCloudLogin), Protector.encrypt(iCloudPassword));
         } else {
-            if (!Main.key.getICloudLogin().isEmpty() && !Main.key.getICloudPassword().isEmpty()) {
-                key.setICloud(Main.key.getICloudLogin(), Main.key.getICloudPassword());
+            if (!PasswordStorrager.key.getICloudLogin().isEmpty() && !PasswordStorrager.key.getICloudPassword().isEmpty()) {
+                key.setICloud(PasswordStorrager.key.getICloudLogin(), PasswordStorrager.key.getICloudPassword());
             }
         }
         if (isMegaChanged) {
             key.setMega(Protector.encrypt(megaLogin), Protector.encrypt(megaPassword));
         } else {
-            if (!Main.key.getMegaLogin().isEmpty() && !Main.key.getMegaPassword().isEmpty()) {
-                key.setMega(Main.key.getMegaLogin(), Main.key.getMegaPassword());
+            if (!PasswordStorrager.key.getMegaLogin().isEmpty() && !PasswordStorrager.key.getMegaPassword().isEmpty()) {
+                key.setMega(PasswordStorrager.key.getMegaLogin(), PasswordStorrager.key.getMegaPassword());
             }
         }
         if (isDropBoxChanged) {
             key.setDropBox(Protector.encrypt(dropBoxLogin), Protector.encrypt(dropBoxPassword));
         } else {
-            if (!Main.key.getDropBoxLogin().isEmpty() && !Main.key.getDropBoxPassword().isEmpty()) {
-                key.setDropBox(Main.key.getDropBoxLogin(), Main.key.getDropBoxPassword());
+            if (!PasswordStorrager.key.getDropBoxLogin().isEmpty() && !PasswordStorrager.key.getDropBoxPassword().isEmpty()) {
+                key.setDropBox(PasswordStorrager.key.getDropBoxLogin(), PasswordStorrager.key.getDropBoxPassword());
             }
         }
         return key;

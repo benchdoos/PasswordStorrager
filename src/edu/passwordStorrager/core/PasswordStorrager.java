@@ -11,10 +11,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
 
-public class Main {
+public class PasswordStorrager {
 
 
-    protected final static File JAR_FILE = new File(Main.class.getProtectionDomain()
+    protected final static File JAR_FILE = new File(PasswordStorrager.class.getProtectionDomain()
             .getCodeSource().getLocation().getPath());
 
     public static Key key = new Key();

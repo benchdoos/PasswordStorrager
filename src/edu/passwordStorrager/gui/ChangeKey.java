@@ -1,6 +1,6 @@
 package edu.passwordStorrager.gui;
 
-import edu.passwordStorrager.core.Main;
+import edu.passwordStorrager.core.PasswordStorrager;
 import edu.passwordStorrager.core.PropertiesManager;
 import edu.passwordStorrager.protector.Protector;
 import edu.passwordStorrager.protector.Values;
@@ -151,9 +151,9 @@ public abstract class ChangeKey extends JDialog {
         PropertiesManager.changeProperties(key, storage);
 
         //FrameUtils.getWindow(""); //FIXME
-        if (Main.framesMainForm.size() > 0) {
-            if (Main.framesMainForm.get(Main.framesMainForm.size() - 1) != null) {
-                Main.framesMainForm.set((Main.framesMainForm.size() - 1), null);
+        if (PasswordStorrager.framesMainForm.size() > 0) {
+            if (PasswordStorrager.framesMainForm.get(PasswordStorrager.framesMainForm.size() - 1) != null) {
+                PasswordStorrager.framesMainForm.set((PasswordStorrager.framesMainForm.size() - 1), null);
                 new MainForm(new XmlParser().parseRecords());
             } else {
                 new MainForm(new XmlParser().parseRecords());
@@ -161,10 +161,10 @@ public abstract class ChangeKey extends JDialog {
         } else {
             new MainForm(new XmlParser().parseRecords());
         }
-        if (Main.framesAuthForm.size() > 0) {
-            if (Main.framesAuthForm.get(Main.framesAuthForm.size() - 1) != null) {
-                Main.framesAuthForm.get(Main.framesAuthForm.size() - 1).dispose();
-                Main.framesAuthForm.set((Main.framesAuthForm.size() - 1), null);
+        if (PasswordStorrager.framesAuthForm.size() > 0) {
+            if (PasswordStorrager.framesAuthForm.get(PasswordStorrager.framesAuthForm.size() - 1) != null) {
+                PasswordStorrager.framesAuthForm.get(PasswordStorrager.framesAuthForm.size() - 1).dispose();
+                PasswordStorrager.framesAuthForm.set((PasswordStorrager.framesAuthForm.size() - 1), null);
             }
         }
 
