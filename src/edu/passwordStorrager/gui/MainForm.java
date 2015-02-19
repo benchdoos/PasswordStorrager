@@ -187,7 +187,6 @@ public class MainForm extends JFrame {
         password.setHeaderValue(PASSWORD_COLUMN_NAME);
         password.setResizable(false);
 
-//        table.setCellSelectionEnabled(true); //test
 //        scrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, null); //square, квадрат между table и scrollpane
     }
 
@@ -619,21 +618,21 @@ public class MainForm extends JFrame {
                     }
                 }
                 if (col == 0) {
-                    table.setRowSelectionInterval(row,row);
-                    table.setColumnSelectionInterval(col+1,col+1);
+                    table.setRowSelectionInterval(row, row);
+                    table.setColumnSelectionInterval(col + 1, col + 1);
                 }
             }
         });
-/*
-        ListSelectionModel listSelectionModel = table.getColumnModel().getSelectionModel();
+
+        /*table.setCellSelectionEnabled(true); //test
+        final ListSelectionModel listSelectionModel = table.getColumnModel().getSelectionModel();
         listSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         listSelectionModel.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 //3->0->1 (calling 0) -> 3
                 System.out.println("PP.>>>" + e.getFirstIndex() + " " + e.getLastIndex() + " " + e.getValueIsAdjusting());
-                
-                
+
                 if (e.getFirstIndex() == 0) {
                     int pwd = table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex();
                     int sit = table.getColumn(SITE_COLUMN_NAME).getModelIndex();
@@ -650,23 +649,24 @@ public class MainForm extends JFrame {
                             }
                             table.setColumnSelectionInterval(2, 2);
                             table.setColumnSelectionInterval(1, 1);
-                        }
-                        if (lastIndex == sit) {
-                            if (selected - 1 > -1) {
+                        } else if (lastIndex == sit) {
+                            if (selected - 1 >= 0) {
                                 table.setRowSelectionInterval(selected - 1, selected - 1);
                             } else {
                                 table.setRowSelectionInterval(rows - 1, rows - 1);
                             }
-                                table.setColumnSelectionInterval(2, 2);
-                                table.setColumnSelectionInterval(pwd, pwd);
+                            table.setColumnSelectionInterval(2, 2);
+                            table.setColumnSelectionInterval(pwd, pwd);
 
                         }
 
+                    } else {
+                        table.setRowSelectionInterval(selected - 1, selected - 1);
                     }
                 }
             }
-        });
-*/
+        });*/
+
         tableModelListener = new TableModelListener() {
             @Override
             public void tableChanged(TableModelEvent e) {
@@ -792,9 +792,9 @@ public class MainForm extends JFrame {
         if (IS_WINDOWS) {
             fileJMenu.add(settingsItem);
         }
-        
+
         jMenuBar1.add(fileJMenu);
-        
+
         editModeJRadioButtonMenuItem.setAccelerator(getAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.META_MASK),
                 KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK)));
 
