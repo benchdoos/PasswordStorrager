@@ -515,6 +515,33 @@ public class MainForm extends JFrame {
 
             }
         });
+        
+        isEditableIcon.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                editModeJRadioButtonMenuItem.doClick();
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
 
         controlPanelMouseListener = new MouseListener() {
             @Override
@@ -937,6 +964,7 @@ public class MainForm extends JFrame {
         editModeJRadioButtonMenuItem.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
+                
                 if (!isSearchMode) {
                     if (!editModeJRadioButtonMenuItem.isSelected()) {
                         isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/lock.png")));
@@ -1306,8 +1334,7 @@ public class MainForm extends JFrame {
 
     public void addNewRecord(int index, int count) {
         if (!editModeJRadioButtonMenuItem.isSelected()) {
-//            editModeJRadioButtonMenuItem.doClick();
-            editModeJRadioButtonMenuItem.getChangeListeners()[0].stateChanged(new ChangeEvent(this));
+            editModeJRadioButtonMenuItem.doClick();
         }
         setStatus(bar.getText(), STATUS_MESSAGE);
         isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/unlock.png")));
