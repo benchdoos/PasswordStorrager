@@ -2,10 +2,7 @@ package edu.passwordStorrager.utils.platform;
 
 import com.apple.eawt.*;
 import edu.passwordStorrager.core.PasswordStorrager;
-import edu.passwordStorrager.gui.AboutApplication;
-import edu.passwordStorrager.gui.ChangeKey;
-import edu.passwordStorrager.gui.MainForm;
-import edu.passwordStorrager.gui.SettingsDialog;
+import edu.passwordStorrager.gui.*;
 import edu.passwordStorrager.xmlManager.XmlParser;
 import org.apache.log4j.Logger;
 

@@ -30,9 +30,10 @@ public class AuthorizeDialog extends JDialog {
     private JPasswordField passwordField;
     private JProgressBar progressBar;
     private Timer timer;
-    private boolean isBlocked = false;
+    public static boolean isBlocked = false;
 
     public AuthorizeDialog() {
+        isBlocked = false;
         initTimer();
         setContentPane(contentPane);
         setIconImage(PlatformUtils.appIcon);
