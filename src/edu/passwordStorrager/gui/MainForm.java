@@ -8,6 +8,7 @@ import edu.passwordStorrager.objects.Record;
 import edu.passwordStorrager.protector.Values;
 import edu.passwordStorrager.utils.FrameUtils;
 import edu.passwordStorrager.utils.StringUtils;
+import edu.passwordStorrager.utils.history.AddRowAction;
 import edu.passwordStorrager.utils.history.ChangeCellValueAction;
 import edu.passwordStorrager.utils.history.History;
 import edu.passwordStorrager.utils.platform.PlatformUtils;
@@ -113,7 +114,7 @@ public class MainForm extends JFrame {
         initComponents();
         requestFocus();
         table.requestFocus();
-        history = new History(this);
+        initHistory();
         PasswordStorrager.frames.add(this);
     }
 
@@ -791,7 +792,8 @@ public class MainForm extends JFrame {
                     } else {
                         setEdited(true);
                     }
-                    if (table.getEditingRow() > -1 && table.getEditingColumn() > -1) {
+//                    if (table.getEditingRow() > -1 && table.getEditingColumn() > -1) {
+                    if(!history.isHistoryCall()){
                         history.register(new ChangeCellValueAction(new Point(row, col), prevValue, value));
                     }
                 }
@@ -837,6 +839,7 @@ public class MainForm extends JFrame {
                     editModeJRadioButtonMenuItem.setSelected(false);
                     isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/lock.png")));
                     isEditableIcon.setToolTipText("Режим редактирования выключен");
+                    initHistory();
                 }
             }
         });
@@ -1147,6 +1150,10 @@ public class MainForm extends JFrame {
         setJMenuBar(jMenuBar1);
     }
 
+    private void initHistory() {
+        history = new History(this);
+    }
+
     private KeyStroke getAccelerator(KeyStroke mac, KeyStroke windows) {
         if (IS_MAC) {
             return mac;
@@ -1254,8 +1261,7 @@ public class MainForm extends JFrame {
         table.setSurrendersFocusOnKeystroke(true);
         table.getModel().addTableModelListener(tableModelListener);
         statusProgressBar.setVisible(false);
-
-//        history = new History(this);
+        
         updateRowCount(recordArrayList.size());
         setStatus("Количество записей: " + table.getModel().getRowCount(), STATUS_MESSAGE);
     }
@@ -1281,7 +1287,7 @@ public class MainForm extends JFrame {
         setStatus("Сохранено", STATUS_SUCCESS);
     }
 
-    private void addNewRecord(int index, int count) {
+    public void addNewRecord(int index, int count) {
         if (!editModeJRadioButtonMenuItem.isSelected()) {
             editModeJRadioButtonMenuItem.doClick();
         }
@@ -1317,6 +1323,9 @@ public class MainForm extends JFrame {
         table.setRowSelectionInterval(index, index);
         scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
         setEdited(true);
+        if (!history.isHistoryCall()) {
+            history.register(new AddRowAction(index, count));
+        }
     }
 
     private void exchangeRecords(int index1, int index2) {
@@ -1330,7 +1339,7 @@ public class MainForm extends JFrame {
         setEdited(true);
     }
 
-    private void deleteSelectedRecords(int index1, int index2) {
+    public void deleteSelectedRecords(int index1, int index2) {
 //index1 - меньше index2
         if (index1 > index2) {
             int i = index1;
