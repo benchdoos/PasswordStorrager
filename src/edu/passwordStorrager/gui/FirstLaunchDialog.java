@@ -20,6 +20,7 @@ import java.awt.event.*;
 import java.io.File;
 
 import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
+import static edu.passwordStorrager.utils.FrameUtils.shakeFrame;
 
 public class FirstLaunchDialog extends JDialog {
     private static final Logger log = Logger.getLogger(getCurrentClassName());
@@ -171,6 +172,8 @@ public class FirstLaunchDialog extends JDialog {
     private void onOK() {
         if (!new String(passwordField1.getPassword()).isEmpty()) {
             if (validatePath(keyField.getText()) && validatePath(storageField.getText())) {
+                keyField.setBackground(Color.white);
+                storageField.setBackground(Color.white);
                 registerNewStorage();
                 try {
                     PasswordStorrager.key = KeyUtils.loadKeyFile(StringUtils.fixFolder(keyField.getText()) + Values.DEFAULT_KEY_FILE_NAME);
@@ -180,6 +183,18 @@ public class FirstLaunchDialog extends JDialog {
                 }
                 new MainForm(new XmlParser().parseRecords()).setVisible(true);
                 dispose();
+            } else {
+                shakeFrame(this);
+                if (!validatePath(keyField.getText())) {
+                    keyField.setBackground(Color.red);
+                }else{
+                    keyField.setBackground(Color.white);
+                }
+                if (!validatePath(storageField.getText())) {
+                    storageField.setBackground(Color.red);
+                } else {
+                    storageField.setBackground(Color.white);
+                }
             }
         }
     }
