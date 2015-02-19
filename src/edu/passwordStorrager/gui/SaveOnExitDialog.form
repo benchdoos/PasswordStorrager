@@ -35,7 +35,7 @@
                   <background color="-1118482"/>
                   <dragEnabled value="false"/>
                   <editable value="false"/>
-                  <font style="1"/>
+                  <font size="14" style="1"/>
                   <text value="Хотите сохранить изменения, внесенные в хранилище?"/>
                 </properties>
               </component>
@@ -49,10 +49,10 @@
                   <editable value="false"/>
                   <enabled value="true"/>
                   <focusable value="true"/>
-                  <font size="10"/>
+                  <font size="12"/>
                   <lineWrap value="false"/>
                   <rows value="2"/>
-                  <text value="Вы можете отменить изменения и вернуться к моменту последнего открытия &#10;документа."/>
+                  <text value="Вы можете отменить изменения и вернуться к моменту последнего &#10;открытия документа."/>
                   <visible value="true"/>
                   <wrapStyleWord value="false"/>
                 </properties>
