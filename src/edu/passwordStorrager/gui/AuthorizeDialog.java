@@ -2,7 +2,6 @@ package edu.passwordStorrager.gui;
 
 import edu.passwordStorrager.cloud.CloudManager;
 import edu.passwordStorrager.core.Core;
-import edu.passwordStorrager.core.PasswordStorrager;
 import edu.passwordStorrager.protector.Encryption;
 import edu.passwordStorrager.protector.Protector;
 import edu.passwordStorrager.protector.Values;
@@ -17,6 +16,7 @@ import java.io.File;
 
 import static edu.passwordStorrager.core.Application.IS_MAC;
 import static edu.passwordStorrager.core.Application.IS_WINDOWS;
+import static edu.passwordStorrager.core.PasswordStorrager.*;
 import static edu.passwordStorrager.core.PropertiesManager.*;
 import static edu.passwordStorrager.utils.FileUtils.exists;
 import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
@@ -29,7 +29,7 @@ public class AuthorizeDialog extends JDialog {
     private JButton buttonCancel;
     private JPasswordField passwordField;
     private JProgressBar progressBar;
-    private static Timer timer;
+    private Timer timer;
     private boolean isBlocked = false;
 
     public AuthorizeDialog() {
@@ -106,7 +106,8 @@ public class AuthorizeDialog extends JDialog {
             com.apple.eawt.Application.getApplication().requestUserAttention(true);
         }
         //TODO request foreground here if is in settings??
-        PasswordStorrager.framesAuthForm.add(this);
+        frames.add(this);
+        isUnlocked = false;
         setVisible(true);
     }
 
@@ -115,32 +116,38 @@ public class AuthorizeDialog extends JDialog {
         Protector.PASSWORD = hexedPassword.toCharArray();
 
         if (exists(propertiesFilePath)) {
-            PasswordStorrager.propertiesApplication = loadProperties(propertiesFilePath);
+            propertiesApplication = loadProperties(propertiesFilePath);
             if (isCorrect()) {
-                showProperties(PasswordStorrager.propertiesApplication);
+
                 System.out.println("Password is correct");
-                PasswordStorrager.isAuthorized = true;
-                Encryption.extractKey(new File(PasswordStorrager.propertiesApplication.getProperty(KEY_NAME) + Values.DEFAULT_KEY_FILE_NAME));
-
-                //TODO send notification here.
-                new CloudManager().synchronize();
-
                 setModal(false);
-                MainForm mf = new MainForm(new XmlParser().parseRecords());
-                setVisible(false);
-                mf.setVisible(true);
+                if (FrameUtils.getWindows(MainForm.class).size() > 0) {
+                    FrameUtils.getWindows(MainForm.class).get(0).setVisible(true);
+                } else {
+                    showProperties(propertiesApplication);
+                    Encryption.extractKey(new File(propertiesApplication.getProperty(KEY_NAME) + Values.DEFAULT_KEY_FILE_NAME));
+
+                    //TODO send notification here.
+                    new CloudManager().synchronize();
+
+                    MainForm mf = new MainForm(new XmlParser().parseRecords());
+                    setVisible(false);
+                    mf.setVisible(true);
+                }
+                isUnlocked = true;
                 dispose();
             } else {
                 //TODO send notification here.
                 System.out.println("Password is not correct");
-                PasswordStorrager.isAuthorized = false;
+                isUnlocked = false;
 
                 buttonOK.setEnabled(false);
                 buttonOK.setVisible(true);
                 buttonCancel.setEnabled(false);
                 progressBar.setVisible(false);
 
-                timer.start();
+                initTimer();
+                timer.restart();
                 FrameUtils.shakeFrame(this);
             }
         }
@@ -178,9 +185,6 @@ public class AuthorizeDialog extends JDialog {
                 }
             }
         };
-
-        if (timer == null) {
-            timer = new Timer(1000, timerListener);
-        }
+        timer = new Timer(1000, timerListener);
     }
 }

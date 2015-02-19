@@ -14,6 +14,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.util.ArrayList;
 
 public abstract class ChangeKey extends JDialog {
     private JPanel contentPane;
@@ -35,8 +36,6 @@ public abstract class ChangeKey extends JDialog {
         setModal(true);
         setResizable(false);
         getRootPane().setDefaultButton(buttonOK);
-
-        
 
         buttonOK.addActionListener(new ActionListener() {
 
@@ -126,18 +125,22 @@ public abstract class ChangeKey extends JDialog {
 // add your code here if necessary
 
         dispose();
-        Window auth = FrameUtils.getWindow(AuthorizeDialog.class.getName());
+        Window auth = FrameUtils.getWindows(AuthorizeDialog.class).get(0);
         if (auth != null) {
             auth.setVisible(true);
         }
-        Window mf = FrameUtils.getWindow(MainForm.class.getName());
-        if (mf != null) {
-            mf.setVisible(true);
+        ArrayList<Window> mainForms = FrameUtils.getWindows(MainForm.class);
+        if (mainForms != null) {
+            for (Window w : mainForms) {
+                w.setVisible(true);
+            }
         }
 
-        Window setD = FrameUtils.getWindow(SettingsDialog.class.getName());
-        if (setD != null) {
-            setD.setVisible(true);
+        ArrayList<Window> settingsDialogs = FrameUtils.getWindows(SettingsDialog.class);
+        if (settingsDialogs != null) {
+            for (Window w : settingsDialogs) {
+                w.setVisible(true);
+            }
         }
     }
 

@@ -56,6 +56,7 @@ public class MainForm extends JFrame {
     private JMenu fileJMenu = new JMenu("Файл");
     private JMenuItem openItem = new JMenuItem("Открыть");
     private JMenuItem saveItem = new JMenuItem("Сохранить");
+    private JMenuItem blockItem = new JMenuItem("Блокировать");
     private JMenuItem settingsItem = new JMenuItem("Настройки");
     private JMenu editJMenu = new JMenu("Правка");
     private JMenuItem addItem = new JMenuItem("Добавить");
@@ -101,7 +102,7 @@ public class MainForm extends JFrame {
         initComponents();
         requestFocus();
         table.requestFocus();
-        PasswordStorrager.framesMainForm.add(this);
+        PasswordStorrager.frames.add(this);
     }
 
     private void initComponents() {
@@ -755,7 +756,20 @@ public class MainForm extends JFrame {
         });
         fileJMenu.add(saveItem);
 
-        jMenuBar1.add(fileJMenu);
+        blockItem.setAccelerator(getAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.META_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_MASK)));
+        blockItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (PasswordStorrager.isUnlocked) {
+                    PasswordStorrager.isUnlocked = false;
+                    setVisible(false);
+                    new AuthorizeDialog();
+                }
+            }
+        });
+
+        fileJMenu.add(blockItem);
 
         settingsItem.setAccelerator(getAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, InputEvent.META_MASK),
                 KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, InputEvent.CTRL_MASK)));
@@ -778,7 +792,9 @@ public class MainForm extends JFrame {
         if (IS_WINDOWS) {
             fileJMenu.add(settingsItem);
         }
-
+        
+        jMenuBar1.add(fileJMenu);
+        
         editModeJRadioButtonMenuItem.setAccelerator(getAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.META_MASK),
                 KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK)));
 

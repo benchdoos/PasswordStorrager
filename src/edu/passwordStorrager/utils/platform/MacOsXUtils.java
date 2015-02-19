@@ -1,6 +1,7 @@
 package edu.passwordStorrager.utils.platform;
 
 import com.apple.eawt.*;
+import edu.passwordStorrager.core.PasswordStorrager;
 import edu.passwordStorrager.gui.AboutApplication;
 import edu.passwordStorrager.gui.ChangeKey;
 import edu.passwordStorrager.gui.MainForm;
@@ -11,7 +12,6 @@ import org.apache.log4j.Logger;
 import static edu.passwordStorrager.core.Application.IS_MAC;
 import static edu.passwordStorrager.core.Core.onQuit;
 import static edu.passwordStorrager.core.PasswordStorrager.framesMainForm;
-import static edu.passwordStorrager.core.PasswordStorrager.isAuthorized;
 import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
 
 public class MacOsXUtils {
@@ -40,7 +40,7 @@ public class MacOsXUtils {
             application.setPreferencesHandler(new PreferencesHandler() {
                 @Override
                 public void handlePreferences(AppEvent.PreferencesEvent preferencesEvent) {
-                    if (isAuthorized) {
+                    if (PasswordStorrager.isUnlocked) {
                         new SettingsDialog() {
                             @Override
                             public void onOK() {

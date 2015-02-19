@@ -18,7 +18,7 @@ public class PasswordStorrager {
             .getCodeSource().getLocation().getPath());
 
     public static Key key = new Key();
-    public static boolean isAuthorized = false;
+    public static boolean isUnlocked = false;
     public static Properties propertiesApplication = new Properties();
     public static Properties propertiesFrames = new Properties();
 
