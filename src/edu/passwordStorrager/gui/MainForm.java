@@ -1420,7 +1420,6 @@ class MovingTogether extends ComponentAdapter {
         Window win = (Window) e.getComponent();
         Dimension size = dialog.getSize();
         if (win == window && dialog.isVisible()) {
-            dialog.setLocationRelativeTo(window);
             Point location = window.getLocation();
             Dimension dim = window.getSize();
             int centerWidth = location.x + dim.width / 2;

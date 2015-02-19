@@ -31,7 +31,6 @@ public class SaveOnExitDialog extends JDialog {
         icon.setSize(new Dimension(80, 80));
         icon.setIcon(FrameUtils.resizeIcon(PlatformUtils.appIcon, icon.getSize()));
 
-        setLocationRelativeTo(window);
         Point location = window.getLocation();
         Dimension dim = window.getSize();
         int centerWidth = location.x + dim.width / 2;
