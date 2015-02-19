@@ -600,6 +600,13 @@ public class MainForm extends JFrame {
                             copyToClipboard(copy);
                         }
                     }
+
+                    if ((e.getKeyCode() == KeyEvent.VK_M) && ((e.getModifiers() & kEvent) != 0)) {
+                        setState(JFrame.ICONIFIED);
+                    }
+                    
+                    
+                    
                     //TODO FIX IF NEEDED
                     int key = e.getKeyCode();
 
