@@ -93,6 +93,7 @@ public class MainForm extends JFrame {
     private JLabel isEditableIcon;
 
     private Timer searchTimer;
+    private Timer lockTimer;
     private static TableModelListener tableModelListener;
     private boolean isSearchMode = false;
 
@@ -121,24 +122,9 @@ public class MainForm extends JFrame {
 
         isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/lock.png")));
 
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                if (isEdited) {
-                    SaveOnExitDialog saveOnExitDialog = new SaveOnExitDialog();
-                    if (IS_MAC) new MovingTogether((JFrame) e.getWindow(), saveOnExitDialog);
-                    saveOnExitDialog.setVisible(true);
-                } else {
-                    disposeForm();
-                }
-                FrameUtils.setFrameLocation(getClass().getEnclosingClass().getName(), getLocation());
-                FrameUtils.setFrameSize(getClass().getEnclosingClass().getName(), getSize());
-            }
+        initLockTimer();
 
-            public void disposeForm() {
-                dispose();
-                Core.onQuit();
-            }
-        });
+        initWindowListeners();
 
         initTableListeners();
 
@@ -163,6 +149,60 @@ public class MainForm extends JFrame {
             table.setColumnSelectionInterval(1, 1);
         }
         isFirstLaunch = false; //to fix isEdited on start
+    }
+
+    private void initLockTimer() {
+        ActionListener actionListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                blockItem.getActionListeners()[0].actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+            }
+        };
+        lockTimer = new Timer(60 * 1000, actionListener);
+        lockTimer.setRepeats(false);
+    }
+
+    private void initWindowListeners() {
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                if (isEdited) {
+                    SaveOnExitDialog saveOnExitDialog = new SaveOnExitDialog();
+                    if (IS_MAC) new MovingTogether((JFrame) e.getWindow(), saveOnExitDialog);
+                    saveOnExitDialog.setVisible(true);
+                } else {
+                    disposeForm();
+                }
+                FrameUtils.setFrameLocation(getClass().getEnclosingClass().getName(), getLocation());
+                FrameUtils.setFrameSize(getClass().getEnclosingClass().getName(), getSize());
+            }
+
+            public void disposeForm() {
+                dispose();
+                Core.onQuit();
+            }
+        });
+
+        addComponentListener(new ComponentListener() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+
+            }
+
+            @Override
+            public void componentMoved(ComponentEvent e) {
+
+            }
+
+            @Override
+            public void componentShown(ComponentEvent e) {
+
+            }
+
+            @Override
+            public void componentHidden(ComponentEvent e) {
+                
+            }
+        });
     }
 
     private void initTable() {
