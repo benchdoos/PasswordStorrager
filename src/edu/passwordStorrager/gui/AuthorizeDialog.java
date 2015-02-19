@@ -49,6 +49,7 @@ public class AuthorizeDialog extends JDialog {
                 passwordField.setEnabled(false);
                 buttonOK.setVisible(false);
                 progressBar.setVisible(true);
+                isBlocked = true;
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
