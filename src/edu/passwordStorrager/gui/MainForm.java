@@ -515,7 +515,7 @@ public class MainForm extends JFrame {
 
             }
         });
-        
+
         isEditableIcon.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -682,6 +682,12 @@ public class MainForm extends JFrame {
             public void keyPressed(KeyEvent e) {
                 if (editModeJRadioButtonMenuItem.isSelected()) {
                     //TODO what do i need here?
+                    /*if (e.getModifiers() > 0) {
+                        int key = e.getKeyCode();
+                        if (key == KeyEvent.VK_META) {
+                            table.getCellEditor().cancelCellEditing();
+                        }
+                    }*/
                 } else {
                     int kEvent = -1;
                     if (IS_MAC) {
@@ -964,7 +970,7 @@ public class MainForm extends JFrame {
         editModeJRadioButtonMenuItem.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                
+
                 if (!isSearchMode) {
                     if (!editModeJRadioButtonMenuItem.isSelected()) {
                         isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/lock.png")));
@@ -1501,8 +1507,31 @@ public class MainForm extends JFrame {
 
         @Override
         public boolean isCellEditable(EventObject anEvent) {
+
+            if (anEvent instanceof KeyEvent) {
+                return startWithKeyEvent((KeyEvent) anEvent) && isNumberCell();
+            }
+            return isNumberCell();
+        }
+
+        private boolean isNumberCell() {
             return textField != null && !textField.getText().equals(NUMBER_COLUMN_NAME)
                     && editModeJRadioButtonMenuItem.isSelected();
+        }
+
+        private boolean startWithKeyEvent(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_META) {
+                return false;
+            }
+            // check modifiers as needed, this here is just a quick example ;-)
+            /*if ((e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) != 0) {
+                return false;
+            }*/
+            // check for a list of function key strokes
+            /*if (excludes.contains(KeyStroke.getKeyStrokeForEvent(e)) {
+                return false;
+            }*/
+            return true;
         }
 
         @Override
