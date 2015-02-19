@@ -178,6 +178,7 @@ public class FirstLaunchDialog extends JDialog {
                     log.warn("Can not load key file: "
                             + StringUtils.fixFolder(keyField.getText()) + Values.DEFAULT_KEY_FILE_NAME, e);
                 }
+                new MainForm(new XmlParser().parseRecords()).setVisible(true);
                 dispose();
             }
         }
