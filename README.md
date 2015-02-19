@@ -16,9 +16,11 @@ Remember only one password to access all your secret data.
 ## Download:
 Mac OS X / Windows:
 
-[Latest](https://github.com/benchdoos/PasswordStorrager/releases/tag/v0.1-beta.2) 0.1-beta.2
+
+[Latest](https://github.com/benchdoos/PasswordStorrager/releases/tag/v0.1-beta.3) 0.1-beta.3
 
 Old releases:
+- [0.1-beta.2](https://github.com/benchdoos/PasswordStorrager/releases/tag/v0.1-beta.2) Mac OS X / Windows
 - [0.1-beta.1](https://github.com/benchdoos/PasswordStorrager/releases/tag/v0.1-beta.1) (**Mac OS X only**)
 
 ### TODO LIST:
