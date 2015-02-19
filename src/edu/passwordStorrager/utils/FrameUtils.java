@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import static edu.passwordStorrager.core.PasswordStorrager.frames;
+
 public class FrameUtils {
     private static final Logger log = Logger.getLogger(getCurrentClassName());
     private static final Timer timer = new Timer(60, null);
@@ -156,17 +158,18 @@ public class FrameUtils {
         }
     }
 
-    public static Window getWindow(String frameClassName) {
-        if (PasswordStorrager.frames != null) {
-            for (int i = 0; i < PasswordStorrager.frames.size(); i++) {
-                Window window = PasswordStorrager.frames.get(i);
-                if (frameClassName != null && getCurrentClassName(window.getClass()) != null) {
-                    if (getCurrentClassName(window.getClass()).equals(frameClassName)) {
-                        return window;
-                    }
-                }
 
+    public static ArrayList<Window> getWindows(Class clazz) {
+
+        if (frames != null) {
+            ArrayList<Window> windows = new ArrayList<>();
+            for (Window window : frames) {
+                if (getCurrentClassName(window.getClass()).equals(getCurrentClassName(clazz))) {
+                    windows.add(window);
+                }
             }
+
+            return windows;
         }
         return null;
     }
@@ -223,7 +226,7 @@ public class FrameUtils {
         try {
             BufferedImage img = ImageIO.read(url);
             return resizeIcon(img, size);
-        } catch (IOException e){
+        } catch (IOException e) {
             log.warn("Can not load file: /resources/icons/icon_black_256.png");
             return null;
         }
