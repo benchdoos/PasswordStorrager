@@ -86,6 +86,10 @@ public class MainForm extends JFrame {
     private JButton addDownButton;
 
     private JPanel controlPanel;
+    private Point mouse = new Point(0, 0);
+    private MouseListener controlPanelMouseListener;
+    private MouseMotionAdapter controlPanelMouseMotionAdapter;
+    
     private JProgressBar progressBar;
     private JLabel bar;
     private JProgressBar statusProgressBar;
@@ -119,6 +123,8 @@ public class MainForm extends JFrame {
         setMinimumSize(new java.awt.Dimension(600, 430));
         setPreferredSize(getFrameSize(getCurrentClassName()));
         setLocation(getFrameLocation(getCurrentClassName()));
+
+        getRootPane().putClientProperty("apple.awt.brushMetalLook", Boolean.TRUE);
 
         isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/lock.png")));
 
@@ -497,6 +503,57 @@ public class MainForm extends JFrame {
 
             }
         });
+
+         controlPanelMouseListener = new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                mouse = e.getPoint();
+                getComponentAt(mouse);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        };        
+        controlPanelMouseMotionAdapter = new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+
+                // get location of Window
+                int thisX = getLocation().x;
+                int thisY = getLocation().y;
+
+                // Determine how much the mouse moved since the initial click
+                int xMoved = (thisX + e.getX()) - (thisX + mouse.x);
+                int yMoved = (thisY + e.getY()) - (thisY + mouse.y);
+
+                // Move window to this position
+                int X = thisX + xMoved;
+                int Y = thisY + yMoved;
+                setLocation(X, Y);
+            }
+        };
+
+        if (IS_MAC) {
+            controlPanel.addMouseListener(controlPanelMouseListener);
+            controlPanel.addMouseMotionListener(controlPanelMouseMotionAdapter);
+        }
     }
 
     private void initStatusBar() {
@@ -604,9 +661,7 @@ public class MainForm extends JFrame {
                     if ((e.getKeyCode() == KeyEvent.VK_M) && ((e.getModifiers() & kEvent) != 0)) {
                         setState(JFrame.ICONIFIED);
                     }
-                    
-                    
-                    
+
                     //TODO FIX IF NEEDED
                     int key = e.getKeyCode();
 
