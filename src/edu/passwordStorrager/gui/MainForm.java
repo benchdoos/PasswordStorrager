@@ -309,6 +309,7 @@ public class MainForm extends JFrame {
                     loadList(recordArrayList);
                     setControlButtonsEnabled(true);
                     isSearchMode = false;
+                    editModeJRadioButtonMenuItem.setEnabled(true);
                 } else {
                     table.requestFocus();
                     table.setRowSelectionInterval(0, 0);
@@ -339,6 +340,7 @@ public class MainForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 isSearchMode = true;
+                editModeJRadioButtonMenuItem.setEnabled(false);
 
                 progressBar.setVisible(true);
                 new Thread(new Runnable() {
