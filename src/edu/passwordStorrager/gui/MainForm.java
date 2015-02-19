@@ -181,28 +181,6 @@ public class MainForm extends JFrame {
                 Core.onQuit();
             }
         });
-
-        addComponentListener(new ComponentListener() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-
-            }
-
-            @Override
-            public void componentMoved(ComponentEvent e) {
-
-            }
-
-            @Override
-            public void componentShown(ComponentEvent e) {
-
-            }
-
-            @Override
-            public void componentHidden(ComponentEvent e) {
-                
-            }
-        });
     }
 
     private void initTable() {
