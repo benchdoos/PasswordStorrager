@@ -13,6 +13,8 @@ public class History {
 
     public History(MainForm mf) {
         mainForm = mf;
+        mainForm.undoItem.setEnabled(false);
+        mainForm.redoItem.setEnabled(false);
     }
 
     public void register(Object obj) {
@@ -27,6 +29,7 @@ public class History {
                 windowHistory.add(obj);
                 current = windowHistory.size() - 1;
             }
+            updateIfIsSaved();
             System.out.println("History.registered: " + obj);
         }
     }
@@ -54,7 +57,7 @@ public class History {
             System.out.println("redo: " + h);
         }
     }
-    
+
     public boolean isHistoryCall() {
         return isHistoryCall;
     }
@@ -69,6 +72,18 @@ public class History {
             mainForm.setEdited(true);
         } else {
             mainForm.setEdited(false);
+        }
+        if (windowHistory.size() > 0) {
+            if (current == -1) {
+                mainForm.undoItem.setEnabled(false);
+            } else {
+                mainForm.undoItem.setEnabled(true);
+            }
+            if (current == windowHistory.size() - 1) {
+                mainForm.redoItem.setEnabled(false);
+            } else {
+                mainForm.redoItem.setEnabled(true);
+            }
         }
     }
 

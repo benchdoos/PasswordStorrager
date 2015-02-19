@@ -63,8 +63,8 @@ public class MainForm extends JFrame {
     private JMenuItem settingsItem = new JMenuItem("Настройки");
     private JMenu editJMenu = new JMenu("Правка");
 
-    private JMenuItem undoItem = new JMenuItem("Отменить");
-    private JMenuItem redoItem = new JMenuItem("Повторить");
+    public JMenuItem undoItem = new JMenuItem("Отменить");
+    public JMenuItem redoItem = new JMenuItem("Повторить");
 
     private JMenuItem addItem = new JMenuItem("Добавить");
     private JMenuItem addSomeItem = new JMenuItem("Добавить несколько...");
