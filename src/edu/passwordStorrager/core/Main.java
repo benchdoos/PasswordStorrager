@@ -33,7 +33,6 @@ public class Main {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                System.out.println("JAR: " + JAR_FILE);
                 createFolderForLog4J();
                 new Core();
             }
