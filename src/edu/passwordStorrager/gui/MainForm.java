@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.Timer;
 import javax.swing.event.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -26,9 +27,7 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EventObject;
+import java.util.*;
 
 import static edu.passwordStorrager.core.Application.*;
 import static edu.passwordStorrager.utils.FrameUtils.*;
@@ -177,7 +176,7 @@ public class MainForm extends JFrame {
         lockTimer.setRepeats(false);
         refreshLockTimer();
     }
-    
+
     public void refreshLockTimer() {
         lockTimer.restart();
     }
@@ -201,7 +200,7 @@ public class MainForm extends JFrame {
                 Core.onQuit();
             }
         });
-        
+
         addWindowFocusListener(new WindowFocusListener() {
             @Override
             public void windowGainedFocus(WindowEvent e) {
@@ -1323,10 +1322,10 @@ public class MainForm extends JFrame {
 
         initTable();
 
-        table.getColumn(NUMBER_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField(NUMBER_COLUMN_NAME)));
-        table.getColumn(SITE_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField(SITE_COLUMN_NAME)));
-        table.getColumn(LOGIN_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField(LOGIN_COLUMN_NAME)));
-        table.getColumn(PASSWORD_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField(PASSWORD_COLUMN_NAME)));
+        table.getColumn(NUMBER_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField(NUMBER_COLUMN_NAME), this));
+        table.getColumn(SITE_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField(SITE_COLUMN_NAME), this));
+        table.getColumn(LOGIN_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField(LOGIN_COLUMN_NAME), this));
+        table.getColumn(PASSWORD_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField(PASSWORD_COLUMN_NAME), this));
 
         resizeTableColumns(table.getColumn(NUMBER_COLUMN_NAME));
 
@@ -1515,13 +1514,101 @@ public class MainForm extends JFrame {
         return tableModel;
     }
 
-    static class TableEditor extends DefaultCellEditor {
+    class TableEditor extends DefaultCellEditor {
 
+        boolean isAutoComplete = false;
+        
         JTextField textField;
 
-        public TableEditor(JTextField textField) {
+        MainForm mainForm;
+
+        int col = -1;
+
+        public TableEditor(JTextField textField, MainForm mainForm) {
             super(textField);
             this.textField = textField;
+            this.mainForm = mainForm;
+            initChangeListener();
+        }
+
+        private void initChangeListener() {
+            textField.getDocument().addDocumentListener(new DocumentListener() {
+                @Override
+                public void insertUpdate(DocumentEvent e) {
+                    if (!isAutoComplete) {
+                        autoComplete();
+                    } else {
+                        isAutoComplete = false;
+                    }
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent e) {
+                }
+
+                @Override
+                public void changedUpdate(DocumentEvent e) {
+
+                }
+            });
+        }
+
+        private void autoComplete() {
+            isAutoComplete = true;
+
+            ArrayList<Record> records = mainForm.recordArrayList;
+            final String text = textField.getText();
+            final int start = text.length();
+
+            if (col == mainForm.table.getColumn(SITE_COLUMN_NAME).getModelIndex() ||
+                    col == mainForm.table.getColumn(LOGIN_COLUMN_NAME).getModelIndex()) {
+                ArrayList<String> sites = new ArrayList<>(records.size());
+                ArrayList<String> logins = new ArrayList<>(records.size());
+                for (Record record : records) {
+                    sites.add(record.getSite());
+                    logins.add(record.getLogin());
+                }
+                Comparator<String> comparator = new Comparator<String>() {
+                    @Override
+                    public int compare(String o1, String o2) {
+                        return ((o1.length() > o2.length()) ? 1 : (o1.length() < o2.length()) ? -1 : 0);
+                    }
+                };
+
+                Collections.sort(sites, comparator);
+                Collections.sort(logins, comparator);
+
+                final ArrayList<String> result = new ArrayList<>();
+
+                if (col == mainForm.table.getColumn(SITE_COLUMN_NAME).getModelIndex()) {
+                    for (String site : sites) {
+                        if (site.startsWith(text) && site.length() > text.length()) {
+                            result.add(site);
+                        }
+                    }
+                }
+                if (col == mainForm.table.getColumn(LOGIN_COLUMN_NAME).getModelIndex()) {
+                    for (String login : logins) {
+                        if (login.startsWith(text) && login.length() > text.length()) {
+                            result.add(login);
+                        }
+                    }
+                }
+                Collections.sort(result);
+
+                if (result.size() > 0) {
+                    if (result.get(0).length() > start) {
+                        SwingUtilities.invokeLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                textField.setText(result.get(0));
+                                textField.setCaretPosition(result.get(0).length());
+                                textField.moveCaretPosition(text.length());
+                            }
+                        });
+                    }
+                }
+            }
         }
 
         @Override
@@ -1560,6 +1647,17 @@ public class MainForm extends JFrame {
             MainForm mf = (MainForm) findWindow(textField);
             mf.undoItem.setEnabled(false);
             mf.redoItem.setEnabled(false);
+            
+            int editingColumn = mf.table.getEditingColumn();
+
+            if (editingColumn == mf.table.getColumn(SITE_COLUMN_NAME).getModelIndex()) {
+                col = editingColumn;
+            } else if (editingColumn == mf.table.getColumn(LOGIN_COLUMN_NAME).getModelIndex()) {
+                col = editingColumn;
+            } else {
+                col = -1;
+            }
+
             super.addCellEditorListener(l);
         }
 
