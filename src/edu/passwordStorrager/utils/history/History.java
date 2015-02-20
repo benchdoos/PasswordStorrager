@@ -42,7 +42,7 @@ public class History {
             isHistoryCall = false;
             current--;
             updateIfIsSaved();
-            System.out.println("undo: " + h);
+            System.out.println("History.undo: " + h);
         }
     }
 
@@ -54,7 +54,7 @@ public class History {
             h.redo(mainForm);
             isHistoryCall = false;
             updateIfIsSaved();
-            System.out.println("redo: " + h);
+            System.out.println("History.redo: " + h);
         }
     }
 

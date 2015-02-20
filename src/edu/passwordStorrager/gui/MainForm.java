@@ -8,10 +8,7 @@ import edu.passwordStorrager.objects.Record;
 import edu.passwordStorrager.protector.Values;
 import edu.passwordStorrager.utils.FrameUtils;
 import edu.passwordStorrager.utils.StringUtils;
-import edu.passwordStorrager.utils.history.AddRowAction;
-import edu.passwordStorrager.utils.history.ChangeCellValueAction;
-import edu.passwordStorrager.utils.history.History;
-import edu.passwordStorrager.utils.history.RemoveRowAction;
+import edu.passwordStorrager.utils.history.*;
 import edu.passwordStorrager.utils.platform.PlatformUtils;
 import edu.passwordStorrager.xmlManager.XmlParser;
 import org.apache.log4j.Logger;
@@ -1050,7 +1047,7 @@ public class MainForm extends JFrame {
 
                         }
                     }.setVisible(true);
-                    
+
                 }
             }
         });
@@ -1388,7 +1385,7 @@ public class MainForm extends JFrame {
         }
     }
 
-    private void exchangeRecords(int index1, int index2) {
+    public void exchangeRecords(int index1, int index2) {
         Record rec1 = recordArrayList.get(index1);
         Record rec2 = recordArrayList.get(index2);
         recordArrayList.set(index1, rec2);
@@ -1396,6 +1393,9 @@ public class MainForm extends JFrame {
         loadList(recordArrayList);
         table.clearSelection();
         table.setRowSelectionInterval(index1, index1);
+        if (!history.isHistoryCall()) {
+            history.register(new ExchangedRowsAction(index1, index2));
+        }
         setEdited(true);
     }
 
