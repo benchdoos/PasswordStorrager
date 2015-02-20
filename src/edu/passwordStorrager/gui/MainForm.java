@@ -104,6 +104,7 @@ public class MainForm extends JFrame {
     private JProgressBar statusProgressBar;
     private JLabel rowCount;
     private JLabel isEditableIcon;
+    private JPanel searchPanel;
 
     private Timer searchTimer;
     private static Timer lockTimer; //for multiple windows
@@ -615,6 +616,8 @@ public class MainForm extends JFrame {
         if (IS_MAC) {
             controlPanel.addMouseListener(controlPanelMouseListener);
             controlPanel.addMouseMotionListener(controlPanelMouseMotionAdapter);
+            searchPanel.addMouseListener(controlPanelMouseListener);
+            searchPanel.addMouseMotionListener(controlPanelMouseMotionAdapter);
         }
     }
 
@@ -741,8 +744,17 @@ public class MainForm extends JFrame {
                         isSearchMode = true;
                     }
 
-                    if (e.getKeyCode() == KeyEvent.VK_ESCAPE && isSearchMode) {
+                    if (key == KeyEvent.VK_ESCAPE && isSearchMode) {
                         searchField.requestFocus();
+                    }
+
+                    if (key == KeyEvent.VK_HOME && table.getRowCount() > 0) {
+                        table.setRowSelectionInterval(0, 0);
+                    }
+
+                    if (key == KeyEvent.VK_END && table.getRowCount() > 0) {
+                        int index = table.getRowCount() - 1;
+                        table.setRowSelectionInterval(index, index);
                     }
                 }
             }
@@ -1335,7 +1347,8 @@ public class MainForm extends JFrame {
         statusProgressBar.setVisible(true);
         setStatus(bar.getText(), STATUS_MESSAGE);
         table.setModel(createTableModel(recordArrayList));
-        table.setRowHeight(25);
+        table.setRowHeight(20);
+        table.setFont(new Font("LucidaGrande", Font.PLAIN, 12));
 
         initTable();
 
@@ -1415,7 +1428,7 @@ public class MainForm extends JFrame {
         table.clearSelection();
         table.setRowSelectionInterval(index, index);
         //scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
-        scrollToVisible(table,index,1);
+        scrollToVisible(table, index, 1);
         table.requestFocus();
         setEdited(true);
         if (!history.isHistoryCall()) {
@@ -1473,7 +1486,7 @@ public class MainForm extends JFrame {
                     if (index1 == recordArrayList.size()) {
                         if (index1 != 0) {
                             table.setRowSelectionInterval(index1 - 1, index1 - 1);
-                            scrollToVisible(table, index1-1, 1);
+                            scrollToVisible(table, index1 - 1, 1);
                         }
                     } else {
                         table.setRowSelectionInterval(index1, index1);
@@ -1481,9 +1494,7 @@ public class MainForm extends JFrame {
                     }
                 }
             }
-            
 
-            
             if (!history.isHistoryCall()) {
                 history.register(new RemoveRowAction(index1, removedRecords));
             }
@@ -1665,6 +1676,7 @@ public class MainForm extends JFrame {
 
         @Override
         public void addCellEditorListener(CellEditorListener l) {
+            textField.setFont(new Font("LucidaGrande", Font.PLAIN, 12));
             textField.setCaret(new DefaultCaret());
             textField.setCaretPosition(textField.getText().length());
             MainForm mf = (MainForm) findWindow(textField);
