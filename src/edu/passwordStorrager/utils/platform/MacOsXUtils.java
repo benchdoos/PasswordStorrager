@@ -104,7 +104,6 @@ public class MacOsXUtils {
     }
 
     public static boolean isBundled() {
-        System.out.println( PasswordStorrager.JAR_FILE.getAbsolutePath().contains(".app/") && IS_MAC);
         return PasswordStorrager.JAR_FILE.getAbsolutePath().contains(".app/") && IS_MAC;
     }
 }
