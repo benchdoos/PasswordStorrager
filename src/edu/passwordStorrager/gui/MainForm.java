@@ -1414,7 +1414,8 @@ public class MainForm extends JFrame {
 
         table.clearSelection();
         table.setRowSelectionInterval(index, index);
-        scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
+        //scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
+        scrollToVisible(table,index,1);
         table.requestFocus();
         setEdited(true);
         if (!history.isHistoryCall()) {
@@ -1472,13 +1473,17 @@ public class MainForm extends JFrame {
                     if (index1 == recordArrayList.size()) {
                         if (index1 != 0) {
                             table.setRowSelectionInterval(index1 - 1, index1 - 1);
+                            scrollToVisible(table, index1-1, 1);
                         }
                     } else {
                         table.setRowSelectionInterval(index1, index1);
+                        scrollToVisible(table, index1, 1);
                     }
                 }
             }
+            
 
+            
             if (!history.isHistoryCall()) {
                 history.register(new RemoveRowAction(index1, removedRecords));
             }
@@ -1725,6 +1730,15 @@ public class MainForm extends JFrame {
 
     public void refreshLockTimer() {
         lockTimer.restart();
+    }
+
+    public static void scrollToVisible(JTable table, int rowIndex, int vColIndex) {
+        if (!(table.getParent() instanceof JViewport)) return;
+        JViewport viewport = (JViewport) table.getParent();
+        Rectangle rect = table.getCellRect(rowIndex, vColIndex, true);
+        Point pt = viewport.getViewPosition();
+        rect.setLocation(rect.x - pt.x, rect.y - pt.y);
+        viewport.scrollRectToVisible(rect);
     }
 }
 
