@@ -101,10 +101,10 @@ public class MainForm extends JFrame {
 
     private JProgressBar progressBar;
     private JLabel bar;
-    private JProgressBar statusProgressBar;
     private JLabel rowCount;
     private JLabel isEditableIcon;
     private JPanel searchPanel;
+    private JLabel info;
 
     private Timer searchTimer;
     private static Timer lockTimer; //for multiple windows
@@ -160,6 +160,8 @@ public class MainForm extends JFrame {
         initStatusBar();
 
         loadList(recordArrayList);
+
+        setStatus("Количество записей: " + table.getModel().getRowCount(), STATUS_MESSAGE);
 
         initTable();
 
@@ -362,19 +364,20 @@ public class MainForm extends JFrame {
 
 
     public void setStatus(String status, int type) {
-        showStatusBar(true);
+        resetStatus();
+        //showStatusBar(true);
         switch (type) {
             case STATUS_MESSAGE:
-                bar.setForeground(Color.black);
-                bar.setText(status);
+                bar.setForeground(new Color(76, 76, 76));
+                bar.setText(status + ";");
                 break;
             case STATUS_SUCCESS:
                 bar.setForeground(new Color(0, 150, 0));
-                bar.setText(status);
+                bar.setText(status + ";");
                 break;
             case STATUS_ERROR:
                 bar.setForeground(Color.red);
-                bar.setText(status);
+                bar.setText(status + ";");
                 break;
         }
 
@@ -410,14 +413,15 @@ public class MainForm extends JFrame {
     }
 
     public void resetStatus() {
-        bar.setForeground(Color.black);
+        bar.setForeground(new Color(76, 76, 76));
         bar.setText("");
-        showStatusBar(false);
+//        showStatusBar(false);
     }
 
-    private void updateRowCount(int count) {
-        rowCount.setText("Записей: " + count);
+    public void updateInfo() {
+        info.setText("объектов: " + recordArrayList.size());
     }
+
 
     private void setControlButtonsEnabled(boolean value) {
         addUpButton.setEnabled(value);
@@ -622,15 +626,11 @@ public class MainForm extends JFrame {
     }
 
     private void initStatusBar() {
-        bar.setFont(new Font("Menlo", Font.PLAIN, 10));
-        bar.setForeground(Color.black);
-        bar.setVerticalAlignment(JLabel.TOP);
-        rowCount.setFont(new Font("Menlo", Font.PLAIN, 10));
-        rowCount.setVerticalAlignment(JLabel.TOP);
-
-        statusProgressBar.setIndeterminate(true);
-        statusProgressBar.putClientProperty("JProgressBar.style", "circular");
-
+//        bar.setFont(new Font("LucidaGrande", Font.PLAIN, 10));
+//        bar.setForeground(new Color(76,76,76));
+//        bar.setVerticalAlignment(JLabel.TOP);
+        /*rowCount.setFont(new Font("Menlo", Font.PLAIN, 10));
+        rowCount.setVerticalAlignment(JLabel.TOP);*/
         statusPanel.addMouseListener(new MouseListener() {
 
             @Override
@@ -650,7 +650,7 @@ public class MainForm extends JFrame {
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                showStatusBar(true);
+                //showStatusBar(true);
             }
 
             @Override
@@ -926,6 +926,8 @@ public class MainForm extends JFrame {
                     initHistory();
                     moveUpButton.setEnabled(false);
                     moveDownButton.setEnabled(false);
+
+                    setStatus("Количество записей: " + table.getModel().getRowCount(), STATUS_MESSAGE);
                 }
             }
         });
@@ -1344,8 +1346,7 @@ public class MainForm extends JFrame {
 
     public void loadList(ArrayList<Record> recordArrayList) {
         //Record[] recordsList = recordArrayList.toArray(new Record[recordArrayList.size()]);
-        statusProgressBar.setVisible(true);
-        setStatus(bar.getText(), STATUS_MESSAGE);
+//        setStatus(bar.getText(), STATUS_MESSAGE);
         table.setModel(createTableModel(recordArrayList));
         table.setRowHeight(20);
         table.setFont(new Font("LucidaGrande", Font.PLAIN, 12));
@@ -1366,10 +1367,7 @@ public class MainForm extends JFrame {
         table.setComponentPopupMenu(popupMenu);
         table.setSurrendersFocusOnKeystroke(true);
         table.getModel().addTableModelListener(tableModelListener);
-        statusProgressBar.setVisible(false);
-
-        updateRowCount(recordArrayList.size());
-        setStatus("Количество записей: " + table.getModel().getRowCount(), STATUS_MESSAGE);
+        updateInfo();
     }
 
     public void saveStorage() {
@@ -1390,14 +1388,14 @@ public class MainForm extends JFrame {
         loadList(recordArrayList);
         setEdited(false);
         history.save();
-        setStatus("Сохранено", STATUS_SUCCESS);
+        setStatus("Сохранено.", STATUS_SUCCESS);
     }
 
     public void addNewRecord(int index, int count) {
         /*if (!editModeJRadioButtonMenuItem.isSelected()) {
             editModeJRadioButtonMenuItem.doClick();
         }*/
-        setStatus(bar.getText(), STATUS_MESSAGE);
+
         isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/unlock.png")));
 
         if (count > 100) {
@@ -1409,8 +1407,6 @@ public class MainForm extends JFrame {
             Record[] rec2 = new Record[count];
             for (int i = 0; i < count; i++) {
                 rec2[i] = new Record();
-                statusProgressBar.setValue((int) ((double) i / count) * 100);
-                statusProgressBar.setToolTipText(statusProgressBar.getValue() + "%");
             }
             Record[] rec3 = Arrays.copyOfRange(tmp, index, tmp.length);
             Record[] rec;
@@ -1433,6 +1429,11 @@ public class MainForm extends JFrame {
         setEdited(true);
         if (!history.isHistoryCall()) {
             history.register(new AddRowAction(index, count));
+            if (count == 1) {
+                setStatus("Добавлена запись", STATUS_MESSAGE);
+            } else {
+                setStatus("Добавлено записей: " + count, STATUS_MESSAGE);
+            }
         }
     }
 
@@ -1497,8 +1498,14 @@ public class MainForm extends JFrame {
 
             if (!history.isHistoryCall()) {
                 history.register(new RemoveRowAction(index1, removedRecords));
+                if (index1 != index2) {
+                    setStatus("Удалено записей: " + (index2+1 - index1) , STATUS_MESSAGE);
+                } else {
+                    setStatus("Удалена запись", STATUS_MESSAGE);
+                }
             }
         }
+
         setEdited(true);
     }
 
@@ -1536,8 +1543,6 @@ public class MainForm extends JFrame {
             siteData[i] = recordArrayList.get(i).getSite();
             loginData[i] = recordArrayList.get(i).getLogin();
             pwdData[i] = recordArrayList.get(i).getPassword();
-            statusProgressBar.setValue((int) ((double) i / total) * 100);
-            statusProgressBar.setToolTipText(statusProgressBar.getValue() + "%");
         }
 
         tableModel.addColumn(NUMBER_COLUMN_NAME, number);
@@ -1587,7 +1592,7 @@ public class MainForm extends JFrame {
         }
 
         private void autoComplete() {
-
+            System.out.println("autoComplete");
             ArrayList<Record> records = mainForm.recordArrayList;
             final String text = textField.getText();
             final int start = text.length();
