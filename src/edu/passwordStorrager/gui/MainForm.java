@@ -43,6 +43,10 @@ public class MainForm extends JFrame {
     static final String NUMBER_COLUMN_NAME = "#", SITE_COLUMN_NAME = "Сайт",
             LOGIN_COLUMN_NAME = "Логин", PASSWORD_COLUMN_NAME = "Пароль";
 
+    static int SITE_COLUMN_INDEX = 1;
+    static int LOGIN_COLUMN_INDEX = 2;
+    static int PASSWORD_COLUMN_INDEX = 3;
+
     private History history;
 
     private boolean isEdited = false;
@@ -141,7 +145,7 @@ public class MainForm extends JFrame {
         initWindowListeners();
 
         initScrollPaneListeners();
-        
+
         initTableListeners();
 
         initMenu();
@@ -177,10 +181,6 @@ public class MainForm extends JFrame {
         lockTimer = new Timer(60 * 1000, actionListener);
         lockTimer.setRepeats(false);
         refreshLockTimer();
-    }
-
-    public void refreshLockTimer() {
-        lockTimer.restart();
     }
 
     private void initWindowListeners() {
@@ -238,68 +238,11 @@ public class MainForm extends JFrame {
         password.setHeaderValue(PASSWORD_COLUMN_NAME);
         password.setResizable(false);
 
+        SITE_COLUMN_INDEX = table.getColumn(SITE_COLUMN_NAME).getModelIndex();
+        LOGIN_COLUMN_INDEX = table.getColumn(LOGIN_COLUMN_NAME).getModelIndex();
+        PASSWORD_COLUMN_INDEX = table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex();
 //        scrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, null); //square, квадрат между table и scrollpane
     }
-
-
-    public void setStatus(String status, int type) {
-        showStatusBar(true);
-        switch (type) {
-            case STATUS_MESSAGE:
-                bar.setForeground(Color.black);
-                bar.setText(status);
-                break;
-            case STATUS_SUCCESS:
-                bar.setForeground(new Color(0, 150, 0));
-                bar.setText(status);
-                break;
-            case STATUS_ERROR:
-                bar.setForeground(Color.red);
-                bar.setText(status);
-                break;
-        }
-
-        if (timer == null) {
-            timer = new Timer(8 * 1000, new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    resetStatus();
-                }
-            });
-            timer.setRepeats(false);
-            timer.start();
-        } else {
-            timer.restart();
-        }
-
-    }
-
-    private void showStatusBar(boolean value) {
-        if (value) {
-            statusPanel.setMinimumSize(new Dimension(-1, 17));
-            statusPanel.setMaximumSize(new Dimension(-1, 17));
-            statusPanel.setPreferredSize(new Dimension(-1, 17));
-            statusPanel.invalidate();
-            getContentPane().validate();
-        } else {
-            statusPanel.setMinimumSize(new Dimension(-1, 2));
-            statusPanel.setMaximumSize(new Dimension(-1, 2));
-            statusPanel.setPreferredSize(new Dimension(-1, 2));
-            statusPanel.invalidate();
-            getContentPane().validate();
-        }
-    }
-
-    public void resetStatus() {
-        bar.setForeground(Color.black);
-        bar.setText("");
-        showStatusBar(false);
-    }
-
-    private void updateRowCount(int count) {
-        rowCount.setText("Записей: " + count);
-    }
-
 
     private void initSearchBarListeners() {
 
@@ -414,6 +357,65 @@ public class MainForm extends JFrame {
         });
         searchTimer.setRepeats(false);
         searchTimer.start();
+    }
+
+
+    public void setStatus(String status, int type) {
+        showStatusBar(true);
+        switch (type) {
+            case STATUS_MESSAGE:
+                bar.setForeground(Color.black);
+                bar.setText(status);
+                break;
+            case STATUS_SUCCESS:
+                bar.setForeground(new Color(0, 150, 0));
+                bar.setText(status);
+                break;
+            case STATUS_ERROR:
+                bar.setForeground(Color.red);
+                bar.setText(status);
+                break;
+        }
+
+        if (timer == null) {
+            timer = new Timer(8 * 1000, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    resetStatus();
+                }
+            });
+            timer.setRepeats(false);
+            timer.start();
+        } else {
+            timer.restart();
+        }
+
+    }
+
+    private void showStatusBar(boolean value) {
+        if (value) {
+            statusPanel.setMinimumSize(new Dimension(-1, 17));
+            statusPanel.setMaximumSize(new Dimension(-1, 17));
+            statusPanel.setPreferredSize(new Dimension(-1, 17));
+            statusPanel.invalidate();
+            getContentPane().validate();
+        } else {
+            statusPanel.setMinimumSize(new Dimension(-1, 2));
+            statusPanel.setMaximumSize(new Dimension(-1, 2));
+            statusPanel.setPreferredSize(new Dimension(-1, 2));
+            statusPanel.invalidate();
+            getContentPane().validate();
+        }
+    }
+
+    public void resetStatus() {
+        bar.setForeground(Color.black);
+        bar.setText("");
+        showStatusBar(false);
+    }
+
+    private void updateRowCount(int count) {
+        rowCount.setText("Записей: " + count);
     }
 
     private void setControlButtonsEnabled(boolean value) {
@@ -678,13 +680,13 @@ public class MainForm extends JFrame {
                 int row = table.rowAtPoint(p);
                 if (count >= 2 && me.getButton() == MouseEvent.BUTTON1) {
                     if (MainForm.this.table.getSelectedRow() >= 0) {
-                        if (MainForm.this.table.getSelectedColumn() == table.getColumn(SITE_COLUMN_NAME).getModelIndex()) {
+                        if (MainForm.this.table.getSelectedColumn() == SITE_COLUMN_INDEX) {
                             String site = (String) MainForm.this.table.getModel()
-                                    .getValueAt(row, table.getColumn(SITE_COLUMN_NAME).getModelIndex());
+                                    .getValueAt(row, SITE_COLUMN_INDEX);
                             StringUtils.openWebPage(site);
                         } else {
                             String copy = (String) MainForm.this.table.getModel().getValueAt(row,
-                                    table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex());
+                                    PASSWORD_COLUMN_INDEX);
                             copyToClipboard(copy);
                         }
                     }
@@ -719,7 +721,7 @@ public class MainForm extends JFrame {
                     if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & kEvent) != 0)) {
                         if (table.getSelectedRow() != -1) {
                             String copy = (String) MainForm.this.table.getModel().getValueAt(table.getSelectedRow(),
-                                    table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex());
+                                    PASSWORD_COLUMN_INDEX);
                             copyToClipboard(copy);
                         }
                     }
@@ -782,8 +784,8 @@ public class MainForm extends JFrame {
                 System.out.println("PP.>>>" + e.getFirstIndex() + " " + e.getLastIndex() + " " + e.getValueIsAdjusting());
 
                 if (e.getFirstIndex() == 0) {
-                    int pwd = table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex();
-                    int sit = table.getColumn(SITE_COLUMN_NAME).getModelIndex();
+                    int pwd = PASSWORD_COLUMN_INDEX;
+                    int sit = SITE_COLUMN_INDEX;
                     int rows = table.getRowCount();
                     int selected = table.getSelectedRow();
                     int lastIndex = e.getLastIndex();
@@ -831,16 +833,16 @@ public class MainForm extends JFrame {
                     newRec.setPassword(oldRec.getPassword());
 
                     String prevValue = "";
-                    if (col == table.getColumn(SITE_COLUMN_NAME).getModelIndex()) {
+                    if (col == SITE_COLUMN_INDEX) {
                         newRec.setSite(value);
                         prevValue = oldRec.getSite();
                     }
-                    if (col == table.getColumn(LOGIN_COLUMN_NAME).getModelIndex()) {
+                    if (col == LOGIN_COLUMN_INDEX) {
                         newRec.setLogin(value);
                         prevValue = oldRec.getLogin();
                     }
 
-                    if (col == table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex()) {
+                    if (col == PASSWORD_COLUMN_INDEX) {
                         newRec.setPassword(value);
                         prevValue = oldRec.getPassword();
                     }
@@ -882,7 +884,7 @@ public class MainForm extends JFrame {
             }
         });*/
     }
-    
+
     private void initScrollPaneListeners() {
         scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
             @Override
@@ -1197,7 +1199,7 @@ public class MainForm extends JFrame {
         copySiteItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                copySelectedCell(table.getColumn(SITE_COLUMN_NAME).getModelIndex());
+                copySelectedCell(SITE_COLUMN_INDEX);
             }
         });
         copyJMenu.add(copySiteItem);
@@ -1207,7 +1209,7 @@ public class MainForm extends JFrame {
         copyLoginItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                copySelectedCell(table.getColumn(LOGIN_COLUMN_NAME).getModelIndex());
+                copySelectedCell(LOGIN_COLUMN_INDEX);
             }
         });
         copyJMenu.add(copyLoginItem);
@@ -1217,7 +1219,7 @@ public class MainForm extends JFrame {
         copyPasswordItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                copySelectedCell(table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex());
+                copySelectedCell(PASSWORD_COLUMN_INDEX);
             }
         });
         copyJMenu.add(copyPasswordItem);
@@ -1269,7 +1271,7 @@ public class MainForm extends JFrame {
         menuItemCopySite.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String copy = (String) table.getModel().getValueAt(table.getSelectedRow(), table.getColumn(SITE_COLUMN_NAME).getModelIndex());
+                String copy = (String) table.getModel().getValueAt(table.getSelectedRow(), SITE_COLUMN_INDEX);
                 copyToClipboard(copy);
             }
         });
@@ -1277,7 +1279,7 @@ public class MainForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (table.getSelectedRow() != -1) {
-                    String copy = (String) table.getModel().getValueAt(table.getSelectedRow(), table.getColumn(LOGIN_COLUMN_NAME).getModelIndex());
+                    String copy = (String) table.getModel().getValueAt(table.getSelectedRow(), LOGIN_COLUMN_INDEX);
                     copyToClipboard(copy);
                     setStatus("Скопировано: " + copy, STATUS_SUCCESS);
                 }
@@ -1365,9 +1367,9 @@ public class MainForm extends JFrame {
         recordArrayList = new ArrayList<>(rows);
         for (int i = 0; i < rows; i++) {
             Record record = new Record();
-            record.setSite((String) table.getModel().getValueAt(i, table.getColumn(SITE_COLUMN_NAME).getModelIndex()));
-            record.setLogin((String) table.getModel().getValueAt(i, table.getColumn(LOGIN_COLUMN_NAME).getModelIndex()));
-            record.setPassword((String) table.getModel().getValueAt(i, table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex()));
+            record.setSite((String) table.getModel().getValueAt(i, SITE_COLUMN_INDEX));
+            record.setLogin((String) table.getModel().getValueAt(i, LOGIN_COLUMN_INDEX));
+            record.setPassword((String) table.getModel().getValueAt(i, PASSWORD_COLUMN_INDEX));
             recordArrayList.add(record);
         }
         new XmlParser().saveRecords(recordArrayList);
@@ -1573,8 +1575,8 @@ public class MainForm extends JFrame {
             final String text = textField.getText();
             final int start = text.length();
 
-            if (col == mainForm.table.getColumn(SITE_COLUMN_NAME).getModelIndex() ||
-                    col == mainForm.table.getColumn(LOGIN_COLUMN_NAME).getModelIndex()) {
+            if (col == mainForm.SITE_COLUMN_INDEX ||
+                    col == mainForm.LOGIN_COLUMN_INDEX) {
                 ArrayList<String> sites = new ArrayList<>(records.size());
                 ArrayList<String> logins = new ArrayList<>(records.size());
                 for (Record record : records) {
@@ -1593,14 +1595,14 @@ public class MainForm extends JFrame {
 
                 final ArrayList<String> result = new ArrayList<>();
 
-                if (col == mainForm.table.getColumn(SITE_COLUMN_NAME).getModelIndex()) {
+                if (col == mainForm.SITE_COLUMN_INDEX) {
                     for (String site : sites) {
                         if (site.startsWith(text) && site.length() > text.length()) {
                             result.add(site);
                         }
                     }
                 }
-                if (col == mainForm.table.getColumn(LOGIN_COLUMN_NAME).getModelIndex()) {
+                if (col == mainForm.LOGIN_COLUMN_INDEX) {
                     for (String login : logins) {
                         if (login.startsWith(text) && login.length() > text.length()) {
                             result.add(login);
@@ -1665,9 +1667,9 @@ public class MainForm extends JFrame {
 
             int editingColumn = mf.table.getEditingColumn();
 
-            if (editingColumn == mf.table.getColumn(SITE_COLUMN_NAME).getModelIndex()) {
+            if (editingColumn == mf.SITE_COLUMN_INDEX) {
                 col = editingColumn;
-            } else if (editingColumn == mf.table.getColumn(LOGIN_COLUMN_NAME).getModelIndex()) {
+            } else if (editingColumn == mf.LOGIN_COLUMN_INDEX) {
                 col = editingColumn;
             } else {
                 col = -1;
@@ -1715,12 +1717,13 @@ public class MainForm extends JFrame {
     }
 
     public void setValue(int index, Record record) {
-        int site = table.getColumn(SITE_COLUMN_NAME).getModelIndex();
-        int login = table.getColumn(LOGIN_COLUMN_NAME).getModelIndex();
-        int password = table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex();
-        table.setValueAt(record.getSite(), index, site);
-        table.setValueAt(record.getLogin(), index, login);
-        table.setValueAt(record.getPassword(), index, password);
+        table.setValueAt(record.getSite(), index, SITE_COLUMN_INDEX);
+        table.setValueAt(record.getLogin(), index, LOGIN_COLUMN_INDEX);
+        table.setValueAt(record.getPassword(), index, PASSWORD_COLUMN_INDEX);
+    }
+
+    public void refreshLockTimer() {
+        lockTimer.restart();
     }
 }
 
