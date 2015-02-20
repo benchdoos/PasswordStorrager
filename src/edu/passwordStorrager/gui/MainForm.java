@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.Timer;
+import javax.swing.border.Border;
 import javax.swing.event.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -1347,6 +1348,7 @@ public class MainForm extends JFrame {
     public void loadList(ArrayList<Record> recordArrayList) {
         //Record[] recordsList = recordArrayList.toArray(new Record[recordArrayList.size()]);
 //        setStatus(bar.getText(), STATUS_MESSAGE);
+        table.setBorder(BorderFactory.createEmptyBorder());
         table.setModel(createTableModel(recordArrayList));
         table.setRowHeight(20);
         table.setFont(new Font("LucidaGrande", Font.PLAIN, 12));
