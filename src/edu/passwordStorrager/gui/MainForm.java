@@ -11,6 +11,7 @@ import edu.passwordStorrager.utils.StringUtils;
 import edu.passwordStorrager.utils.history.AddRowAction;
 import edu.passwordStorrager.utils.history.ChangeCellValueAction;
 import edu.passwordStorrager.utils.history.History;
+import edu.passwordStorrager.utils.history.RemoveRowAction;
 import edu.passwordStorrager.utils.platform.PlatformUtils;
 import edu.passwordStorrager.xmlManager.XmlParser;
 import org.apache.log4j.Logger;
@@ -1005,6 +1006,9 @@ public class MainForm extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if (!isSearchMode) {
                     addNewRecord(recordArrayList.size(), 1);
+                    if (!editModeJRadioButtonMenuItem.isSelected()) {
+                        editModeJRadioButtonMenuItem.doClick();
+                    }
                 }
             }
         });
@@ -1035,6 +1039,9 @@ public class MainForm extends JFrame {
                                         addNewRecord(table.getRowCount(), count); //after selection //row = before
                                     }
                                 }
+                                if (!editModeJRadioButtonMenuItem.isSelected()) {
+                                    editModeJRadioButtonMenuItem.doClick();
+                                }
                                 dispose();
                             } else {
                                 shakeFrame(this);
@@ -1043,6 +1050,7 @@ public class MainForm extends JFrame {
 
                         }
                     }.setVisible(true);
+                    
                 }
             }
         });
@@ -1339,9 +1347,9 @@ public class MainForm extends JFrame {
     }
 
     public void addNewRecord(int index, int count) {
-        if (!editModeJRadioButtonMenuItem.isSelected()) {
+        /*if (!editModeJRadioButtonMenuItem.isSelected()) {
             editModeJRadioButtonMenuItem.doClick();
-        }
+        }*/
         setStatus(bar.getText(), STATUS_MESSAGE);
         isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/unlock.png")));
 
@@ -1406,16 +1414,20 @@ public class MainForm extends JFrame {
             index2 = table.getRowCount() - 1;
         }
 
+        ArrayList<Record> removedRecords = new ArrayList<>();
+
         if (recordArrayList.size() > 0) {
             int diff = index2 - index1;
+            removedRecords.add(recordArrayList.get(index1));
             recordArrayList.remove(index1);
             for (int i = 0; i < diff; i++) {
+                removedRecords.add(recordArrayList.get(index1));
                 recordArrayList.remove(index1);
             }
             loadList(recordArrayList);
             table.clearSelection();
 
-            editModeJRadioButtonMenuItem.setSelected(true);
+//            editModeJRadioButtonMenuItem.setSelected(true);
             isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/unlock.png")));
 
             if (index1 >= 0) {
@@ -1429,25 +1441,11 @@ public class MainForm extends JFrame {
                     }
                 }
             }
-        }
 
-        //int index = table.getSelectedRow();
-        /*if (index >= 0) {
-            recordArrayList.remove(index);
-            loadList(recordArrayList);
-            table.clearSelection();
-
-            editModeJRadioButtonMenuItem.setSelected(true);
-            isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/unlock.png")));
-
-            if (index >= 0 && recordArrayList.size() > 0) {
-                if (index < recordArrayList.size()) {
-                    table.setRowSelectionInterval(index, index);
-                } else {
-                    table.setRowSelectionInterval(recordArrayList.size() - 1, recordArrayList.size() - 1);
-                }
+            if (!history.isHistoryCall()) {
+                history.register(new RemoveRowAction(index1, removedRecords));
             }
-        }*/
+        }
         setEdited(true);
     }
 
@@ -1580,6 +1578,15 @@ public class MainForm extends JFrame {
 
     boolean hasPrevious() {
         return table.getSelectedRow() >= 0 && table.getSelectedRow() > 0;
+    }
+
+    public void setValue(int index, Record record) {
+        int site = table.getColumn(SITE_COLUMN_NAME).getModelIndex();
+        int login = table.getColumn(LOGIN_COLUMN_NAME).getModelIndex();
+        int password = table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex();
+        table.setValueAt(record.getSite(), index, site);
+        table.setValueAt(record.getLogin(), index, login);
+        table.setValueAt(record.getPassword(), index, password);
     }
 }
 
