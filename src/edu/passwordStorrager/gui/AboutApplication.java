@@ -3,6 +3,7 @@ package edu.passwordStorrager.gui;
 import edu.passwordStorrager.core.Application;
 import edu.passwordStorrager.utils.FrameUtils;
 import edu.passwordStorrager.utils.StringUtils;
+import edu.passwordStorrager.utils.platform.MacOsXUtils;
 import edu.passwordStorrager.utils.platform.PlatformUtils;
 import org.apache.log4j.Logger;
 
@@ -25,10 +26,12 @@ public class AboutApplication extends JFrame {
     public AboutApplication() {
         setTitle("О программе");
         setContentPane(contentPane);
-        setIconImage(PlatformUtils.appIcon);
+        if (!MacOsXUtils.isBundled()) {
+            setIconImage(PlatformUtils.appIcon);
+        }
         setResizable(false);
         icon.setSize(128, 128);
-        icon.setIcon(FrameUtils.resizeIcon(getClass().getResource("/resources/icons/icon_black_256.png"),icon.getSize()));
+        icon.setIcon(FrameUtils.resizeIcon(getClass().getResource("/resources/icons/icon_black_256.png"), icon.getSize()));
 
         final String original = version.getText() + Application.APPLICATION_VERSION;
         version.setText(original);

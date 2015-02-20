@@ -6,6 +6,7 @@ import edu.passwordStorrager.protector.Encryption;
 import edu.passwordStorrager.protector.Protector;
 import edu.passwordStorrager.protector.Values;
 import edu.passwordStorrager.utils.FrameUtils;
+import edu.passwordStorrager.utils.platform.MacOsXUtils;
 import edu.passwordStorrager.utils.platform.PlatformUtils;
 import edu.passwordStorrager.xmlManager.XmlParser;
 import org.apache.log4j.Logger;
@@ -36,12 +37,13 @@ public class AuthorizeDialog extends JDialog {
         isBlocked = false;
         initTimer();
         setContentPane(contentPane);
-        setIconImage(PlatformUtils.appIcon);
+        if (!MacOsXUtils.isBundled()) {
+            setIconImage(PlatformUtils.appIcon);
+        }
         setTitle("Вход");
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
         setResizable(false);
-        setIconImage(PlatformUtils.appIcon);
         progressBar.setIndeterminate(true);
         progressBar.putClientProperty("JProgressBar.style", "circular");
 

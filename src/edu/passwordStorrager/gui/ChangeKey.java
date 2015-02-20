@@ -7,6 +7,7 @@ import edu.passwordStorrager.protector.Values;
 import edu.passwordStorrager.utils.FileUtils;
 import edu.passwordStorrager.utils.FrameUtils;
 import edu.passwordStorrager.utils.StringUtils;
+import edu.passwordStorrager.utils.platform.MacOsXUtils;
 import edu.passwordStorrager.utils.platform.PlatformUtils;
 import edu.passwordStorrager.xmlManager.XmlParser;
 
@@ -29,7 +30,9 @@ public abstract class ChangeKey extends JDialog {
 
     public ChangeKey() {
         setTitle("Указать хранилище");
-        setIconImage(PlatformUtils.appIcon);
+        if (!MacOsXUtils.isBundled()) {
+            setIconImage(PlatformUtils.appIcon);
+        }
         description.setText("<html>Укажите местоположение файла ключа и хранилища. <br>" +
                 "Укажите пароль, заданный при создании данного хранилища. </html>");
         setContentPane(contentPane);

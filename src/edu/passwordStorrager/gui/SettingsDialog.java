@@ -9,6 +9,7 @@ import edu.passwordStorrager.utils.FileUtils;
 import edu.passwordStorrager.utils.FrameUtils;
 import edu.passwordStorrager.utils.KeyUtils;
 import edu.passwordStorrager.utils.StringUtils;
+import edu.passwordStorrager.utils.platform.MacOsXUtils;
 import edu.passwordStorrager.utils.platform.PlatformUtils;
 import org.apache.log4j.Logger;
 
@@ -63,7 +64,9 @@ public abstract class SettingsDialog extends JDialog {
     private void init() {
         setResizable(false);
         setMinimumSize(new Dimension(380, 320));
-        setIconImage(PlatformUtils.appIcon);
+        if (!MacOsXUtils.isBundled()) {
+            setIconImage(PlatformUtils.appIcon);
+        }
 
         setTitle("Настройки " + APPLICATION_NAME);
 

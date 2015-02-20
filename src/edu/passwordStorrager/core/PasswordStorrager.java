@@ -14,7 +14,7 @@ import java.util.Properties;
 public class PasswordStorrager {
 
 
-    protected final static File JAR_FILE = new File(PasswordStorrager.class.getProtectionDomain()
+    public final static File JAR_FILE = new File(PasswordStorrager.class.getProtectionDomain()
             .getCodeSource().getLocation().getPath());
 
     public static Key key = new Key();

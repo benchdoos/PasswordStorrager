@@ -10,6 +10,7 @@ import edu.passwordStorrager.utils.FrameUtils;
 import edu.passwordStorrager.utils.KeyUtils;
 import edu.passwordStorrager.utils.StorageUtils;
 import edu.passwordStorrager.utils.StringUtils;
+import edu.passwordStorrager.utils.platform.MacOsXUtils;
 import edu.passwordStorrager.utils.platform.PlatformUtils;
 import edu.passwordStorrager.xmlManager.XmlParser;
 import org.apache.log4j.Logger;
@@ -47,7 +48,7 @@ public class FirstLaunchDialog extends JDialog {
 
     public FirstLaunchDialog() {
         setResizable(false);
-        setIconImage(PlatformUtils.appIcon);
+        if (!MacOsXUtils.isBundled()) {             setIconImage(PlatformUtils.appIcon);         }
         setTitle("Регистрация хранилища - " + Application.APPLICATION_NAME);
         /*storageField.setText(PropertiesManager.propertiesApplication.getProperty("Storage"));*/
 

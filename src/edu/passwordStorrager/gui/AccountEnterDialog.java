@@ -1,5 +1,6 @@
 package edu.passwordStorrager.gui;
 
+import edu.passwordStorrager.utils.platform.MacOsXUtils;
 import edu.passwordStorrager.utils.platform.PlatformUtils;
 
 import javax.swing.*;
@@ -15,12 +16,13 @@ public abstract class AccountEnterDialog extends JDialog {
 
     public AccountEnterDialog(String windowName, String login, String password) {
         setContentPane(contentPane);
-        setIconImage(PlatformUtils.appIcon);
+        if (!MacOsXUtils.isBundled()) {
+            setIconImage(PlatformUtils.appIcon);
+        }
         setTitle(windowName);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
         setResizable(false);
-        
 
         textField1.setText(login);
         passwordField1.setText(password);
@@ -57,7 +59,7 @@ public abstract class AccountEnterDialog extends JDialog {
         int width = (Toolkit.getDefaultToolkit().getScreenSize().width / 2) - (this.getWidth() / 2);
         int height = (Toolkit.getDefaultToolkit().getScreenSize().height / 2) - (this.getHeight() / 2);
         setLocation(width, height);
-        
+
         setVisible(true);
     }
 

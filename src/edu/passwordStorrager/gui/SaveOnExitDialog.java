@@ -2,6 +2,7 @@ package edu.passwordStorrager.gui;
 
 import edu.passwordStorrager.core.Core;
 import edu.passwordStorrager.utils.FrameUtils;
+import edu.passwordStorrager.utils.platform.MacOsXUtils;
 import edu.passwordStorrager.utils.platform.PlatformUtils;
 
 import javax.swing.*;
@@ -27,7 +28,9 @@ public class SaveOnExitDialog extends JDialog {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonSave);
-        setIconImage(PlatformUtils.appIcon);
+        if (!MacOsXUtils.isBundled()) {
+            setIconImage(PlatformUtils.appIcon);
+        }
         icon.setSize(new Dimension(80, 80));
         icon.setIcon(FrameUtils.resizeIcon(PlatformUtils.appIcon, icon.getSize()));
 
@@ -48,7 +51,7 @@ public class SaveOnExitDialog extends JDialog {
                 onDiscard();
             }
         });
-        
+
         buttonSave.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 onSave();
@@ -60,7 +63,6 @@ public class SaveOnExitDialog extends JDialog {
                 onCancel();
             }
         });
-        
 
 // call onCancel() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -69,12 +71,11 @@ public class SaveOnExitDialog extends JDialog {
                 onCancel();
             }
         });
-        
 
         contentPane.registerKeyboardAction(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 onCancel();
-             }
+            }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         pack();
         buttonDiscard.requestFocus();

@@ -9,6 +9,7 @@ import edu.passwordStorrager.protector.Values;
 import edu.passwordStorrager.utils.FrameUtils;
 import edu.passwordStorrager.utils.StringUtils;
 import edu.passwordStorrager.utils.history.*;
+import edu.passwordStorrager.utils.platform.MacOsXUtils;
 import edu.passwordStorrager.utils.platform.PlatformUtils;
 import edu.passwordStorrager.xmlManager.XmlParser;
 import org.apache.log4j.Logger;
@@ -123,7 +124,9 @@ public class MainForm extends JFrame {
             setTitle(Application.APPLICATION_NAME);
         }
         setContentPane(panel1);
-        setIconImage(PlatformUtils.appIcon);
+        if (!MacOsXUtils.isBundled()) {
+            setIconImage(PlatformUtils.appIcon);
+        }
 
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(600, 430));

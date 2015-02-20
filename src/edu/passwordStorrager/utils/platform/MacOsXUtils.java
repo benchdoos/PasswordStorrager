@@ -18,7 +18,9 @@ public class MacOsXUtils {
         if (IS_MAC) {
             Application application = com.apple.eawt.Application.getApplication();
             //application.requestForeground(false);
-            application.setDockIconImage(PlatformUtils.appIcon);
+            if(!isBundled()) {
+                application.setDockIconImage(PlatformUtils.appIcon);
+            }
 
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", edu.passwordStorrager.core.Application.APPLICATION_NAME);
@@ -99,5 +101,10 @@ public class MacOsXUtils {
             p.add(new MenuItem("2"));
             com.apple.eawt.Application.getApplication().setDockMenu(p);*/
         }
+    }
+
+    public static boolean isBundled() {
+        System.out.println( PasswordStorrager.JAR_FILE.getAbsolutePath().contains(".app/") && IS_MAC);
+        return PasswordStorrager.JAR_FILE.getAbsolutePath().contains(".app/") && IS_MAC;
     }
 }
