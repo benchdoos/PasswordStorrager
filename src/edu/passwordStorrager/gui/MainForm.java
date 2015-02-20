@@ -1517,7 +1517,7 @@ public class MainForm extends JFrame {
     class TableEditor extends DefaultCellEditor {
 
         boolean isAutoComplete = false;
-        
+
         JTextField textField;
 
         MainForm mainForm;
@@ -1554,7 +1554,6 @@ public class MainForm extends JFrame {
         }
 
         private void autoComplete() {
-            isAutoComplete = true;
 
             ArrayList<Record> records = mainForm.recordArrayList;
             final String text = textField.getText();
@@ -1601,9 +1600,11 @@ public class MainForm extends JFrame {
                         SwingUtilities.invokeLater(new Runnable() {
                             @Override
                             public void run() {
+                                isAutoComplete = true;
                                 textField.setText(result.get(0));
                                 textField.setCaretPosition(result.get(0).length());
                                 textField.moveCaretPosition(text.length());
+                                isAutoComplete = false;
                             }
                         });
                     }
@@ -1647,7 +1648,7 @@ public class MainForm extends JFrame {
             MainForm mf = (MainForm) findWindow(textField);
             mf.undoItem.setEnabled(false);
             mf.redoItem.setEnabled(false);
-            
+
             int editingColumn = mf.table.getEditingColumn();
 
             if (editingColumn == mf.table.getColumn(SITE_COLUMN_NAME).getModelIndex()) {
