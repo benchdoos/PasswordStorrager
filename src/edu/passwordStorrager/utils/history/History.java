@@ -30,8 +30,13 @@ public class History {
                 current = windowHistory.size() - 1;
             }
             updateIfIsSaved();
+            refreshTimer();
             System.out.println("History.registered: " + obj);
         }
+    }
+
+    private void refreshTimer() {
+        mainForm.refreshLockTimer();
     }
 
     public void undo() {
@@ -43,6 +48,7 @@ public class History {
             current--;
             updateIfIsSaved();
             System.out.println("History.undo: " + h);
+            refreshTimer();
         }
     }
 
@@ -55,6 +61,7 @@ public class History {
             isHistoryCall = false;
             updateIfIsSaved();
             System.out.println("History.redo: " + h);
+            refreshTimer();
         }
     }
 

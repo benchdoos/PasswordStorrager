@@ -175,6 +175,11 @@ public class MainForm extends JFrame {
         };
         lockTimer = new Timer(60 * 1000, actionListener);
         lockTimer.setRepeats(false);
+        refreshLockTimer();
+    }
+    
+    public void refreshLockTimer() {
+        lockTimer.restart();
     }
 
     private void initWindowListeners() {
@@ -1211,6 +1216,7 @@ public class MainForm extends JFrame {
 
     private void initHistory() {
         history = new History(this);
+        refreshLockTimer();
     }
 
     private KeyStroke getAccelerator(KeyStroke mac, KeyStroke windows) {
