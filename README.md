@@ -10,7 +10,7 @@ Remember only one password to access all your secret data.
 - Windows (in development)
 
 **Requirements:**
-- [Java 1.7 or newer](http://java.com/ru/download/)
+- [Java 1.8 or newer](http://java.com/ru/download/)
 - Mac OS X 10.7.3 (Lion) or newer / Windows 7 or newer
 
 ## Download:
