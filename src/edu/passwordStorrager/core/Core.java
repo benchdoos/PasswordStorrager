@@ -47,7 +47,7 @@ public class Core implements Application {
     private void initSystem() {
         new PropertiesManager(); //MUST BE CALLED. DO NOT TOUCH
 
-        PlatformUtils.printOSParameters();
+        System.out.println(PlatformUtils.getSystemParameters());
         PlatformUtils.initializeOS();
     }
     

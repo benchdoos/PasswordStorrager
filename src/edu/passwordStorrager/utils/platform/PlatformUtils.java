@@ -3,6 +3,9 @@ package edu.passwordStorrager.utils.platform;
 import edu.passwordStorrager.core.Application;
 import edu.passwordStorrager.utils.UnsupportedOsException;
 import org.apache.log4j.Logger;
+import oshi.SystemInfo;
+import oshi.hardware.HardwareAbstractionLayer;
+import oshi.software.os.OperatingSystem;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,11 +19,29 @@ public class PlatformUtils {
     private static final Logger log = Logger.getLogger(getCurrentClassName());
 
     public static void initializeOS() {
-        log.info("System - OS: " + OS_NAME
+        /*log.info("System - OS: " + OS_NAME
                 + " v" + OS_VERSION
                 + " " + OS_ARCH
                 + "; Java v" + JAVA_VERSION
-                + "; Program v" + Application.APPLICATION_VERSION);
+                + "; Program v" + Application.APPLICATION_VERSION);*/
+
+        SystemInfo si = new SystemInfo();
+        OperatingSystem os = si.getOperatingSystem();
+        HardwareAbstractionLayer hal = si.getHardware();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("System: ");
+        sb.append(os).append(" arch: ").append(OS_ARCH);
+        sb.append(" ");
+        sb.append("Core: ").append(hal.getProcessors()[0]);
+        sb.append(" ");
+        sb.append("Memory: ").append(hal.getMemory().getAvailable())
+                .append(" (total:").append(hal.getMemory().getTotal()).append(")");
+        sb.append("; ");
+        sb.append("Java v").append(JAVA_VERSION).append("; Program v" + Application.APPLICATION_VERSION);
+
+        log.info(sb.toString());
+        
         if (!PlatformUtils.isOsSupported()) {
             throw new UnsupportedOsException();
         }
@@ -44,17 +65,35 @@ public class PlatformUtils {
     }
 
 
-    public static void printOSParameters() {
-        System.out.println("==========================System=========================");
-        System.out.println("System:");
-        System.out.println("\tOS: " + OS_NAME + " v" + OS_VERSION + " arch: " + OS_ARCH);
-        System.out.println("Java:");
-        System.out.println("\tJava version: " + SYSTEM.getProperty("java.specification.version") + "(" + JAVA_VERSION + ")");
-        System.out.println("\t" + SYSTEM.getProperty("java.runtime.name") + " v" + SYSTEM.getProperty("java.vm.version"));
-        System.out.println("User:");
-        System.out.println("\tName: " + USER_NAME + " Home: " + USER_HOME);
-        System.out.println("\tTime zone: " + SYSTEM.getProperty("user.timezone") + " (" + SYSTEM.getProperty("user.country") + ") language: " + SYSTEM.getProperty("user.language"));
-        System.out.println("Logging to: " + SYSTEM.get(APPLICATION_LOG_FOLDER_PROPERTY));
-        System.out.println("=========================================================");
+    public static String getSystemParameters() {
+        SystemInfo si = new SystemInfo();
+        OperatingSystem os = si.getOperatingSystem();
+        HardwareAbstractionLayer hal = si.getHardware();
+        int mb = 1024 * 1024;
+
+        StringBuilder sb = new StringBuilder();
+        
+        sb.append("==========================System=========================").append("\n");
+        sb.append("System:").append("\n");
+        sb.append("\tOS: ").append(os.getManufacturer()).append(" ").append(os.getFamily()).append("\n");
+        sb.append("\tVersion: ").append(os.getVersion()).append("\n");
+        sb.append("\tArch: ").append(OS_ARCH).append("\n");
+
+        sb.append("Hardware:").append("\n");
+        sb.append("\tCore: ").append(hal.getProcessors()[0]).append(" (total:").append(hal.getProcessors().length).append(")").append("\n");
+        sb.append("\tMemory: ").append(hal.getMemory().getAvailable() / mb).append(" (total:").append(hal.getMemory().getTotal() / mb).append(") MB").append("\n");
+
+        sb.append("Java:").append("\n");
+        sb.append("\tJava version: ").append(SYSTEM.getProperty("java.specification.version")).append("(").append(JAVA_VERSION).append(")").append("\n");
+        sb.append("\t").append(SYSTEM.getProperty("java.runtime.name")).append(" v").append(SYSTEM.getProperty("java.vm.version")).append("\n");
+
+        sb.append("User:").append("\n");
+        sb.append("\tName: ").append(USER_NAME).append(" Home: ").append(USER_HOME).append("\n");
+        sb.append("\tTime zone: ").append(SYSTEM.getProperty("user.timezone")).append(" (").append(SYSTEM.getProperty("user.country")).append(") language: ").append(SYSTEM.getProperty("user.language")).append("\n");
+
+        sb.append("Logging to: ").append(SYSTEM.get(APPLICATION_LOG_FOLDER_PROPERTY)).append("\n");
+        sb.append("=========================================================").append("\n");
+
+        return sb.toString();
     }
 }
