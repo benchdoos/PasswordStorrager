@@ -1,5 +1,7 @@
 package edu.passwordStorrager.gui;
 
+import java.awt.*;
+
 public class ZebraJTable extends javax.swing.JTable {
     private java.awt.Color rowColors[] = new java.awt.Color[2];
     private boolean drawStripes = false;
@@ -126,9 +128,10 @@ public class ZebraJTable extends javax.swing.JTable {
                 rowColors[0].getBlue(), null);
         final float[] selHSB = java.awt.Color.RGBtoHSB(
                 sel.getRed(), sel.getGreen(), sel.getBlue(), null);
-        rowColors[1] = java.awt.Color.getHSBColor(
+        /*rowColors[1] = java.awt.Color.getHSBColor(
                 (selHSB[1] == 0.0 || selHSB[2] == 0.0) ? bgHSB[0] : selHSB[0],
                 0.1f * selHSB[1] + 0.9f * bgHSB[1],
-                bgHSB[2] + ((bgHSB[2] < 0.5f) ? 0.05f : -0.05f));
+                bgHSB[2] + ((bgHSB[2] < 0.5f) ? 0.05f : -0.05f));*/
+        rowColors[1] = new Color(245,245,245);
     }
 }
