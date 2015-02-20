@@ -201,6 +201,18 @@ public class MainForm extends JFrame {
                 Core.onQuit();
             }
         });
+        
+        addWindowFocusListener(new WindowFocusListener() {
+            @Override
+            public void windowGainedFocus(WindowEvent e) {
+                refreshLockTimer();
+            }
+
+            @Override
+            public void windowLostFocus(WindowEvent e) {
+                refreshLockTimer();
+            }
+        });
     }
 
     private void initTable() {
