@@ -102,7 +102,7 @@ public class MainForm extends JFrame {
     private JLabel isEditableIcon;
 
     private Timer searchTimer;
-    private Timer lockTimer;
+    private static Timer lockTimer; //for multiple windows
     private static TableModelListener tableModelListener;
     private boolean isSearchMode = false;
 
@@ -140,6 +140,8 @@ public class MainForm extends JFrame {
 
         initWindowListeners();
 
+        initScrollPaneListeners();
+        
         initTableListeners();
 
         initMenu();
@@ -343,6 +345,7 @@ public class MainForm extends JFrame {
                 isSearchMode = true;
                 int width = 300;
                 changeSearchFieldSize(width);
+                refreshLockTimer();
             }
 
             @Override
@@ -352,6 +355,7 @@ public class MainForm extends JFrame {
                 if (searchField.getText().isEmpty()) {
                     isSearchMode = false;
                 }
+                refreshLockTimer();
             }
         });
 
@@ -754,6 +758,7 @@ public class MainForm extends JFrame {
             public void valueChanged(ListSelectionEvent e) {
                 int row = table.getSelectedRow();
                 int col = table.getSelectedColumn();
+                refreshLockTimer();
                 if (row > -1) {
                     if (!isSearchMode) {
                         moveUpButton.setEnabled(hasPrevious());
@@ -876,6 +881,15 @@ public class MainForm extends JFrame {
                 e.getAdjustable().setValue(e.getAdjustable().getMaximum());
             }
         });*/
+    }
+    
+    private void initScrollPaneListeners() {
+        scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+            @Override
+            public void adjustmentValueChanged(AdjustmentEvent e) {
+                refreshLockTimer();
+            }
+        });
     }
 
     private void initMenu() {
