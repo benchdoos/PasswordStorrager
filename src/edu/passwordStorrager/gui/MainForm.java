@@ -886,6 +886,7 @@ public class MainForm extends JFrame {
     }
 
     private void initScrollPaneListeners() {
+        scrollPane.getVerticalScrollBar().setUnitIncrement(5);
         scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
             @Override
             public void adjustmentValueChanged(AdjustmentEvent e) {
