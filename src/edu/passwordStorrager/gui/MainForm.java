@@ -142,7 +142,7 @@ public class MainForm extends JFrame {
 
         initMenu();
 
-        initPopUp();
+//        initPopUp();
 
         initControlBar();
 
