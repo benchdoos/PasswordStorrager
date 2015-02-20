@@ -82,7 +82,7 @@ public class MainForm extends JFrame {
 
     private JPanel panel1;
     private JScrollPane scrollPane;
-    public JTable table;
+    public ZebraJTable table;
     private JPanel statusPanel;
     private JTextField searchField;
     private JButton moveUpButton;
