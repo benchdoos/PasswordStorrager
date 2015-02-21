@@ -42,7 +42,10 @@
         <properties>
           <alignmentX value="0.0"/>
           <alignmentY value="0.0"/>
+          <inheritsPopupMenu value="false"/>
+          <maximumSize width="-1" height="22"/>
           <minimumSize width="-1" height="22"/>
+          <preferredSize width="-1" height="22"/>
         </properties>
         <border type="none"/>
         <children>
