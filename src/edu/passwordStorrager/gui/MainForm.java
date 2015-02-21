@@ -99,14 +99,13 @@ public class MainForm extends JFrame {
     private JButton addUpButton;
     private JButton addDownButton;
 
-    private JPanel controlPanel;
+    public JPanel controlPanel;
     private Point mouse = new Point(0, 0);
     private MouseListener controlPanelMouseListener;
     private MouseMotionAdapter controlPanelMouseMotionAdapter;
 
     private JProgressBar progressBar;
     private JLabel bar;
-    private JLabel rowCount;
     private JLabel isEditableIcon;
     private JPanel searchPanel;
     private JLabel info;

@@ -40,8 +40,7 @@ public class SaveOnExitDialog extends JDialog {
         Dimension dim = window.getSize();
         int centerWidth = location.x + dim.width / 2;
         centerWidth = centerWidth - size.width / 2;
-//        int height = location.y + 22;
-        int height = location.y + 55;
+        int height = location.y + window.getInsets().top + window.controlPanel.getHeight() + 1;
         setLocation(centerWidth, height);
 
         if (IS_MAC) {
@@ -109,9 +108,10 @@ public class SaveOnExitDialog extends JDialog {
     }
 
     class MovingTogether extends ComponentAdapter {
-        private Window window, dialog;
+        private MainForm window;
+        private Window dialog;
 
-        public MovingTogether(JFrame window, JDialog dialog) {
+        public MovingTogether(MainForm window, JDialog dialog) {
             this.window = window;
             this.dialog = dialog;
             if (window.getComponentListeners().length > 1) {
@@ -121,14 +121,14 @@ public class SaveOnExitDialog extends JDialog {
         }
 
         public void componentMoved(ComponentEvent e) {
-            Window win = (Window) e.getComponent();
+            MainForm win = (MainForm) e.getComponent();
             Dimension size = dialog.getSize();
             if (win == window && dialog.isVisible()) {
                 Point location = window.getLocation();
                 Dimension dim = window.getSize();
                 int centerWidth = location.x + dim.width / 2;
                 centerWidth = centerWidth - size.width / 2;
-                int height = location.y + 55;
+                int height = location.y + window.getInsets().top + window.controlPanel.getHeight() + 1;
                 dialog.setLocation(centerWidth, height);
 
             }
