@@ -114,7 +114,6 @@ public class MainForm extends JFrame {
     private static Timer lockTimer; //for multiple windows
     private static TableModelListener tableModelListener;
     private boolean isSearchMode = false;
-    public int windowDisposeStatus = -1;
     private int disposeCounter = 0;
 
 
@@ -1529,8 +1528,7 @@ public class MainForm extends JFrame {
     @Override
     public void dispose() {
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
-        System.out.println(">>L" + stackTraceElements.length);
-        if ((stackTraceElements.length == 23 || stackTraceElements.length == 29) && stackTraceElements.length != windowDisposeStatus) {
+        if ((stackTraceElements.length == 23 || stackTraceElements.length == 29)) {
             if (stackTraceElements.length == 23) {
                 disposeCounter++;
                 if (disposeCounter >= 2) {
@@ -1541,9 +1539,6 @@ public class MainForm extends JFrame {
                 disposeCounter = 0;
             }
 
-            System.out.println("Yes: " + stackTraceElements.length + " " + windowDisposeStatus);
-
-            windowDisposeStatus = stackTraceElements.length;
             if (!isEdited) {
                 FrameUtils.removeWindow(this);
                 disposeFrame();
@@ -1552,8 +1547,6 @@ public class MainForm extends JFrame {
                 if (IS_MAC) new MovingTogether(this, saveOnExitDialog);
                 saveOnExitDialog.setVisible(true);
             }
-        } else {
-            System.out.println("Nothug");
         }
 
     }
