@@ -246,7 +246,6 @@ public class FrameUtils {
         Window d=null;
         for (Window win : frames) {
             if (win.equals(w)) {
-                System.out.println("~~~");
                 d = win;
                 break;
             }
