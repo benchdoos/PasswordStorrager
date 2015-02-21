@@ -874,7 +874,9 @@ public class MainForm extends JFrame {
                     }
 //                    if (table.getEditingRow() > -1 && table.getEditingColumn() > -1) {
                     if (!history.isHistoryCall()) {
-                        history.register(new ChangeCellValueAction(new Point(row, col), prevValue, value));
+                        if(!prevValue.equals(value)) {
+                            history.register(new ChangeCellValueAction(new Point(row, col), prevValue, value));
+                        }
                     }
                 }
             }
@@ -1394,7 +1396,7 @@ public class MainForm extends JFrame {
         loadList(recordArrayList);
         setEdited(false);
         history.save();
-        setStatus("Сохранено.", STATUS_SUCCESS);
+        setStatus("Сохранено", STATUS_SUCCESS);
     }
 
     public void addNewRecord(int index, int count) {
@@ -1598,7 +1600,6 @@ public class MainForm extends JFrame {
         }
 
         private void autoComplete() {
-            System.out.println("autoComplete");
             ArrayList<Record> records = mainForm.recordArrayList;
             final String text = textField.getText();
             final int start = text.length();
@@ -1623,14 +1624,14 @@ public class MainForm extends JFrame {
 
                 final ArrayList<String> result = new ArrayList<>();
 
-                if (col == mainForm.SITE_COLUMN_INDEX) {
+                if (col == SITE_COLUMN_INDEX) {
                     for (String site : sites) {
                         if (site.startsWith(text) && site.length() > text.length()) {
                             result.add(site);
                         }
                     }
                 }
-                if (col == mainForm.LOGIN_COLUMN_INDEX) {
+                if (col == LOGIN_COLUMN_INDEX) {
                     for (String login : logins) {
                         if (login.startsWith(text) && login.length() > text.length()) {
                             result.add(login);
@@ -1645,6 +1646,7 @@ public class MainForm extends JFrame {
                             @Override
                             public void run() {
                                 isAutoComplete = true;
+                                System.out.println("autoComplete");
                                 textField.setText(result.get(0));
                                 textField.setCaretPosition(result.get(0).length());
                                 textField.moveCaretPosition(text.length());
