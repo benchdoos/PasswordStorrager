@@ -2,6 +2,7 @@
 
 * ~~add Log4j logging on OSX/Windows~~ ([fdb0950](https://github.com/benchdoos/PasswordStorrager/commit/fdb0950ccb34a854ba0303acbfbe34afe909ab62))
 * make Mac OS X full support : sheets (and? notif)
+* add history names in redo/undo
 * add labels to passwords
 * add ability to edit records while search
 * ~~add History save~~ ([f73d508](https://github.com/benchdoos/PasswordStorrager/commit/f73d508051d2a3fa74f84d1262ea5eccedbeb762))
