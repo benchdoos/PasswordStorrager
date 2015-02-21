@@ -1538,7 +1538,9 @@ public class MainForm extends JFrame {
     @Override
     public void dispose() {
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
-        if ((stackTraceElements.length == 23 || stackTraceElements.length == 29)) {
+        System.out.println(">>" + stackTraceElements.length);
+        if ((stackTraceElements.length == 23 || stackTraceElements.length == 29) 
+                || (IS_WINDOWS && stackTraceElements.length == 30)) {
             if (stackTraceElements.length == 23) {
                 disposeCounter++;
                 if (disposeCounter >= 2) {

@@ -1,5 +1,6 @@
 package edu.passwordStorrager.utils.platform;
 
+
 import com.apple.eawt.*;
 import edu.passwordStorrager.core.PasswordStorrager;
 import edu.passwordStorrager.gui.*;
@@ -14,7 +15,7 @@ import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
 
 public class MacOsXUtils {
     private static final Logger log = Logger.getLogger(getCurrentClassName());
-    public static  QuitResponse applicationQuitResponse;
+    public static QuitResponse applicationQuitResponse;
 
     public static void initializeMacOSX() {
         if (IS_MAC) {

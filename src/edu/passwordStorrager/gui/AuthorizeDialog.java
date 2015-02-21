@@ -21,7 +21,8 @@ import java.io.File;
 
 import static edu.passwordStorrager.core.Application.IS_MAC;
 import static edu.passwordStorrager.core.Application.IS_WINDOWS;
-import static edu.passwordStorrager.core.PasswordStorrager.*;
+import static edu.passwordStorrager.core.PasswordStorrager.isUnlocked;
+import static edu.passwordStorrager.core.PasswordStorrager.propertiesApplication;
 import static edu.passwordStorrager.core.PropertiesManager.*;
 import static edu.passwordStorrager.utils.FileUtils.exists;
 import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
