@@ -102,6 +102,9 @@ public class SaveOnExitDialog extends JDialog {
         if (MacOsXUtils.applicationQuitResponse != null) {
             MacOsXUtils.applicationQuitResponse.cancelQuit();
         }
+        
+        window.windowDisposeStatus = -1;
+
         Core.setIsExitCanceled(true);
         dispose();
     }

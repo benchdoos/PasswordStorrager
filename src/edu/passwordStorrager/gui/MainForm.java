@@ -114,7 +114,8 @@ public class MainForm extends JFrame {
     private static Timer lockTimer; //for multiple windows
     private static TableModelListener tableModelListener;
     private boolean isSearchMode = false;
-    private boolean isDisposeAlreadyCalled = false;
+    public int windowDisposeStatus = -1;
+    private int disposeCounter = 0;
 
 
     public MainForm(ArrayList<Record> recordArrayList) {
@@ -1527,8 +1528,22 @@ public class MainForm extends JFrame {
 
     @Override
     public void dispose() {
-        if (!isDisposeAlreadyCalled) {
-            isDisposeAlreadyCalled = true;
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+        System.out.println(">>L" + stackTraceElements.length);
+        if ((stackTraceElements.length == 23 || stackTraceElements.length == 29) && stackTraceElements.length != windowDisposeStatus) {
+            if (stackTraceElements.length == 23) {
+                disposeCounter++;
+                if (disposeCounter >= 2) {
+                    disposeCounter = 0;
+                    return;
+                }
+            } else {
+                disposeCounter = 0;
+            }
+
+            System.out.println("Yes: " + stackTraceElements.length + " " + windowDisposeStatus);
+
+            windowDisposeStatus = stackTraceElements.length;
             if (!isEdited) {
                 FrameUtils.removeWindow(this);
                 disposeFrame();
@@ -1538,17 +1553,17 @@ public class MainForm extends JFrame {
                 saveOnExitDialog.setVisible(true);
             }
         } else {
-            isDisposeAlreadyCalled = false;
+            System.out.println("Nothug");
         }
+
     }
 
     public void disposeFrame() {
         setEdited(false);
         super.dispose();
     }
-    
-    
-    
+
+
     private DefaultTableModel createTableModel(ArrayList<Record> recordArrayList) {
         DefaultTableModel tableModel = new DefaultTableModel();
         String[] number = new String[recordArrayList.size()];
