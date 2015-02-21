@@ -65,16 +65,16 @@ public class Core implements Application {
     }
 
     public static void onQuit() {
-        log.debug("Quit");
-
         disposeFrames();
 
         //TODO sync here
         if (IS_MAC) {
             if (!isExitCanceled) {
+                log.debug("Quit");
                 System.exit(0);
             }
         } else {
+            log.debug("Quit");
             System.exit(0);
         }
 
