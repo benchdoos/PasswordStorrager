@@ -217,6 +217,13 @@ public class MainForm extends JFrame {
             }
         });
 
+        this.getRootPane().registerKeyboardAction(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        }, getAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.META_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_MASK)), JComponent.WHEN_IN_FOCUSED_WINDOW);
+
         addMouseListener(controlPanelMouseListener);
         addMouseMotionListener(controlPanelMouseMotionAdapter);
     }
@@ -1538,10 +1545,17 @@ public class MainForm extends JFrame {
     @Override
     public void dispose() {
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
-        System.out.println(">>" + stackTraceElements.length);
-        if ((stackTraceElements.length == 23 || stackTraceElements.length == 29) 
-                || (IS_WINDOWS && stackTraceElements.length == 30)) {
-            if (stackTraceElements.length == 23) {
+
+        int called = stackTraceElements.length;
+        if (
+                (called == 23 || called == 29 || called == 43
+                        || called == 83
+                        || called == 86
+                        || called == 96
+                        || called == 100
+                )
+                        || (IS_WINDOWS && called == 30)) {
+            if (called == 23) {
                 disposeCounter++;
                 if (disposeCounter >= 2) {
                     disposeCounter = 0;
@@ -1558,6 +1572,8 @@ public class MainForm extends JFrame {
                 saveOnExitDialog = new SaveOnExitDialog(this);
                 saveOnExitDialog.setVisible(true);
             }
+        } else {
+            System.out.println(">>" + called);
         }
 
     }
