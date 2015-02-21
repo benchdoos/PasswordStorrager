@@ -1545,7 +1545,7 @@ public class MainForm extends JFrame {
                 disposeFrame();
             } else {
                 SaveOnExitDialog saveOnExitDialog = new SaveOnExitDialog(this);
-                if (IS_MAC) new MovingTogether(this, saveOnExitDialog);
+//                if (IS_MAC) new MovingTogether(this, saveOnExitDialog);
                 saveOnExitDialog.setVisible(true);
             }
         }
@@ -1851,30 +1851,3 @@ abstract class InputForm extends JDialog {
     }
 }
 
-class MovingTogether extends ComponentAdapter {
-    private Window window, dialog;
-
-    public MovingTogether(JFrame window, JDialog dialog) {
-        this.window = window;
-        this.dialog = dialog;
-        if (window.getComponentListeners().length > 1) {
-            window.removeComponentListener(this);
-        }
-        window.addComponentListener(this);
-    }
-
-    public void componentMoved(ComponentEvent e) {
-        Window win = (Window) e.getComponent();
-        Dimension size = dialog.getSize();
-        if (win == window && dialog.isVisible()) {
-            Point location = window.getLocation();
-            Dimension dim = window.getSize();
-            int centerWidth = location.x + dim.width / 2;
-            centerWidth = centerWidth - size.width / 2;
-            int height = location.y + 22;
-            dialog.setLocation(centerWidth, height);
-
-        }
-    }
-
-}

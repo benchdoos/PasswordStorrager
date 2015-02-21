@@ -40,11 +40,13 @@ public class SaveOnExitDialog extends JDialog {
         Dimension dim = window.getSize();
         int centerWidth = location.x + dim.width / 2;
         centerWidth = centerWidth - size.width / 2;
-        int height = location.y + 22;
+//        int height = location.y + 22;
+        int height = location.y + 55;
         setLocation(centerWidth, height);
 
         if (IS_MAC) {
             setUndecorated(true);
+            new MovingTogether(window, this);
         }
 
         buttonDiscard.addActionListener(new ActionListener() {
@@ -104,5 +106,33 @@ public class SaveOnExitDialog extends JDialog {
         }
         Core.setIsExitCanceled(true);
         dispose();
+    }
+
+    class MovingTogether extends ComponentAdapter {
+        private Window window, dialog;
+
+        public MovingTogether(JFrame window, JDialog dialog) {
+            this.window = window;
+            this.dialog = dialog;
+            if (window.getComponentListeners().length > 1) {
+                window.removeComponentListener(this);
+            }
+            window.addComponentListener(this);
+        }
+
+        public void componentMoved(ComponentEvent e) {
+            Window win = (Window) e.getComponent();
+            Dimension size = dialog.getSize();
+            if (win == window && dialog.isVisible()) {
+                Point location = window.getLocation();
+                Dimension dim = window.getSize();
+                int centerWidth = location.x + dim.width / 2;
+                centerWidth = centerWidth - size.width / 2;
+                int height = location.y + 55;
+                dialog.setLocation(centerWidth, height);
+
+            }
+        }
+
     }
 }
