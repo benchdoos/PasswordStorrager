@@ -24,7 +24,7 @@ public class MacOsXUtils {
 
             setProperties();
 
-            setHalders(application);
+            setHandlers(application);
 
             application.addAppEventListener(new SystemSleepListener() {
                 @Override
@@ -51,7 +51,7 @@ public class MacOsXUtils {
         }
     }
 
-    private static void setHalders(Application application) {
+    private static void setHandlers(Application application) {
         application.setAboutHandler(new AboutHandler() {
             @Override
             public void handleAbout(AppEvent.AboutEvent aboutEvent) {
