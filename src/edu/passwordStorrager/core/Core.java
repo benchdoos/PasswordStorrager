@@ -2,11 +2,14 @@ package edu.passwordStorrager.core;
 
 import edu.passwordStorrager.gui.AuthorizeDialog;
 import edu.passwordStorrager.gui.FirstLaunchDialog;
+import edu.passwordStorrager.gui.MainForm;
 import edu.passwordStorrager.utils.platform.PlatformUtils;
 import org.apache.log4j.Logger;
 
+import java.awt.*;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ConcurrentModificationException;
 import java.util.Properties;
 
 import static edu.passwordStorrager.utils.FileUtils.exists;
@@ -14,7 +17,9 @@ import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
 
 public class Core implements Application {
     private static final Logger log = Logger.getLogger(getCurrentClassName());
-    
+
+    private static boolean isExitCanceled = false;
+
     public Core() {
         log.debug("Launch");
 
@@ -44,16 +49,62 @@ public class Core implements Application {
         }
     }
 
+    public static boolean isIsExitCanceled() {
+        return isExitCanceled;
+    }
+
+    public static void setIsExitCanceled(boolean isExitCanceled) {
+        Core.isExitCanceled = isExitCanceled;
+    }
+
     private void initSystem() {
         new PropertiesManager(); //MUST BE CALLED. DO NOT TOUCH
 
         System.out.println(PlatformUtils.getSystemParameters());
         PlatformUtils.initializeOS();
     }
-    
+
     public static void onQuit() {
         log.debug("Quit");
+
+        disposeFrames();
+
         //TODO sync here
-        System.exit(0);
+        if (!isExitCanceled) {
+            System.exit(0);
+        }
+
+    }
+
+    /**
+     * Disposes MainForm firstly
+     */
+    private static void disposeFrames() {
+        try {
+            disposeMainFrames();
+        } catch (ConcurrentModificationException e) {
+            disposeMainFrames();
+        }
+
+        try {
+            disposeWindows();
+        } catch (ConcurrentModificationException e) {
+            disposeWindows();
+        }
+    }
+
+    private static void disposeWindows() {
+        for (Window w : PasswordStorrager.frames) {
+            w.dispose();
+        }
+    }
+
+    private static void disposeMainFrames() {
+        for (Window w : PasswordStorrager.frames) {
+            if (w instanceof MainForm) {
+                MainForm mf = (MainForm) w;
+                mf.dispose();
+            }
+        }
     }
 }

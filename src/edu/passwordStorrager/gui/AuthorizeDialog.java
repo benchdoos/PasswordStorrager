@@ -39,6 +39,7 @@ public class AuthorizeDialog extends JDialog {
 
     public AuthorizeDialog() {
         isBlocked = false;
+        isUnlocked = false;
         initTimer();
         setContentPane(contentPane);
         if (!MacOsXUtils.isBundled()) {
@@ -137,8 +138,7 @@ public class AuthorizeDialog extends JDialog {
             com.apple.eawt.Application.getApplication().requestUserAttention(true);
         }
         //TODO request foreground here if is in settings??
-        frames.add(this);
-        isUnlocked = false;
+        FrameUtils.registerWindow(this);
         setVisible(true);
     }
 

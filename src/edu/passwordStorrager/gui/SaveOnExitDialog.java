@@ -17,9 +17,11 @@ public class SaveOnExitDialog extends JDialog {
     private JButton buttonSave;
     private JButton buttonCancel;
     private JButton buttonDiscard;
-    MainForm window = (MainForm) MainForm.getFrames()[1];
+    MainForm window;
+//    MainForm window = (MainForm) MainForm.getFrames()[1];
 
-    public SaveOnExitDialog() {
+    public SaveOnExitDialog(MainForm window) {
+        this.window = window;
         Dimension size = new Dimension(570, 130);
         contentPane.setMinimumSize(size);
         contentPane.setPreferredSize(size);
@@ -82,19 +84,25 @@ public class SaveOnExitDialog extends JDialog {
     }
 
     private void onDiscard() {
-        window.dispose();
+        window.disposeFrame();
+        Core.setIsExitCanceled(false);
         dispose();
-        Core.onQuit(); //TODO remove when there will be more then one window
+//        Core.onQuit(); //TODO remove when there will be more then one window
     }
 
     private void onSave() {
         window.saveStorage();
         window.dispose();
+        Core.setIsExitCanceled(false);
         dispose();
-        Core.onQuit(); //TODO remove when there will be more then one window
+//        Core.onQuit(); //TODO remove when there will be more then one window
     }
 
     private void onCancel() {
+        if (MacOsXUtils.applicationQuitResponse != null) {
+            MacOsXUtils.applicationQuitResponse.cancelQuit();
+        }
+        Core.setIsExitCanceled(true);
         dispose();
     }
 }

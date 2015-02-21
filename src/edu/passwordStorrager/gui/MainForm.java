@@ -1,7 +1,6 @@
 package edu.passwordStorrager.gui;
 
 import edu.passwordStorrager.core.Application;
-import edu.passwordStorrager.core.Core;
 import edu.passwordStorrager.core.PasswordStorrager;
 import edu.passwordStorrager.core.PropertiesManager;
 import edu.passwordStorrager.objects.Record;
@@ -115,6 +114,7 @@ public class MainForm extends JFrame {
     private static Timer lockTimer; //for multiple windows
     private static TableModelListener tableModelListener;
     private boolean isSearchMode = false;
+    private boolean isDisposeAlreadyCalled = false;
 
 
     public MainForm(ArrayList<Record> recordArrayList) {
@@ -123,7 +123,7 @@ public class MainForm extends JFrame {
         requestFocus();
         table.requestFocus();
         initHistory();
-        PasswordStorrager.frames.add(this);
+        FrameUtils.registerWindow(this);
     }
 
     private void initComponents() {
@@ -194,20 +194,9 @@ public class MainForm extends JFrame {
     private void initWindowListeners() {
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                if (isEdited) {
-                    SaveOnExitDialog saveOnExitDialog = new SaveOnExitDialog();
-                    if (IS_MAC) new MovingTogether((JFrame) e.getWindow(), saveOnExitDialog);
-                    saveOnExitDialog.setVisible(true);
-                } else {
-                    disposeForm();
-                }
+                dispose();
                 FrameUtils.setFrameLocation(getClass().getEnclosingClass().getName(), getLocation());
                 FrameUtils.setFrameSize(getClass().getEnclosingClass().getName(), getSize());
-            }
-
-            public void disposeForm() {
-                dispose();
-                Core.onQuit();
             }
         });
 
@@ -874,7 +863,7 @@ public class MainForm extends JFrame {
                     }
 //                    if (table.getEditingRow() > -1 && table.getEditingColumn() > -1) {
                     if (!history.isHistoryCall()) {
-                        if(!prevValue.equals(value)) {
+                        if (!prevValue.equals(value)) {
                             history.register(new ChangeCellValueAction(new Point(row, col), prevValue, value));
                         }
                     }
@@ -1536,7 +1525,30 @@ public class MainForm extends JFrame {
         }
     }
 
+    @Override
+    public void dispose() {
+        if (!isDisposeAlreadyCalled) {
+            isDisposeAlreadyCalled = true;
+            if (!isEdited) {
+                FrameUtils.removeWindow(this);
+                disposeFrame();
+            } else {
+                SaveOnExitDialog saveOnExitDialog = new SaveOnExitDialog(this);
+                if (IS_MAC) new MovingTogether(this, saveOnExitDialog);
+                saveOnExitDialog.setVisible(true);
+            }
+        } else {
+            isDisposeAlreadyCalled = false;
+        }
+    }
 
+    public void disposeFrame() {
+        setEdited(false);
+        super.dispose();
+    }
+    
+    
+    
     private DefaultTableModel createTableModel(ArrayList<Record> recordArrayList) {
         DefaultTableModel tableModel = new DefaultTableModel();
         String[] number = new String[recordArrayList.size()];
