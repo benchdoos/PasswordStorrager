@@ -3,6 +3,7 @@ package edu.passwordStorrager.gui;
 import edu.passwordStorrager.core.Application;
 import edu.passwordStorrager.core.PasswordStorrager;
 import edu.passwordStorrager.core.PropertiesManager;
+import edu.passwordStorrager.gui.elements.ZebraJTable;
 import edu.passwordStorrager.objects.Record;
 import edu.passwordStorrager.protector.Values;
 import edu.passwordStorrager.utils.FrameUtils;

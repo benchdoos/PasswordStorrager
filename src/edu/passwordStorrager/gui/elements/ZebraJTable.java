@@ -1,4 +1,4 @@
-package edu.passwordStorrager.gui;
+package edu.passwordStorrager.gui.elements;
 
 import java.awt.*;
 

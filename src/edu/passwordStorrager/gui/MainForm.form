@@ -20,7 +20,7 @@
         </properties>
         <border type="none"/>
         <children>
-          <component id="127f2" class="edu.passwordStorrager.gui.ZebraJTable" binding="table">
+          <component id="127f2" class="edu.passwordStorrager.gui.elements.ZebraJTable" binding="table">
             <constraints/>
             <properties>
               <autoCreateRowSorter value="true"/>
