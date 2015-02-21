@@ -2,6 +2,7 @@ package edu.passwordStorrager.gui;
 
 import edu.passwordStorrager.cloud.CloudManager;
 import edu.passwordStorrager.core.Core;
+import edu.passwordStorrager.core.PasswordStorrager;
 import edu.passwordStorrager.protector.Encryption;
 import edu.passwordStorrager.protector.Protector;
 import edu.passwordStorrager.protector.Values;
@@ -12,6 +13,7 @@ import edu.passwordStorrager.xmlManager.XmlParser;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 
@@ -105,13 +107,22 @@ public class AuthorizeDialog extends JDialog {
         pack();
 
         setLocation(FrameUtils.setFrameOnCenter(getSize()));
-        if (IS_MAC) {
-            com.apple.eawt.Application.getApplication().requestUserAttention(true);
+        if (IS_MAC && !isAnyMainFormNoticed()) {
+                com.apple.eawt.Application.getApplication().requestUserAttention(true);
         }
         //TODO request foreground here if is in settings??
         frames.add(this);
         isUnlocked = false;
         setVisible(true);
+    }
+
+    private boolean isAnyMainFormNoticed() {
+        for (Window w : PasswordStorrager.frames) {
+            if (w instanceof MainForm) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void onOK() {
