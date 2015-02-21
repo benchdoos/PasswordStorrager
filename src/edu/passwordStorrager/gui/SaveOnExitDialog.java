@@ -26,9 +26,12 @@ public class SaveOnExitDialog extends JDialog {
         contentPane.setMinimumSize(size);
         contentPane.setPreferredSize(size);
         contentPane.setMaximumSize(size);
+        
         setResizable(false);
         setContentPane(contentPane);
         setModal(true);
+
+        
         getRootPane().setDefaultButton(buttonSave);
         if (!MacOsXUtils.isBundled()) {
             setIconImage(PlatformUtils.appIcon);

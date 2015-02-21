@@ -116,6 +116,8 @@ public class MainForm extends JFrame {
     private boolean isSearchMode = false;
     private int disposeCounter = 0;
 
+    SaveOnExitDialog saveOnExitDialog;
+
 
     public MainForm(ArrayList<Record> recordArrayList) {
         this.recordArrayList = recordArrayList;
@@ -177,6 +179,8 @@ public class MainForm extends JFrame {
             table.setColumnSelectionInterval(1, 1);
         }
         isFirstLaunch = false; //to fix isEdited on start
+
+        saveOnExitDialog = new SaveOnExitDialog(this);
     }
 
     private void initLockTimer() {
@@ -947,10 +951,12 @@ public class MainForm extends JFrame {
         blockItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (PasswordStorrager.isUnlocked) {
-                    PasswordStorrager.isUnlocked = false;
-                    setVisible(false);
-                    new AuthorizeDialog();
+                if (!saveOnExitDialog.isVisible()) {
+                    if (PasswordStorrager.isUnlocked) {
+                        PasswordStorrager.isUnlocked = false;
+                        setVisible(false);
+                        new AuthorizeDialog();
+                    }
                 }
             }
         });
@@ -1543,7 +1549,7 @@ public class MainForm extends JFrame {
                 FrameUtils.removeWindow(this);
                 disposeFrame();
             } else {
-                SaveOnExitDialog saveOnExitDialog = new SaveOnExitDialog(this);
+
 //                if (IS_MAC) new MovingTogether(this, saveOnExitDialog);
                 saveOnExitDialog.setVisible(true);
             }
