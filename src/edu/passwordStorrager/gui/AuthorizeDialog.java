@@ -13,6 +13,8 @@ import edu.passwordStorrager.xmlManager.XmlParser;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -44,7 +46,6 @@ public class AuthorizeDialog extends JDialog {
         }
         setTitle("Вход");
         setModal(true);
-        getRootPane().setDefaultButton(buttonOK);
         setResizable(false);
         progressBar.setIndeterminate(true);
         progressBar.putClientProperty("JProgressBar.style", "circular");
@@ -85,6 +86,31 @@ public class AuthorizeDialog extends JDialog {
                     KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
         }
 
+        passwordField.getDocument().addDocumentListener(new DocumentListener() {
+            void updateDefaultButton() {
+                if (new String(passwordField.getPassword()).isEmpty()) {
+                    getRootPane().setDefaultButton(null);
+                } else {
+                    getRootPane().setDefaultButton(buttonOK);
+                }
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                updateDefaultButton();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                updateDefaultButton();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+
+            }
+        });
+
 // call onCancel() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -108,7 +134,7 @@ public class AuthorizeDialog extends JDialog {
 
         setLocation(FrameUtils.setFrameOnCenter(getSize()));
         if (IS_MAC && !isAnyMainFormNoticed()) {
-                com.apple.eawt.Application.getApplication().requestUserAttention(true);
+            com.apple.eawt.Application.getApplication().requestUserAttention(true);
         }
         //TODO request foreground here if is in settings??
         frames.add(this);
