@@ -70,7 +70,11 @@ public class Core implements Application {
         disposeFrames();
 
         //TODO sync here
-        if (!isExitCanceled) {
+        if (IS_MAC) {
+            if (!isExitCanceled) {
+                System.exit(0);
+            }
+        } else {
             System.exit(0);
         }
 

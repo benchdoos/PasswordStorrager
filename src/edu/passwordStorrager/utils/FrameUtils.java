@@ -1,7 +1,9 @@
 package edu.passwordStorrager.utils;
 
 import edu.passwordStorrager.core.Application;
+import edu.passwordStorrager.core.Core;
 import edu.passwordStorrager.core.PropertiesManager;
+import edu.passwordStorrager.gui.MainForm;
 import org.apache.log4j.Logger;
 
 import javax.imageio.ImageIO;
@@ -242,7 +244,7 @@ public class FrameUtils {
         frames.add(w);
     }
 
-    public static void removeWindow(Window w) {
+    public static void unRegisterWindow(Window w) {
         Window d=null;
         for (Window win : frames) {
             if (win.equals(w)) {
@@ -252,6 +254,15 @@ public class FrameUtils {
         }
         if (d != null) {
             frames.remove(d);
+            quitIfNoMainFramesFound();
+        }
+    }
+
+    private static void quitIfNoMainFramesFound() {
+        if (!Application.IS_MAC) {
+            if (getWindows(MainForm.class).size() == 0) {
+                Core.onQuit();
+            }
         }
     }
 }

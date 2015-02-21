@@ -1552,7 +1552,7 @@ public class MainForm extends JFrame {
             }
 
             if (!isEdited) {
-                FrameUtils.removeWindow(this);
+                FrameUtils.unRegisterWindow(this);
                 disposeFrame();
             } else {
                 saveOnExitDialog = new SaveOnExitDialog(this);
@@ -1565,6 +1565,7 @@ public class MainForm extends JFrame {
     public void disposeFrame() {
         setEdited(false);
         super.dispose();
+        FrameUtils.unRegisterWindow(this);
         Core.setIsExitCanceled(false);
     }
 
