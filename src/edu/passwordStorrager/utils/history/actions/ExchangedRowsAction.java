@@ -1,6 +1,7 @@
-package edu.passwordStorrager.utils.history;
+package edu.passwordStorrager.utils.history.actions;
 
 import edu.passwordStorrager.gui.MainForm;
+import edu.passwordStorrager.utils.history.HistoryAction;
 
 public class ExchangedRowsAction implements HistoryAction {
     int row1 = -1;

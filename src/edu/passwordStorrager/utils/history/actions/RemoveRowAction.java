@@ -1,7 +1,8 @@
-package edu.passwordStorrager.utils.history;
+package edu.passwordStorrager.utils.history.actions;
 
 import edu.passwordStorrager.gui.MainForm;
 import edu.passwordStorrager.objects.Record;
+import edu.passwordStorrager.utils.history.HistoryAction;
 
 import java.util.ArrayList;
 

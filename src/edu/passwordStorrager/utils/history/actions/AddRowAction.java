@@ -1,6 +1,7 @@
-package edu.passwordStorrager.utils.history;
+package edu.passwordStorrager.utils.history.actions;
 
 import edu.passwordStorrager.gui.MainForm;
+import edu.passwordStorrager.utils.history.HistoryAction;
 
 public class AddRowAction implements HistoryAction {
     int index = -1;
