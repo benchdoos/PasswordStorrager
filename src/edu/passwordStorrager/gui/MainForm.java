@@ -215,6 +215,9 @@ public class MainForm extends JFrame {
                 refreshLockTimer();
             }
         });
+        
+        addMouseListener(controlPanelMouseListener);
+        addMouseMotionListener(controlPanelMouseMotionAdapter);
     }
 
     private void initTable() {
@@ -1549,8 +1552,7 @@ public class MainForm extends JFrame {
                 FrameUtils.removeWindow(this);
                 disposeFrame();
             } else {
-
-//                if (IS_MAC) new MovingTogether(this, saveOnExitDialog);
+                saveOnExitDialog = new SaveOnExitDialog(this);
                 saveOnExitDialog.setVisible(true);
             }
         }

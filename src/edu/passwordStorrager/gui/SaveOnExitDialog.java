@@ -39,12 +39,7 @@ public class SaveOnExitDialog extends JDialog {
         icon.setSize(new Dimension(80, 80));
         icon.setIcon(FrameUtils.resizeIcon(PlatformUtils.appIcon, icon.getSize()));
 
-        Point location = window.getLocation();
-        Dimension dim = window.getSize();
-        int centerWidth = location.x + dim.width / 2;
-        centerWidth = centerWidth - size.width / 2;
-        int height = location.y + window.getInsets().top + window.controlPanel.getHeight() + 1;
-        setLocation(centerWidth, height);
+        updateLocation(window, size);
 
         if (IS_MAC) {
             setUndecorated(true);
@@ -87,6 +82,15 @@ public class SaveOnExitDialog extends JDialog {
         buttonDiscard.requestFocus();
     }
 
+    private void updateLocation(MainForm window, Dimension size) {
+        Point location = window.getLocation();
+        Dimension dim = window.getSize();
+        int centerWidth = location.x + dim.width / 2;
+        centerWidth = centerWidth - size.width / 2;
+        int height = location.y + window.getInsets().top + window.controlPanel.getHeight() + 1;
+        setLocation(centerWidth, height);
+    }
+
     private void onDiscard() {
         window.disposeFrame();
         Core.setIsExitCanceled(false);
@@ -108,6 +112,15 @@ public class SaveOnExitDialog extends JDialog {
         }
         Core.setIsExitCanceled(true);
         dispose();
+    }
+
+    @Override
+    public void setVisible(boolean value) {
+        updateLocation(window,getSize());
+        /*requestFocusInWindow();
+        getRootPane().setDefaultButton(buttonSave);
+        buttonDiscard.requestFocus();*/
+        super.setVisible(value);
     }
 
     class MovingTogether extends ComponentAdapter {
