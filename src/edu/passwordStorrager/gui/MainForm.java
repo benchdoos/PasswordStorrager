@@ -8,7 +8,7 @@ import edu.passwordStorrager.objects.Record;
 import edu.passwordStorrager.protector.Values;
 import edu.passwordStorrager.utils.FrameUtils;
 import edu.passwordStorrager.utils.StringUtils;
-import edu.passwordStorrager.utils.history.*;
+import edu.passwordStorrager.utils.history.History;
 import edu.passwordStorrager.utils.history.actions.AddRowAction;
 import edu.passwordStorrager.utils.history.actions.ChangeCellValueAction;
 import edu.passwordStorrager.utils.history.actions.ExchangedRowsAction;
@@ -47,6 +47,7 @@ public class MainForm extends JFrame {
     static final String NUMBER_COLUMN_NAME = "#", SITE_COLUMN_NAME = "Сайт",
             LOGIN_COLUMN_NAME = "Логин", PASSWORD_COLUMN_NAME = "Пароль";
 
+    static int NUMBER_COLUMN_INDEX = 0;
     static int SITE_COLUMN_INDEX = 1;
     static int LOGIN_COLUMN_INDEX = 2;
     static int PASSWORD_COLUMN_INDEX = 3;
@@ -245,6 +246,7 @@ public class MainForm extends JFrame {
         password.setHeaderValue(PASSWORD_COLUMN_NAME);
         password.setResizable(false);
 
+        NUMBER_COLUMN_INDEX = table.getColumn(NUMBER_COLUMN_NAME).getModelIndex();
         SITE_COLUMN_INDEX = table.getColumn(SITE_COLUMN_NAME).getModelIndex();
         LOGIN_COLUMN_INDEX = table.getColumn(LOGIN_COLUMN_NAME).getModelIndex();
         PASSWORD_COLUMN_INDEX = table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex();
@@ -1322,12 +1324,11 @@ public class MainForm extends JFrame {
 
 
     private void resizeTableColumns(TableColumn tableColumn) {
-        int column = table.getColumn(NUMBER_COLUMN_NAME).getModelIndex();
         int preferredWidth = tableColumn.getMinWidth();
         int maxWidth = tableColumn.getMaxWidth();
         for (int row = 0; row < table.getRowCount(); row++) {
-            TableCellRenderer cellRenderer = table.getCellRenderer(row, column);
-            Component c = table.prepareRenderer(cellRenderer, row, column);
+            TableCellRenderer cellRenderer = table.getCellRenderer(row, NUMBER_COLUMN_INDEX);
+            Component c = table.prepareRenderer(cellRenderer, row, NUMBER_COLUMN_INDEX);
             int width = c.getPreferredSize().width + table.getIntercellSpacing().width;
             preferredWidth = Math.max(preferredWidth, width);
 
@@ -1504,7 +1505,7 @@ public class MainForm extends JFrame {
             if (!history.isHistoryCall()) {
                 history.register(new RemoveRowAction(index1, removedRecords));
                 if (index1 != index2) {
-                    setStatus("Удалено записей: " + (index2+1 - index1) , STATUS_MESSAGE);
+                    setStatus("Удалено записей: " + (index2 + 1 - index1), STATUS_MESSAGE);
                 } else {
                     setStatus("Удалена запись", STATUS_MESSAGE);
                 }
