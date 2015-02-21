@@ -92,7 +92,6 @@ public class MacOsXUtils {
             @Override
             public void handleQuitRequestWith(AppEvent.QuitEvent quitEvent, QuitResponse quitResponse) {
                 applicationQuitResponse = quitResponse;
-                System.out.println("quit called");
                 if (isUnlocked) {
                     onQuit();
                 } else {
@@ -100,7 +99,6 @@ public class MacOsXUtils {
                         onQuit();
                     } else {
                         applicationQuitResponse.cancelQuit();
-
                     }
                 }
             }

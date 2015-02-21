@@ -35,6 +35,7 @@
                   <background color="-1118482"/>
                   <dragEnabled value="false"/>
                   <editable value="false"/>
+                  <focusable value="false"/>
                   <font size="14" style="1"/>
                   <text value="Хотите сохранить изменения, внесенные в хранилище?"/>
                 </properties>
@@ -48,7 +49,7 @@
                   <dragEnabled value="false"/>
                   <editable value="false"/>
                   <enabled value="true"/>
-                  <focusable value="true"/>
+                  <focusable value="false"/>
                   <font size="12"/>
                   <lineWrap value="false"/>
                   <rows value="2"/>

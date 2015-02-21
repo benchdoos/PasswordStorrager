@@ -1,6 +1,7 @@
 package edu.passwordStorrager.gui;
 
 import edu.passwordStorrager.core.Application;
+import edu.passwordStorrager.core.Core;
 import edu.passwordStorrager.core.PasswordStorrager;
 import edu.passwordStorrager.core.PropertiesManager;
 import edu.passwordStorrager.gui.elements.ZebraJTable;
@@ -215,7 +216,7 @@ public class MainForm extends JFrame {
                 refreshLockTimer();
             }
         });
-        
+
         addMouseListener(controlPanelMouseListener);
         addMouseMotionListener(controlPanelMouseMotionAdapter);
     }
@@ -1562,6 +1563,7 @@ public class MainForm extends JFrame {
     public void disposeFrame() {
         setEdited(false);
         super.dispose();
+        Core.setIsExitCanceled(false);
     }
 
 
