@@ -9,6 +9,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 public class PasswordStorrager {
@@ -25,7 +27,7 @@ public class PasswordStorrager {
     public static ArrayList<MainForm> framesMainForm = new ArrayList<>();
     public static ArrayList<AuthorizeDialog> framesAuthForm = new ArrayList<>();
 
-    public static ArrayList<Window> frames = new ArrayList<>();
+    public static List<Window> frames = Collections.synchronizedList(new ArrayList<Window>());
 
 
     public static void main(String[] args) {
