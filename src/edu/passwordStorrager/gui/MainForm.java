@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.List;
 
 import static edu.passwordStorrager.core.Application.*;
 import static edu.passwordStorrager.utils.FrameUtils.*;
@@ -45,7 +46,7 @@ public class MainForm extends JFrame {
     private static final Logger log = Logger.getLogger(getCurrentClassName());
 
     public static final int STATUS_MESSAGE = 1, STATUS_ERROR = -1, STATUS_SUCCESS = 2;
-    protected  JRadioButtonMenuItem editModeJRadioButtonMenuItem; //if checked - can edit existing
+    protected JRadioButtonMenuItem editModeJRadioButtonMenuItem; //if checked - can edit existing
     static Timer timer;
 
     static final String SITE_COLUMN_NAME = "Сайт",
@@ -790,7 +791,6 @@ public class MainForm extends JFrame {
             }
         });
 
-
         tableModelListener = new TableModelListener() {
             @Override
             public void tableChanged(TableModelEvent e) {
@@ -1281,8 +1281,8 @@ public class MainForm extends JFrame {
             setStatus("Нечего копировать!", STATUS_ERROR);
         }
     }
-    
-    
+
+
     private void copySelectedCell(int column) {
         if (table.getSelectedRow() >= 0) {
             String copy = (String) table.getModel().getValueAt(table.getSelectedRow(), column);
@@ -1478,14 +1478,14 @@ public class MainForm extends JFrame {
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
 
         int called = stackTraceElements.length;
-        if (
-                (called == 23 || called == 29 || called == 43
-                        || called == 83
-                        || called == 86
-                        || called == 96
-                        || called == 100
-                )
-                        || (IS_WINDOWS && called == 30)) {
+        if (called == 23
+                || called == 29
+                || called == 30
+                || called == 43
+                || called == 83
+                || called == 86
+                || called == 96
+                || called == 100) {
             if (called == 23) {
                 disposeCounter++;
                 if (disposeCounter >= 2) {
@@ -1807,10 +1807,57 @@ class TableEditor extends DefaultCellEditor {
 
 class MyTableHeaderRenderer extends JPanel implements TableCellRenderer {
     JLabel label = new JLabel();
+    JLabel sortedIcon = new JLabel("d");
+
+    private JPopupMenu getPopUpMenu(final JTable table) {
+        JPopupMenu popup = new JPopupMenu();
+        JMenuItem cancel = new JMenuItem("Отменить сортировку");
+        cancel.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DefaultRowSorter sorter = ((DefaultRowSorter) table.getRowSorter());
+                ArrayList<RowSorter.SortKey> list = new ArrayList<>();
+                list.add(new RowSorter.SortKey(0, SortOrder.UNSORTED));
+                sorter.setSortKeys(list);
+                sorter.sort();
+
+            }
+        });
+        popup.add(cancel);
+        return popup;
+    }
 
     @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+    public Component getTableCellRendererComponent(final JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+
         setLayout(new BorderLayout());
+
+        List<? extends RowSorter.SortKey> keys = table.getRowSorter().getSortKeys();
+        for (int i = 0; i < keys.size(); i++) {
+            RowSorter.SortKey sorter = keys.get(i);
+            String name = sorter.getSortOrder().name();
+            int ordinal = sorter.getSortOrder().ordinal();
+            System.out.println(i + ">>>" + ordinal + " " + name);
+
+            if (ordinal == 0 || ordinal == 1) {
+                table.getTableHeader().setComponentPopupMenu(getPopUpMenu(table));
+                remove(sortedIcon);
+                try {
+                    if (ordinal == 0) {
+                        sortedIcon = new JLabel(new ImageIcon(ImageIO.read(getClass().getResource("/icons/controls/table.header.sort.asc.png"))));
+                    } else {
+                        sortedIcon = new JLabel(new ImageIcon(ImageIO.read(getClass().getResource("/icons/controls/table.header.sort.desc.png"))));
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                add(sortedIcon, BorderLayout.EAST);
+            } else {
+                remove(sortedIcon);
+            }
+
+        }
 
         remove(label);
         label = new JLabel(value.toString());
@@ -1818,11 +1865,11 @@ class MyTableHeaderRenderer extends JPanel implements TableCellRenderer {
         if (isSelected) {
             label.setFont(new Font("Helvetica", Font.BOLD, 11));
         }
-        add(label);
+        add(label, BorderLayout.WEST);
 
         setBackground(new Color(246, 246, 246));
 
-        setBorder(BorderFactory.createCompoundBorder(new TableHeaderBorder(getSize()), new EmptyBorder(0, 10, 0, 0)));
+        setBorder(BorderFactory.createCompoundBorder(new TableHeaderBorder(getSize()), new EmptyBorder(0, 10, 0, 10)));
 //        setToolTipText((String) value);
         return this;
     }
