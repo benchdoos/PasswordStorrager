@@ -4,6 +4,7 @@ import edu.passwordStorrager.core.Application;
 import edu.passwordStorrager.core.Core;
 import edu.passwordStorrager.core.PasswordStorrager;
 import edu.passwordStorrager.core.PropertiesManager;
+import edu.passwordStorrager.gui.elements.ControlButton;
 import edu.passwordStorrager.gui.elements.ZebraJTable;
 import edu.passwordStorrager.objects.Record;
 import edu.passwordStorrager.protector.Values;
@@ -480,10 +481,10 @@ public class MainForm extends JFrame {
     }
 
     private void initControlBar() {
-        addUpButton.putClientProperty("JButton.buttonType", "gradient");
+        /*addUpButton.putClientProperty("JButton.buttonType", "gradient");
         addDownButton.putClientProperty("JButton.buttonType", "gradient");
         moveUpButton.putClientProperty("JButton.buttonType", "gradient");
-        moveDownButton.putClientProperty("JButton.buttonType", "gradient");
+        moveDownButton.putClientProperty("JButton.buttonType", "gradient");*/
         /*addUpButton.putClientProperty("JButton.buttonType", "textured");
         addDownButton.putClientProperty("JButton.buttonType", "textured");*/
 
@@ -496,10 +497,10 @@ public class MainForm extends JFrame {
         moveDownButton.setText("");
         moveDownButton.setToolTipText("Переместить вниз");
         try {
-            Image img = ImageIO.read(getClass().getResource("/icons/controls/AddDown.png"));
-            addDownButton.setIcon(new ImageIcon(img));
-            img = ImageIO.read(getClass().getResource("/icons/controls/AddUp.png"));
+            Image img = ImageIO.read(getClass().getResource("/icons/controls/AddUp.png"));
             addUpButton.setIcon(new ImageIcon(img));
+            img = ImageIO.read(getClass().getResource("/icons/controls/AddDown.png"));
+            addDownButton.setIcon(new ImageIcon(img));
             img = ImageIO.read(getClass().getResource("/icons/controls/moveUp.png"));
             moveUpButton.setIcon(new ImageIcon(img));
             img = ImageIO.read(getClass().getResource("/icons/controls/moveDown.png"));
@@ -1577,6 +1578,20 @@ public class MainForm extends JFrame {
         Point pt = viewport.getViewPosition();
         rect.setLocation(rect.x - pt.x, rect.y - pt.y);
         viewport.scrollRectToVisible(rect);
+    }
+
+    private void createUIComponents() {
+        if (IS_MAC) {
+            addUpButton = new ControlButton();
+            addDownButton = new ControlButton();
+            moveUpButton = new ControlButton();
+            moveDownButton = new ControlButton();
+        } else {
+            addUpButton = new JButton();
+            addDownButton = new JButton();
+            moveUpButton = new JButton();
+            moveDownButton = new JButton();
+        }
     }
 }
 
