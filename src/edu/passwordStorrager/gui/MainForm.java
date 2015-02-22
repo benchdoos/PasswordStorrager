@@ -266,7 +266,7 @@ public class MainForm extends JFrame {
         JTableHeader header = table.getTableHeader();
         header.setPreferredSize(new Dimension(header.getPreferredSize().width, 22));
         header.setBackground(new Color(246, 246, 246));
-        header.setDefaultRenderer(new MyTableHeaderRenderer());
+        header.setDefaultRenderer(new MainFormTableHeader());
 
         JPanel corner = new JPanel();
         corner.setBackground(new Color(246, 246, 246));
@@ -1504,7 +1504,7 @@ public class MainForm extends JFrame {
                 saveOnExitDialog.setVisible(true);
             }
         } else {
-            System.out.println(">>" + called);
+            System.out.println("close called>>" + called);
         }
 
     }
@@ -1805,9 +1805,9 @@ class TableEditor extends DefaultCellEditor {
     }
 }
 
-class MyTableHeaderRenderer extends JPanel implements TableCellRenderer {
+class MainFormTableHeader extends JPanel implements TableCellRenderer {
     JLabel label = new JLabel();
-    JLabel sortedIcon = new JLabel("d");
+    JLabel sortedIcon = new JLabel();
 
     private JPopupMenu getPopUpMenu(final JTable table) {
         JPopupMenu popup = new JPopupMenu();
@@ -1835,18 +1835,17 @@ class MyTableHeaderRenderer extends JPanel implements TableCellRenderer {
         List<? extends RowSorter.SortKey> keys = table.getRowSorter().getSortKeys();
 
         remove(label);
-        
+
         label = new JLabel(value.toString());
-        
+
         if (keys.size() > 0) {
             RowSorter.SortKey sorter = keys.get(0);
             String name = sorter.getSortOrder().name();
             int ordinal = sorter.getSortOrder().ordinal();
-            System.out.println(">>>" + ordinal + " " + name);
 
             if ((ordinal == 0 || ordinal == 1) && column == sorter.getColumn()) {
                 label.setFont(new Font("Helvetica", Font.BOLD, 11));
-                
+
                 table.getTableHeader().setComponentPopupMenu(getPopUpMenu(table));
                 remove(sortedIcon);
                 try {
@@ -1867,7 +1866,7 @@ class MyTableHeaderRenderer extends JPanel implements TableCellRenderer {
         } else {
             label.setFont(new Font("Helvetica", Font.PLAIN, 11));
         }
-        
+
         add(label, BorderLayout.WEST);
 
         setBackground(new Color(246, 246, 246));
