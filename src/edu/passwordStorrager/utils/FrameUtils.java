@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import static edu.passwordStorrager.core.Application.IS_MAC;
+import static edu.passwordStorrager.core.Application.IS_WINDOWS;
 import static edu.passwordStorrager.core.PasswordStorrager.frames;
 import static edu.passwordStorrager.core.PasswordStorrager.propertiesFrames;
 
@@ -266,6 +268,17 @@ public class FrameUtils {
         }*/
         if (getWindows(MainForm.class).size() == 0) {
             Core.onQuit();
+        }
+    }
+
+    public static KeyStroke getKeyStrokeForOS(KeyStroke mac, KeyStroke windows) {
+        if (IS_MAC) {
+            return mac;
+        } else if (IS_WINDOWS) {
+            return windows;
+        } else {
+            //TODO edit if deeded
+            return windows;
         }
     }
 }
