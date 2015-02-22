@@ -18,14 +18,14 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.util.Locale;
 
 import static edu.passwordStorrager.core.Application.IS_MAC;
-import static edu.passwordStorrager.core.Application.IS_WINDOWS;
 import static edu.passwordStorrager.core.PasswordStorrager.isUnlocked;
 import static edu.passwordStorrager.core.PasswordStorrager.propertiesApplication;
 import static edu.passwordStorrager.core.PropertiesManager.*;
 import static edu.passwordStorrager.utils.FileUtils.exists;
-import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
+import static edu.passwordStorrager.utils.FrameUtils.*;
 
 public class AuthorizeDialog extends JDialog {
     private static final Logger log = Logger.getLogger(getCurrentClassName());
@@ -35,6 +35,7 @@ public class AuthorizeDialog extends JDialog {
     private JButton buttonCancel;
     private JPasswordField passwordField;
     private JProgressBar progressBar;
+    private JLabel languageLabel;
     private Timer timer;
     public static boolean isBlocked = false;
 
@@ -80,13 +81,10 @@ public class AuthorizeDialog extends JDialog {
             }
         };
 
-        if (IS_MAC) {
-            passwordField.registerKeyboardAction(deletePasswordActionListener,
-                    KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.META_MASK), JComponent.WHEN_FOCUSED);
-        } else if (IS_WINDOWS) {
-            passwordField.registerKeyboardAction(deletePasswordActionListener,
-                    KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
-        }
+        passwordField.registerKeyboardAction(deletePasswordActionListener,
+                getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.META_MASK),
+                        KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.CTRL_MASK)), 
+                JComponent.WHEN_FOCUSED);
 
         passwordField.getDocument().addDocumentListener(new DocumentListener() {
             void updateDefaultButton() {
@@ -130,7 +128,35 @@ public class AuthorizeDialog extends JDialog {
                     onCancel();
                 }
             }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        }, getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.META_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_MASK)), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+        passwordField.registerKeyboardAction(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                passwordField.requestFocus();
+            }
+        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
+        
+        
+        passwordField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                
+                
+            }
+        });
+        
+        Timer timer1 = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Window w = FrameUtils.getWindows(AuthorizeDialog.class).get(0);
+                Locale locale = w.getInputContext().getLocale();
+                languageLabel.setText(locale.getLanguage().toUpperCase());
+            }
+        });
+        timer1.setRepeats(true);
+        timer1.start();
 
         pack();
 
