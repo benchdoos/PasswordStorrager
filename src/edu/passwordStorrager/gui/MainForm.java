@@ -792,6 +792,28 @@ public class MainForm extends JFrame {
             }
         });
 
+        ListSelectionModel cellSelectionModel = table.getSelectionModel();
+        cellSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        cellSelectionModel.addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                int row = table.getSelectedRow();
+                int col = table.getSelectedColumn();
+                refreshLockTimer();
+                if (row > -1) {
+                    if (!isSearchMode) {
+                        moveUpButton.setEnabled(hasPrevious());
+                        moveDownButton.setEnabled(hasNext());
+                    }
+                }
+                if (col == 0) {
+                    table.setRowSelectionInterval(row, row);
+                    table.setColumnSelectionInterval(col + 1, col + 1);
+                }
+            }
+        });
+        
         tableModelListener = new TableModelListener() {
             @Override
             public void tableChanged(TableModelEvent e) {
