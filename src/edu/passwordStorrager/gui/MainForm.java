@@ -22,8 +22,11 @@ import org.apache.log4j.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.Timer;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.text.DefaultCaret;
@@ -217,7 +220,21 @@ public class MainForm extends JFrame {
             }
         });
 
-        this.getRootPane().registerKeyboardAction(new ActionListener() {
+        addComponentListener(new ComponentAdapter() {
+            /*@Override
+            public void componentMoved(ComponentEvent e) {
+                System.out.println("~~~");
+                super.componentMoved(e);
+            }*/
+
+            @Override
+            public void componentResized(ComponentEvent e) {
+                table.setBorder(BorderFactory.createEmptyBorder());
+                super.componentResized(e);
+            }
+        });
+
+        getRootPane().registerKeyboardAction(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 dispose();
             }
@@ -254,7 +271,16 @@ public class MainForm extends JFrame {
         SITE_COLUMN_INDEX = table.getColumn(SITE_COLUMN_NAME).getModelIndex();
         LOGIN_COLUMN_INDEX = table.getColumn(LOGIN_COLUMN_NAME).getModelIndex();
         PASSWORD_COLUMN_INDEX = table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex();
-//        scrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, null); //square, квадрат между table и scrollpane
+
+        JTableHeader header = table.getTableHeader();
+        header.setPreferredSize(new Dimension(header.getPreferredSize().width, 22));
+        header.setBackground(new Color(246, 246, 246));
+        header.setDefaultRenderer(new MyTableHeaderRenderer());
+
+        JPanel corner = new JPanel();
+        corner.setBackground(new Color(246, 246, 246));
+        corner.setBorder(new TableHeaderBorder(corner.getSize(), new Color(246, 246, 246)));
+        scrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, corner); //square, квадрат между table и scrollpane
     }
 
     private void initSearchBarListeners() {
@@ -1876,6 +1902,70 @@ abstract class InputForm extends JDialog {
         buttonOK.setVisible(true);
         value.setEnabled(true);
 
+    }
+}
+
+
+class MyTableHeaderRenderer extends JPanel implements TableCellRenderer {
+    JLabel label = new JLabel();
+
+    @Override
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        setLayout(new BorderLayout());
+
+        remove(label);
+        label = new JLabel(value.toString());
+        label.setFont(new Font("Helvetica", Font.PLAIN, 11));
+        if (isSelected) {
+            label.setFont(new Font("Helvetica", Font.BOLD, 11));
+        }
+        add(label);
+
+        setBackground(new Color(246, 246, 246));
+
+        setBorder(BorderFactory.createCompoundBorder(new TableHeaderBorder(getSize()), new EmptyBorder(0, 10, 0, 0)));
+//        setToolTipText((String) value);
+        return this;
+    }
+
+}
+
+class TableHeaderBorder implements Border {
+    Dimension dimension;
+    final Color topColor = new Color(172, 172, 172);
+    final Color bottomColor = new Color(196, 196, 196);
+    Color separatorColor = new Color(220, 220, 220);
+
+
+    public TableHeaderBorder(Dimension dimension) {
+        this.dimension = dimension;
+    }
+
+    public TableHeaderBorder(Dimension dimension, Color separatorColor) {
+        this.dimension = dimension;
+        this.separatorColor = separatorColor;
+    }
+
+    @Override
+    public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+        g.setColor(topColor);
+        g.drawLine(x, y - 1, width, y - 1);
+
+        g.setColor(bottomColor);
+        g.drawLine(x, height - 1, width, height - 1);
+
+        g.setColor(separatorColor);
+        g.drawLine(width - 1, y + 3, width - 1, height - 4);
+    }
+
+    @Override
+    public Insets getBorderInsets(Component c) {
+        return new Insets(0, 0, 0, 0);
+    }
+
+    @Override
+    public boolean isBorderOpaque() {
+        return false;
     }
 }
 
