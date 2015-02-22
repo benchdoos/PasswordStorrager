@@ -45,10 +45,10 @@ public class MainForm extends JFrame {
     private static final Logger log = Logger.getLogger(getCurrentClassName());
 
     public static final int STATUS_MESSAGE = 1, STATUS_ERROR = -1, STATUS_SUCCESS = 2;
-    protected static JRadioButtonMenuItem editModeJRadioButtonMenuItem; //if checked - can edit existing
+    protected  JRadioButtonMenuItem editModeJRadioButtonMenuItem; //if checked - can edit existing
     static Timer timer;
 
-    static final String NUMBER_COLUMN_NAME = "#", SITE_COLUMN_NAME = "Сайт",
+    static final String SITE_COLUMN_NAME = "Сайт",
             LOGIN_COLUMN_NAME = "Логин", PASSWORD_COLUMN_NAME = "Пароль";
 
     static int NUMBER_COLUMN_INDEX = 0;
@@ -246,28 +246,28 @@ public class MainForm extends JFrame {
     }
 
     private void initTable() {
-        TableColumn number = table.getColumnModel().getColumn(0);
+        /*TableColumn number = table.getColumnModel().getColumn(0);
         number.setHeaderValue(NUMBER_COLUMN_NAME);
         number.setMinWidth(20);
         number.setMaxWidth(40);
         number.setPreferredWidth(number.getPreferredWidth());
-        number.sizeWidthToFit();
+        number.sizeWidthToFit();*/
 
-        TableColumn site = table.getColumnModel().getColumn(1);
+        TableColumn site = table.getColumnModel().getColumn(0);
         site.setHeaderValue(SITE_COLUMN_NAME);
         site.setWidth(150);
         site.setResizable(false);
 
-        TableColumn login = table.getColumnModel().getColumn(2);
+        TableColumn login = table.getColumnModel().getColumn(1);
         login.setHeaderValue(LOGIN_COLUMN_NAME);
         login.setWidth(150);
         login.setResizable(false);
 
-        TableColumn password = table.getColumnModel().getColumn(3);
+        TableColumn password = table.getColumnModel().getColumn(2);
         password.setHeaderValue(PASSWORD_COLUMN_NAME);
         password.setResizable(false);
 
-        NUMBER_COLUMN_INDEX = table.getColumn(NUMBER_COLUMN_NAME).getModelIndex();
+//        NUMBER_COLUMN_INDEX = table.getColumn(NUMBER_COLUMN_NAME).getModelIndex();
         SITE_COLUMN_INDEX = table.getColumn(SITE_COLUMN_NAME).getModelIndex();
         LOGIN_COLUMN_INDEX = table.getColumn(LOGIN_COLUMN_NAME).getModelIndex();
         PASSWORD_COLUMN_INDEX = table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex();
@@ -1393,12 +1393,12 @@ public class MainForm extends JFrame {
 
         initTable();
 
-        table.getColumn(NUMBER_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField(NUMBER_COLUMN_NAME), this));
+//        table.getColumn(NUMBER_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField(NUMBER_COLUMN_NAME), this));
         table.getColumn(SITE_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField(SITE_COLUMN_NAME), this));
         table.getColumn(LOGIN_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField(LOGIN_COLUMN_NAME), this));
         table.getColumn(PASSWORD_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField(PASSWORD_COLUMN_NAME), this));
 
-        resizeTableColumns(table.getColumn(NUMBER_COLUMN_NAME));
+//        resizeTableColumns(table.getColumn(NUMBER_COLUMN_NAME));
 
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.setDragEnabled(false);
@@ -1628,177 +1628,11 @@ public class MainForm extends JFrame {
             pwdData[i] = recordArrayList.get(i).getPassword();
         }
 
-        tableModel.addColumn(NUMBER_COLUMN_NAME, number);
+//        tableModel.addColumn(NUMBER_COLUMN_NAME, number);
         tableModel.addColumn(SITE_COLUMN_NAME, siteData);
         tableModel.addColumn(LOGIN_COLUMN_NAME, loginData);
         tableModel.addColumn(PASSWORD_COLUMN_NAME, pwdData);
         return tableModel;
-    }
-
-    class TableEditor extends DefaultCellEditor {
-
-        boolean isAutoComplete = false;
-
-        JTextField textField;
-
-        MainForm mainForm;
-
-        int col = -1;
-
-        public TableEditor(JTextField textField, MainForm mainForm) {
-            super(textField);
-            this.textField = textField;
-            this.mainForm = mainForm;
-            initChangeListener();
-        }
-
-        private void initChangeListener() {
-            textField.getDocument().addDocumentListener(new DocumentListener() {
-                @Override
-                public void insertUpdate(DocumentEvent e) {
-                    if (!isAutoComplete) {
-                        autoComplete();
-                    } else {
-                        isAutoComplete = false;
-                    }
-                }
-
-                @Override
-                public void removeUpdate(DocumentEvent e) {
-                }
-
-                @Override
-                public void changedUpdate(DocumentEvent e) {
-
-                }
-            });
-        }
-
-        private void autoComplete() {
-            ArrayList<Record> records = mainForm.recordArrayList;
-            final String text = textField.getText();
-            final int start = text.length();
-
-            if (col == mainForm.SITE_COLUMN_INDEX ||
-                    col == mainForm.LOGIN_COLUMN_INDEX) {
-                ArrayList<String> sites = new ArrayList<>(records.size());
-                ArrayList<String> logins = new ArrayList<>(records.size());
-                for (Record record : records) {
-                    sites.add(record.getSite());
-                    logins.add(record.getLogin());
-                }
-                Comparator<String> comparator = new Comparator<String>() {
-                    @Override
-                    public int compare(String o1, String o2) {
-                        return ((o1.length() > o2.length()) ? 1 : (o1.length() < o2.length()) ? -1 : 0);
-                    }
-                };
-
-                Collections.sort(sites, comparator);
-                Collections.sort(logins, comparator);
-
-                final ArrayList<String> result = new ArrayList<>();
-
-                if (col == SITE_COLUMN_INDEX) {
-                    for (String site : sites) {
-                        if (site.startsWith(text) && site.length() > text.length()) {
-                            result.add(site);
-                        }
-                    }
-                }
-                if (col == LOGIN_COLUMN_INDEX) {
-                    for (String login : logins) {
-                        if (login.startsWith(text) && login.length() > text.length()) {
-                            result.add(login);
-                        }
-                    }
-                }
-                Collections.sort(result);
-
-                if (result.size() > 0) {
-                    if (result.get(0).length() > start) {
-                        SwingUtilities.invokeLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                isAutoComplete = true;
-                                System.out.println("autoComplete");
-                                textField.setText(result.get(0));
-                                textField.setCaretPosition(result.get(0).length());
-                                textField.moveCaretPosition(text.length());
-                                isAutoComplete = false;
-                            }
-                        });
-                    }
-                }
-            }
-        }
-
-        @Override
-        public boolean isCellEditable(EventObject anEvent) {
-
-            if (anEvent instanceof KeyEvent) {
-                return startWithKeyEvent((KeyEvent) anEvent) && isNumberCell();
-            }
-            return isNumberCell();
-        }
-
-        private boolean isNumberCell() {
-            return textField != null && !textField.getText().equals(NUMBER_COLUMN_NAME)
-                    && editModeJRadioButtonMenuItem.isSelected();
-        }
-
-        private boolean startWithKeyEvent(KeyEvent e) {
-            if (e.getKeyCode() == KeyEvent.VK_META) {
-                return false;
-            }
-            // check modifiers as needed, this here is just a quick example ;-)
-            /*if ((e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) != 0) {
-                return false;
-            }*/
-            // check for a list of function key strokes
-            /*if (excludes.contains(KeyStroke.getKeyStrokeForEvent(e)) {
-                return false;
-            }*/
-            return true;
-        }
-
-        @Override
-        public void addCellEditorListener(CellEditorListener l) {
-            textField.setFont(new Font("LucidaGrande", Font.PLAIN, 12));
-            textField.setCaret(new DefaultCaret());
-            textField.setCaretPosition(textField.getText().length());
-            MainForm mf = (MainForm) findWindow(textField);
-            mf.undoItem.setEnabled(false);
-            mf.redoItem.setEnabled(false);
-
-            int editingColumn = mf.table.getEditingColumn();
-
-            if (editingColumn == mf.SITE_COLUMN_INDEX) {
-                col = editingColumn;
-            } else if (editingColumn == mf.LOGIN_COLUMN_INDEX) {
-                col = editingColumn;
-            } else {
-                col = -1;
-            }
-
-            super.addCellEditorListener(l);
-        }
-
-        @Override
-        public boolean stopCellEditing() {
-            MainForm mf = (MainForm) findWindow(textField);
-            mf.undoItem.setEnabled(true);
-            mf.redoItem.setEnabled(true);
-            return super.stopCellEditing();
-        }
-
-        @Override
-        public void cancelCellEditing() {
-            MainForm mf = (MainForm) findWindow(textField);
-            mf.undoItem.setEnabled(true);
-            mf.redoItem.setEnabled(true);
-            super.cancelCellEditing();
-        }
     }
 
 
@@ -1905,6 +1739,174 @@ abstract class InputForm extends JDialog {
     }
 }
 
+
+class TableEditor extends DefaultCellEditor {
+
+    boolean isAutoComplete = false;
+
+    JTextField textField;
+
+    MainForm mainForm;
+
+    int col = -1;
+
+    public TableEditor(JTextField textField, MainForm mainForm) {
+        super(textField);
+        this.textField = textField;
+        this.mainForm = mainForm;
+        initChangeListener();
+    }
+
+    private void initChangeListener() {
+        textField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                if (!isAutoComplete) {
+                    autoComplete();
+                } else {
+                    isAutoComplete = false;
+                }
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+
+            }
+        });
+    }
+
+    private void autoComplete() {
+        ArrayList<Record> records = mainForm.recordArrayList;
+        final String text = textField.getText();
+        final int start = text.length();
+
+        if (col == mainForm.SITE_COLUMN_INDEX ||
+                col == mainForm.LOGIN_COLUMN_INDEX) {
+            ArrayList<String> sites = new ArrayList<>(records.size());
+            ArrayList<String> logins = new ArrayList<>(records.size());
+            for (Record record : records) {
+                sites.add(record.getSite());
+                logins.add(record.getLogin());
+            }
+            Comparator<String> comparator = new Comparator<String>() {
+                @Override
+                public int compare(String o1, String o2) {
+                    return ((o1.length() > o2.length()) ? 1 : (o1.length() < o2.length()) ? -1 : 0);
+                }
+            };
+
+            Collections.sort(sites, comparator);
+            Collections.sort(logins, comparator);
+
+            final ArrayList<String> result = new ArrayList<>();
+
+            if (col == MainForm.SITE_COLUMN_INDEX) {
+                for (String site : sites) {
+                    if (site.startsWith(text) && site.length() > text.length()) {
+                        result.add(site);
+                    }
+                }
+            }
+            if (col == MainForm.LOGIN_COLUMN_INDEX) {
+                for (String login : logins) {
+                    if (login.startsWith(text) && login.length() > text.length()) {
+                        result.add(login);
+                    }
+                }
+            }
+            Collections.sort(result);
+
+            if (result.size() > 0) {
+                if (result.get(0).length() > start) {
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            isAutoComplete = true;
+                            System.out.println("autoComplete");
+                            textField.setText(result.get(0));
+                            textField.setCaretPosition(result.get(0).length());
+                            textField.moveCaretPosition(text.length());
+                            isAutoComplete = false;
+                        }
+                    });
+                }
+            }
+        }
+    }
+
+    @Override
+    public boolean isCellEditable(EventObject anEvent) {
+
+    /*    if (anEvent instanceof KeyEvent) {
+            return startWithKeyEvent((KeyEvent) anEvent) && isNumberCell();
+        }
+        return isNumberCell();*/
+        return mainForm.editModeJRadioButtonMenuItem.isSelected();
+    }
+
+    private boolean isNumberCell() {
+        return textField != null 
+//                && !textField.getText().equals(MainForm.NUMBER_COLUMN_NAME)
+                && mainForm.editModeJRadioButtonMenuItem.isSelected();
+    }
+
+    private boolean startWithKeyEvent(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_META) {
+            return false;
+        }
+        // check modifiers as needed, this here is just a quick example ;-)
+            /*if ((e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) != 0) {
+                return false;
+            }*/
+        // check for a list of function key strokes
+            /*if (excludes.contains(KeyStroke.getKeyStrokeForEvent(e)) {
+                return false;
+            }*/
+        return true;
+    }
+
+    @Override
+    public void addCellEditorListener(CellEditorListener l) {
+        textField.setFont(new Font("LucidaGrande", Font.PLAIN, 12));
+        textField.setCaret(new DefaultCaret());
+        textField.setCaretPosition(textField.getText().length());
+        MainForm mf = (MainForm) findWindow(textField);
+        mf.undoItem.setEnabled(false);
+        mf.redoItem.setEnabled(false);
+
+        int editingColumn = mf.table.getEditingColumn();
+
+        if (editingColumn == mf.SITE_COLUMN_INDEX) {
+            col = editingColumn;
+        } else if (editingColumn == mf.LOGIN_COLUMN_INDEX) {
+            col = editingColumn;
+        } else {
+            col = -1;
+        }
+
+        super.addCellEditorListener(l);
+    }
+
+    @Override
+    public boolean stopCellEditing() {
+        MainForm mf = (MainForm) findWindow(textField);
+        mf.undoItem.setEnabled(true);
+        mf.redoItem.setEnabled(true);
+        return super.stopCellEditing();
+    }
+
+    @Override
+    public void cancelCellEditing() {
+        MainForm mf = (MainForm) findWindow(textField);
+        mf.undoItem.setEnabled(true);
+        mf.redoItem.setEnabled(true);
+        super.cancelCellEditing();
+    }
+}
 
 class MyTableHeaderRenderer extends JPanel implements TableCellRenderer {
     JLabel label = new JLabel();
