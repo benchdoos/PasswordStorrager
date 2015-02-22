@@ -1833,13 +1833,20 @@ class MyTableHeaderRenderer extends JPanel implements TableCellRenderer {
         setLayout(new BorderLayout());
 
         List<? extends RowSorter.SortKey> keys = table.getRowSorter().getSortKeys();
-        for (int i = 0; i < keys.size(); i++) {
-            RowSorter.SortKey sorter = keys.get(i);
+
+        remove(label);
+        
+        label = new JLabel(value.toString());
+        
+        if (keys.size() > 0) {
+            RowSorter.SortKey sorter = keys.get(0);
             String name = sorter.getSortOrder().name();
             int ordinal = sorter.getSortOrder().ordinal();
-            System.out.println(i + ">>>" + ordinal + " " + name);
+            System.out.println(">>>" + ordinal + " " + name);
 
-            if (ordinal == 0 || ordinal == 1) {
+            if ((ordinal == 0 || ordinal == 1) && column == sorter.getColumn()) {
+                label.setFont(new Font("Helvetica", Font.BOLD, 11));
+                
                 table.getTableHeader().setComponentPopupMenu(getPopUpMenu(table));
                 remove(sortedIcon);
                 try {
@@ -1854,17 +1861,13 @@ class MyTableHeaderRenderer extends JPanel implements TableCellRenderer {
 
                 add(sortedIcon, BorderLayout.EAST);
             } else {
+                label.setFont(new Font("Helvetica", Font.PLAIN, 11));
                 remove(sortedIcon);
             }
-
+        } else {
+            label.setFont(new Font("Helvetica", Font.PLAIN, 11));
         }
-
-        remove(label);
-        label = new JLabel(value.toString());
-        label.setFont(new Font("Helvetica", Font.PLAIN, 11));
-        if (isSelected) {
-            label.setFont(new Font("Helvetica", Font.BOLD, 11));
-        }
+        
         add(label, BorderLayout.WEST);
 
         setBackground(new Color(246, 246, 246));
