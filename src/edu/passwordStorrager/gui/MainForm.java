@@ -51,7 +51,6 @@ public class MainForm extends JFrame {
     static final String SITE_COLUMN_NAME = "Сайт",
             LOGIN_COLUMN_NAME = "Логин", PASSWORD_COLUMN_NAME = "Пароль";
 
-    static int NUMBER_COLUMN_INDEX = 0;
     static int SITE_COLUMN_INDEX = 1;
     static int LOGIN_COLUMN_INDEX = 2;
     static int PASSWORD_COLUMN_INDEX = 3;
@@ -221,11 +220,6 @@ public class MainForm extends JFrame {
         });
 
         addComponentListener(new ComponentAdapter() {
-            /*@Override
-            public void componentMoved(ComponentEvent e) {
-                System.out.println("~~~");
-                super.componentMoved(e);
-            }*/
 
             @Override
             public void componentResized(ComponentEvent e) {
@@ -246,28 +240,24 @@ public class MainForm extends JFrame {
     }
 
     private void initTable() {
-        /*TableColumn number = table.getColumnModel().getColumn(0);
-        number.setHeaderValue(NUMBER_COLUMN_NAME);
-        number.setMinWidth(20);
-        number.setMaxWidth(40);
-        number.setPreferredWidth(number.getPreferredWidth());
-        number.sizeWidthToFit();*/
 
         TableColumn site = table.getColumnModel().getColumn(0);
         site.setHeaderValue(SITE_COLUMN_NAME);
+        site.setMinWidth(80);
         site.setWidth(150);
-        site.setResizable(false);
+        site.setResizable(true);
 
         TableColumn login = table.getColumnModel().getColumn(1);
         login.setHeaderValue(LOGIN_COLUMN_NAME);
+        login.setMinWidth(80);
         login.setWidth(150);
-        login.setResizable(false);
+        login.setResizable(true);
 
         TableColumn password = table.getColumnModel().getColumn(2);
         password.setHeaderValue(PASSWORD_COLUMN_NAME);
-        password.setResizable(false);
+        password.setMinWidth(80);
+        password.setResizable(true);
 
-//        NUMBER_COLUMN_INDEX = table.getColumn(NUMBER_COLUMN_NAME).getModelIndex();
         SITE_COLUMN_INDEX = table.getColumn(SITE_COLUMN_NAME).getModelIndex();
         LOGIN_COLUMN_INDEX = table.getColumn(LOGIN_COLUMN_NAME).getModelIndex();
         PASSWORD_COLUMN_INDEX = table.getColumn(PASSWORD_COLUMN_NAME).getModelIndex();
@@ -1291,26 +1281,8 @@ public class MainForm extends JFrame {
             setStatus("Нечего копировать!", STATUS_ERROR);
         }
     }
-
-
-    private void resizeTableColumns(TableColumn tableColumn) {
-        int preferredWidth = tableColumn.getMinWidth();
-        int maxWidth = tableColumn.getMaxWidth();
-        for (int row = 0; row < table.getRowCount(); row++) {
-            TableCellRenderer cellRenderer = table.getCellRenderer(row, NUMBER_COLUMN_INDEX);
-            Component c = table.prepareRenderer(cellRenderer, row, NUMBER_COLUMN_INDEX);
-            int width = c.getPreferredSize().width + table.getIntercellSpacing().width;
-            preferredWidth = Math.max(preferredWidth, width);
-
-            if (preferredWidth >= maxWidth) {
-                preferredWidth = maxWidth;
-                break;
-            }
-        }
-        tableColumn.setPreferredWidth(preferredWidth);
-    }
-
-
+    
+    
     private void copySelectedCell(int column) {
         if (table.getSelectedRow() >= 0) {
             String copy = (String) table.getModel().getValueAt(table.getSelectedRow(), column);
@@ -1329,12 +1301,9 @@ public class MainForm extends JFrame {
 
         initTable();
 
-//        table.getColumn(NUMBER_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField(NUMBER_COLUMN_NAME), this));
         table.getColumn(SITE_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField(SITE_COLUMN_NAME), this));
         table.getColumn(LOGIN_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField(LOGIN_COLUMN_NAME), this));
         table.getColumn(PASSWORD_COLUMN_NAME).setCellEditor(new TableEditor(new JTextField(PASSWORD_COLUMN_NAME), this));
-
-//        resizeTableColumns(table.getColumn(NUMBER_COLUMN_NAME));
 
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.setDragEnabled(false);
@@ -1564,7 +1533,6 @@ public class MainForm extends JFrame {
             pwdData[i] = recordArrayList.get(i).getPassword();
         }
 
-//        tableModel.addColumn(NUMBER_COLUMN_NAME, number);
         tableModel.addColumn(SITE_COLUMN_NAME, siteData);
         tableModel.addColumn(LOGIN_COLUMN_NAME, loginData);
         tableModel.addColumn(PASSWORD_COLUMN_NAME, pwdData);
@@ -1776,18 +1744,11 @@ class TableEditor extends DefaultCellEditor {
 
     @Override
     public boolean isCellEditable(EventObject anEvent) {
-
-    /*    if (anEvent instanceof KeyEvent) {
-            return startWithKeyEvent((KeyEvent) anEvent) && isNumberCell();
-        }
-        return isNumberCell();*/
         return mainForm.editModeJRadioButtonMenuItem.isSelected();
     }
 
     private boolean isNumberCell() {
-        return textField != null 
-//                && !textField.getText().equals(MainForm.NUMBER_COLUMN_NAME)
-                && mainForm.editModeJRadioButtonMenuItem.isSelected();
+        return textField != null && mainForm.editModeJRadioButtonMenuItem.isSelected();
     }
 
     private boolean startWithKeyEvent(KeyEvent e) {
