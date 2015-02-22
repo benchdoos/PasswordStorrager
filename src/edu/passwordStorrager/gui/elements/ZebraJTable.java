@@ -53,7 +53,7 @@ public class ZebraJTable extends javax.swing.JTable {
         final int h = getHeight() - insets.top - insets.bottom;
         final int x = insets.left;
         int y = insets.top;
-        int rowHeight = 16; // A default for empty tables
+        int rowHeight = 20; // A default for empty tables
         final int nItems = getRowCount();
         for (int i = 0; i < nItems; i++, y += rowHeight) {
             rowHeight = getRowHeight(i);
