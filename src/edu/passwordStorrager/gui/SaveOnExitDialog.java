@@ -26,12 +26,11 @@ public class SaveOnExitDialog extends JDialog {
         contentPane.setMinimumSize(size);
         contentPane.setPreferredSize(size);
         contentPane.setMaximumSize(size);
-        
+
         setResizable(false);
         setContentPane(contentPane);
         setModal(true);
 
-        
         getRootPane().setDefaultButton(buttonSave);
         if (!MacOsXUtils.isBundled()) {
             setIconImage(PlatformUtils.appIcon);
@@ -92,21 +91,22 @@ public class SaveOnExitDialog extends JDialog {
     }
 
     private void onDiscard() {
+        setVisible(false);
         window.disposeFrame();
         Core.setIsExitCanceled(false);
         dispose();
-//        Core.onQuit(); //TODO remove when there will be more then one window
     }
 
     private void onSave() {
+        setVisible(false);
         window.saveStorage();
         window.dispose();
         Core.setIsExitCanceled(false);
         dispose();
-//        Core.onQuit(); //TODO remove when there will be more then one window
     }
 
     private void onCancel() {
+        setVisible(false);
         if (MacOsXUtils.applicationQuitResponse != null) {
             MacOsXUtils.applicationQuitResponse.cancelQuit();
         }
@@ -116,7 +116,7 @@ public class SaveOnExitDialog extends JDialog {
 
     @Override
     public void setVisible(boolean value) {
-        updateLocation(window,getSize());
+        updateLocation(window, getSize());
         /*requestFocusInWindow();
         getRootPane().setDefaultButton(buttonSave);
         buttonDiscard.requestFocus();*/
