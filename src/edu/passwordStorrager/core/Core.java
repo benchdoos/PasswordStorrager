@@ -68,7 +68,7 @@ public class Core implements Application {
         disposeFrames();
 
         //TODO sync here
-        if (IS_MAC) {
+        /*if (IS_MAC) { //TODO return when multi-window ready (FrameUtils too)
             if (!isExitCanceled) {
                 log.debug("Quit");
                 System.exit(0);
@@ -76,7 +76,10 @@ public class Core implements Application {
         } else {
             log.debug("Quit");
             System.exit(0);
-        }
+        }*/
+
+        log.debug("Quit");
+        System.exit(0);
 
     }
 

@@ -259,10 +259,13 @@ public class FrameUtils {
     }
 
     private static void quitIfNoMainFramesFound() {
-        if (!Application.IS_MAC) {
+        /*if (!Application.IS_MAC) { //TODO return when multi-window ready
             if (getWindows(MainForm.class).size() == 0) {
                 Core.onQuit();
             }
+        }*/
+        if (getWindows(MainForm.class).size() == 0) {
+            Core.onQuit();
         }
     }
 }
