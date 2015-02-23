@@ -42,7 +42,7 @@ public class Core implements Application {
 
         if (exists(PropertiesManager.propertiesFilePath)) {
             log.debug("Properties file found, loading AuthorizeDialog");
-            new AuthorizeDialog();
+            new AuthorizeDialog(true);
         } else {
             log.debug("Properties file not found, loading FirstLaunchDialog");
             new FirstLaunchDialog();

@@ -40,7 +40,7 @@ public class AuthorizeDialog extends JDialog {
     private Timer timer;
     public static boolean isBlocked = false;
 
-    public AuthorizeDialog() {
+    public AuthorizeDialog(boolean isModal) {
         isBlocked = false;
         isUnlocked = false;
         initTimer();
@@ -49,7 +49,7 @@ public class AuthorizeDialog extends JDialog {
             setIconImage(PlatformUtils.appIcon);
         }
         setTitle("Вход");
-        setModal(true);
+        setModal(isModal);
         setResizable(false);
         progressBar.setIndeterminate(true);
         progressBar.putClientProperty("JProgressBar.style", "circular");

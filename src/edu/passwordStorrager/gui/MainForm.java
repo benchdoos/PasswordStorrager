@@ -981,7 +981,7 @@ public class MainForm extends JFrame {
                     if (PasswordStorrager.isUnlocked) {
                         PasswordStorrager.isUnlocked = false;
                         setVisible(false);
-                        new AuthorizeDialog();
+                        new AuthorizeDialog(false);
                     }
                 }
             }
