@@ -191,7 +191,7 @@ public class MainForm extends JFrame {
         }
 
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        setMinimumSize(new Dimension(COLUMN_COUNT * COLUMN_MINIMUM_WIDTH, 300));
+        setMinimumSize(new Dimension((COLUMN_COUNT * COLUMN_MINIMUM_WIDTH) + 20, 300));
         setPreferredSize(getFrameSize(getCurrentClassName()));
         setLocation(getFrameLocation(getCurrentClassName()));
 
