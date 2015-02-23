@@ -849,7 +849,7 @@ public class MainForm extends JFrame {
                         moveDownButton.setEnabled(hasNext());
                     }
                 }
-                if (col == 0) {
+                if (col == 0 && row >= 0) {
                     table.setRowSelectionInterval(row, row);
                     table.setColumnSelectionInterval(col + 1, col + 1);
                 }
