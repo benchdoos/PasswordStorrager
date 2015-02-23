@@ -17,6 +17,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.im.InputContext;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -26,7 +27,8 @@ import static edu.passwordStorrager.core.PasswordStorrager.isUnlocked;
 import static edu.passwordStorrager.core.PasswordStorrager.propertiesApplication;
 import static edu.passwordStorrager.core.PropertiesManager.*;
 import static edu.passwordStorrager.utils.FileUtils.exists;
-import static edu.passwordStorrager.utils.FrameUtils.*;
+import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
+import static edu.passwordStorrager.utils.FrameUtils.getKeyStrokeForOS;
 
 public class AuthorizeDialog extends JDialog {
     private static final Logger log = Logger.getLogger(getCurrentClassName());
@@ -38,7 +40,8 @@ public class AuthorizeDialog extends JDialog {
     private JProgressBar progressBar;
     private JLabel languageLabel;
     private JPanel languagePanel;
-    private Timer timer;
+    private Timer blockTimer;
+    private Timer languageTimer;
     public static boolean isBlocked = false;
 
     public AuthorizeDialog(boolean isModal) {
@@ -59,10 +62,10 @@ public class AuthorizeDialog extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 buttonOK.setVisible(false);
                 progressBar.setVisible(true);
-                
+
                 passwordField.setEnabled(false);
                 buttonCancel.setEnabled(false);
-                
+
                 isBlocked = true;
                 new Thread(new Runnable() {
                     @Override
@@ -88,7 +91,7 @@ public class AuthorizeDialog extends JDialog {
 
         passwordField.registerKeyboardAction(deletePasswordActionListener,
                 getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.META_MASK),
-                        KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.CTRL_MASK)), 
+                        KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.CTRL_MASK)),
                 JComponent.WHEN_FOCUSED);
 
         passwordField.getDocument().addDocumentListener(new DocumentListener() {
@@ -142,33 +145,48 @@ public class AuthorizeDialog extends JDialog {
                 passwordField.requestFocus();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
-        
-        
+
         passwordField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
-                
-                
+                languageTimer.start();
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                languageTimer.stop();
             }
         });
-        
-        Timer timer1 = new Timer(1000, new ActionListener() {
+
+        languageTimer = new Timer(1000, new ActionListener() {
+
             @Override
             public void actionPerformed(ActionEvent e) {
-                Window w = FrameUtils.getWindows(AuthorizeDialog.class).get(0);
-                Locale locale = w.getInputContext().getLocale();
+
+                InputContext context = InputContext.getInstance();
+
+                Locale locale = context.getLocale();
                 String name = locale.getLanguage().toUpperCase();
-                if(!name.isEmpty()) {
+                if (!name.isEmpty()) {
                     languageLabel.setText(name);
                     languagePanel.setToolTipText(locale.getDisplayLanguage());
                 } else {
-                    languageLabel.setText("*");
+                    languageLabel.setText("●");
                     languagePanel.setToolTipText("Незнакомая раскладка");
                 }
             }
         });
-        timer1.setRepeats(true);
-        timer1.start();
+        languageTimer.setRepeats(true);
+
+        Locale locale = InputContext.getInstance().getLocale();
+        String name = InputContext.getInstance().getLocale().getLanguage().toUpperCase();
+        if (!name.isEmpty()) {
+            languageLabel.setText(name);
+            languagePanel.setToolTipText(locale.getDisplayLanguage());
+        } else {
+            languageLabel.setText("●");
+            languagePanel.setToolTipText("Незнакомая раскладка");
+        }
 
         pack();
 
@@ -178,6 +196,7 @@ public class AuthorizeDialog extends JDialog {
         }
         //TODO request foreground here if is in settings??
         FrameUtils.registerWindow(this);
+        languageTimer.start();
         setVisible(true);
     }
 
@@ -193,6 +212,7 @@ public class AuthorizeDialog extends JDialog {
     private void onOK() {
         String hexedPassword = Protector.hexPassword(Protector.hexPassword(new String(passwordField.getPassword())));
         Protector.PASSWORD = hexedPassword.toCharArray();
+        languageTimer.stop();
 
         if (exists(propertiesFilePath)) {
             propertiesApplication = loadProperties(propertiesFilePath);
@@ -230,7 +250,7 @@ public class AuthorizeDialog extends JDialog {
                 progressBar.setVisible(false);
 
                 initTimer();
-                timer.restart();
+                blockTimer.restart();
                 FrameUtils.shakeFrame(this);
             }
         }
@@ -257,9 +277,12 @@ public class AuthorizeDialog extends JDialog {
                     passwordField.setEnabled(true);
                     passwordField.requestFocus();
                     passwordField.setToolTipText("");
+                    if (isFocusOwner()) {
+                        languageTimer.start();
+                    }
                     counter = 0;
                     isBlocked = false;
-                    timer.stop();
+                    blockTimer.stop();
                 } else {
                     buttonOK.setEnabled(false);
                     isBlocked = true;
@@ -268,6 +291,12 @@ public class AuthorizeDialog extends JDialog {
                 }
             }
         };
-        timer = new Timer(1000, timerListener);
+        blockTimer = new Timer(1000, timerListener);
+    }
+
+    @Override
+    public void dispose() {
+        languageTimer.stop();
+        super.dispose();
     }
 }
