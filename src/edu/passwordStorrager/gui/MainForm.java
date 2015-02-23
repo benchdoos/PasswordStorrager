@@ -692,7 +692,7 @@ public class MainForm extends JFrame {
     private void initTableListeners() {
         MouseListener copyMouseListener = new MouseAdapter() {
             int count = 0;
-            Timer timer = new Timer(700, new ActionListener() {
+            Timer timer = new Timer(500, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     count = 0;
@@ -710,13 +710,12 @@ public class MainForm extends JFrame {
                 Point p = me.getPoint();
                 int row = table.rowAtPoint(p);
                 if (count >= 2 && me.getButton() == MouseEvent.BUTTON1) {
-                    if (MainForm.this.table.getSelectedRow() >= 0) {
-                        if (MainForm.this.table.getSelectedColumn() == SITE_COLUMN_INDEX) {
-                            String site = (String) MainForm.this.table.getModel()
-                                    .getValueAt(row, SITE_COLUMN_INDEX);
+                    if (table.getSelectedRow() >= 0) {
+                        if (table.getSelectedColumn() == SITE_COLUMN_INDEX) {
+                            String site = (String) table.getValueAt(row, SITE_COLUMN_INDEX);
                             StringUtils.openWebPage(site);
                         } else {
-                            String copy = (String) MainForm.this.table.getModel().getValueAt(row,
+                            String copy = (String) table.getValueAt(row,
                                     PASSWORD_COLUMN_INDEX);
                             copyToClipboard(copy);
                         }
@@ -813,7 +812,7 @@ public class MainForm extends JFrame {
                 }
             }
         });
-        
+
         tableModelListener = new TableModelListener() {
             @Override
             public void tableChanged(TableModelEvent e) {
