@@ -111,10 +111,12 @@ public class MainForm extends JFrame {
     private MouseMotionAdapter controlPanelMouseMotionAdapter;
 
     private JProgressBar progressBar;
-    private JLabel bar;
+    private JLabel messageInfo;
+    private JLabel messageStatus;
     private JLabel isEditableIcon;
     private JPanel searchPanel;
     private JLabel info;
+
 
     private Timer searchTimer;
     private static Timer lockTimer; //for multiple windows
@@ -134,6 +136,8 @@ public class MainForm extends JFrame {
         table.requestFocus();
 
         initHistory();
+        
+        resetStatus();
 
         FrameUtils.registerWindow(this);
     }
@@ -430,20 +434,18 @@ public class MainForm extends JFrame {
 
 
     public void setStatus(String status, int type) {
-        resetStatus();
-        //showStatusBar(true);
         switch (type) {
             case STATUS_MESSAGE:
-                bar.setForeground(new Color(76, 76, 76));
-                bar.setText(status + ";");
+                messageInfo.setForeground(new Color(76, 76, 76));
+                messageInfo.setText(status + ";");
                 break;
             case STATUS_SUCCESS:
-                bar.setForeground(new Color(0, 150, 0));
-                bar.setText(status + ";");
+                messageStatus.setForeground(new Color(0, 150, 0));
+                messageStatus.setText(status + ";");
                 break;
             case STATUS_ERROR:
-                bar.setForeground(Color.red);
-                bar.setText(status + ";");
+                messageStatus.setForeground(Color.red);
+                messageStatus.setText(status + ";");
                 break;
         }
 
@@ -479,8 +481,11 @@ public class MainForm extends JFrame {
     }
 
     public void resetStatus() {
-        bar.setForeground(new Color(76, 76, 76));
-        bar.setText("");
+        messageInfo.setForeground(new Color(76, 76, 76));
+        messageInfo.setText("");
+        messageStatus.setForeground(new Color(76, 76, 76));
+        messageStatus.setText("");
+        
 //        showStatusBar(false);
     }
 
@@ -693,9 +698,9 @@ public class MainForm extends JFrame {
     }
 
     private void initStatusBar() {
-//        bar.setFont(new Font("LucidaGrande", Font.PLAIN, 10));
-//        bar.setForeground(new Color(76,76,76));
-//        bar.setVerticalAlignment(JLabel.TOP);
+//        messageInfo.setFont(new Font("LucidaGrande", Font.PLAIN, 10));
+//        messageInfo.setForeground(new Color(76,76,76));
+//        messageInfo.setVerticalAlignment(JLabel.TOP);
         /*rowCount.setFont(new Font("Menlo", Font.PLAIN, 10));
         rowCount.setVerticalAlignment(JLabel.TOP);*/
         statusPanel.addMouseListener(new MouseListener() {
@@ -723,7 +728,7 @@ public class MainForm extends JFrame {
             @Override
             public void mouseExited(MouseEvent e) {
                 //showStatusBar(false);
-                //setStatus(bar.getText(),STATUS_MESSAGE);
+                //setStatus(messageInfo.getText(),STATUS_MESSAGE);
             }
         });
     }
@@ -1348,7 +1353,7 @@ public class MainForm extends JFrame {
 
     public void loadList(ArrayList<Record> recordArrayList) {
         //Record[] recordsList = recordArrayList.toArray(new Record[recordArrayList.size()]);
-//        setStatus(bar.getText(), STATUS_MESSAGE);
+//        setStatus(messageInfo.getText(), STATUS_MESSAGE);
         table.setBorder(BorderFactory.createEmptyBorder());
         table.setModel(createTableModel(recordArrayList)); //not to draw focus for table 
         table.setRowHeight(20);
@@ -1903,7 +1908,8 @@ class MainFormTableHeader extends JPanel implements TableCellRenderer {
     }
 
     @Override
-    public Component getTableCellRendererComponent(final JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+    public Component getTableCellRendererComponent(final JTable table, Object value, 
+                                                   boolean isSelected, boolean hasFocus, int row, int column) {
 
         setLayout(new BorderLayout());
 
