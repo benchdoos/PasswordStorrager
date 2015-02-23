@@ -212,10 +212,21 @@ public class MainForm extends JFrame {
 
     private void initWindowListeners() {
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 dispose();
                 FrameUtils.setFrameLocation(getClass().getEnclosingClass().getName(), getLocation());
                 FrameUtils.setFrameSize(getClass().getEnclosingClass().getName(), getSize());
+            }
+        });
+
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                super.componentResized(e);
+                if (searchField.isFocusOwner()) {
+                    updateSearchFieldSize();
+                }
             }
         });
 
@@ -316,26 +327,18 @@ public class MainForm extends JFrame {
         });
 
         searchField.addFocusListener(new FocusListener() {
-            private void changeSearchFieldSize(int width) {
-                int height = searchField.getHeight();
-                searchField.setMinimumSize(new Dimension(width, height));
-                searchField.setMaximumSize(new Dimension(width, height));
-                searchField.invalidate();
-                controlPanel.validate();
-            }
 
             @Override
             public void focusGained(FocusEvent e) {
                 isSearchMode = true;
-                int width = 300;
-                changeSearchFieldSize(width);
+                updateSearchFieldSize();
                 refreshLockTimer();
             }
 
             @Override
             public void focusLost(FocusEvent e) {
-                int width = 150;
-                changeSearchFieldSize(width);
+
+                updateSearchFieldSize();
                 if (searchField.getText().isEmpty()) {
                     isSearchMode = false;
                 }
@@ -371,6 +374,33 @@ public class MainForm extends JFrame {
             searchField.registerKeyboardAction(clearSearchFieldAction, KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE,
                     InputEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
         }
+    }
+
+    private void updateSearchFieldSize() {
+        final int windowThreshold_600 = 580;
+        int windowWidth = getSize().width;
+
+        int width;
+
+        if (searchField.isFocusOwner()) {
+            if (windowWidth > windowThreshold_600) {
+                width = 300;
+            } else {
+                width = 10;
+            }
+        } else {
+            if (windowWidth > windowThreshold_600) {
+                width = 150;
+            } else {
+                width = 10;
+            }
+        }
+
+        int height = searchField.getHeight();
+        searchField.setMinimumSize(new Dimension(width, height));
+        searchField.setMaximumSize(new Dimension(width, height));
+        searchField.invalidate();
+        controlPanel.validate();
     }
 
     private void initSearchTimer(final String text) {
