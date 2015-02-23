@@ -50,12 +50,16 @@ public class MainForm extends JFrame {
     protected JRadioButtonMenuItem editModeJRadioButtonMenuItem; //if checked - can edit existing
     static Timer timer;
 
+    private static final int COLUMN_MINIMUM_WIDTH = 120;
+    private static final int COLUMN_COUNT = 3;
+
     static final String SITE_COLUMN_NAME = "Сайт",
             LOGIN_COLUMN_NAME = "Логин", PASSWORD_COLUMN_NAME = "Пароль";
 
     static int SITE_COLUMN_INDEX = 1;
     static int LOGIN_COLUMN_INDEX = 2;
     static int PASSWORD_COLUMN_INDEX = 3;
+
 
     private History history;
 
@@ -126,32 +130,19 @@ public class MainForm extends JFrame {
 
     public MainForm(ArrayList<Record> recordArrayList) {
         this.recordArrayList = recordArrayList;
+
         initComponents();
+
         requestFocus();
         table.requestFocus();
+
         initHistory();
+
         FrameUtils.registerWindow(this);
     }
 
     private void initComponents() {
-        if (IS_MAC) {
-            updateTitle(new File(PasswordStorrager.propertiesApplication.getProperty(PropertiesManager.KEY_NAME) + Values.DEFAULT_STORAGE_FILE_NAME));
-        } else {
-            setTitle(Application.APPLICATION_NAME);
-        }
-        setContentPane(panel1);
-        if (!MacOsXUtils.isBundled()) {
-            setIconImage(PlatformUtils.appIcon);
-        }
-
-        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        setMinimumSize(new java.awt.Dimension(600, 430));
-        setPreferredSize(getFrameSize(getCurrentClassName()));
-        setLocation(getFrameLocation(getCurrentClassName()));
-
-        getRootPane().putClientProperty("apple.awt.brushMetalLook", Boolean.TRUE);
-
-        isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/lock.png")));
+        initWindow();
 
         initLockTimer();
 
@@ -186,6 +177,25 @@ public class MainForm extends JFrame {
         isFirstLaunch = false; //to fix isEdited on start
 
         saveOnExitDialog = new SaveOnExitDialog(this);
+    }
+
+    private void initWindow() {
+        if (IS_MAC) {
+            updateTitle(new File(PasswordStorrager.propertiesApplication.getProperty(PropertiesManager.KEY_NAME) + Values.DEFAULT_STORAGE_FILE_NAME));
+        } else {
+            setTitle(Application.APPLICATION_NAME);
+        }
+        setContentPane(panel1);
+        if (!MacOsXUtils.isBundled()) {
+            setIconImage(PlatformUtils.appIcon);
+        }
+
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        setMinimumSize(new Dimension(COLUMN_COUNT * COLUMN_MINIMUM_WIDTH, 300));
+        setPreferredSize(getFrameSize(getCurrentClassName()));
+        setLocation(getFrameLocation(getCurrentClassName()));
+
+        getRootPane().putClientProperty("apple.awt.brushMetalLook", Boolean.TRUE);
     }
 
     private void initLockTimer() {
@@ -245,19 +255,19 @@ public class MainForm extends JFrame {
 
         TableColumn site = table.getColumnModel().getColumn(0);
         site.setHeaderValue(SITE_COLUMN_NAME);
-        site.setMinWidth(80);
+        site.setMinWidth(COLUMN_MINIMUM_WIDTH);
         site.setWidth(150);
         site.setResizable(true);
 
         TableColumn login = table.getColumnModel().getColumn(1);
         login.setHeaderValue(LOGIN_COLUMN_NAME);
-        login.setMinWidth(80);
+        login.setMinWidth(COLUMN_MINIMUM_WIDTH);
         login.setWidth(150);
         login.setResizable(true);
 
         TableColumn password = table.getColumnModel().getColumn(2);
         password.setHeaderValue(PASSWORD_COLUMN_NAME);
-        password.setMinWidth(80);
+        password.setMinWidth(COLUMN_MINIMUM_WIDTH);
         password.setResizable(true);
 
         SITE_COLUMN_INDEX = table.getColumn(SITE_COLUMN_NAME).getModelIndex();
@@ -572,6 +582,7 @@ public class MainForm extends JFrame {
             }
         });
 
+        isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/lock.png")));
         isEditableIcon.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
