@@ -982,7 +982,10 @@ public class MainForm extends JFrame {
                 if (!saveOnExitDialog.isVisible()) {
                     if (PasswordStorrager.isUnlocked) {
                         PasswordStorrager.isUnlocked = false;
-                        setVisible(false);
+                        ArrayList<Window> windows = FrameUtils.getWindows(MainForm.class);
+                        for (Window window : windows) {
+                            window.setVisible(false);
+                        }
                         new AuthorizeDialog(false);
                     }
                 }

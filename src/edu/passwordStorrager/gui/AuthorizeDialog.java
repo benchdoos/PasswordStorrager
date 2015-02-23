@@ -18,6 +18,7 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Locale;
 
 import static edu.passwordStorrager.core.Application.IS_MAC;
@@ -200,8 +201,11 @@ public class AuthorizeDialog extends JDialog {
                 buttonCancel.requestFocus();
                 System.out.println("Password is correct");
                 setModal(false);
-                if (FrameUtils.getWindows(MainForm.class).size() > 0) {
-                    FrameUtils.getWindows(MainForm.class).get(0).setVisible(true);
+                ArrayList<Window> mainForms = FrameUtils.getWindows(MainForm.class);
+                if (mainForms.size() > 0) {
+                    for (Window w : mainForms) {
+                        w.setVisible(true);
+                    }
                 } else {
                     showProperties(propertiesApplication);
                     Encryption.extractKey(new File(propertiesApplication.getProperty(KEY_NAME) + Values.DEFAULT_KEY_FILE_NAME));
