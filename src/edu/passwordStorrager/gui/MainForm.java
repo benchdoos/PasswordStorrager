@@ -198,18 +198,6 @@ public class MainForm extends JFrame {
         getRootPane().putClientProperty("apple.awt.brushMetalLook", Boolean.TRUE);
     }
 
-    private void initLockTimer() {
-        ActionListener actionListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                blockItem.getActionListeners()[0].actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
-            }
-        };
-        lockTimer = new Timer(60 * 1000, actionListener);
-        lockTimer.setRepeats(false);
-        refreshLockTimer();
-    }
-
     private void initWindowListeners() {
         addWindowListener(new WindowAdapter() {
             @Override
@@ -232,7 +220,7 @@ public class MainForm extends JFrame {
             @Override
             public void windowLostFocus(WindowEvent e) {
                 refreshLockTimer();
-                scrollPane.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, new Color(177,177,177)));
+                scrollPane.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, new Color(177, 177, 177)));
                 scrollPane.invalidate();
                 getContentPane().validate();
             }
@@ -243,7 +231,7 @@ public class MainForm extends JFrame {
             @Override
             public void componentResized(ComponentEvent e) {
                 super.componentResized(e);
-                scrollPane.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, new Color(149,149,149)));
+                scrollPane.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, new Color(149, 149, 149)));
                 scrollPane.invalidate();
                 getContentPane().validate();
                 if (searchField.isFocusOwner()) {
@@ -261,6 +249,18 @@ public class MainForm extends JFrame {
 
         addMouseListener(controlPanelMouseListener);
         addMouseMotionListener(controlPanelMouseMotionAdapter);
+    }
+
+    private void initLockTimer() {
+        ActionListener actionListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                blockItem.getActionListeners()[0].actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+            }
+        };
+        lockTimer = new Timer(60 * 1000, actionListener);
+        lockTimer.setRepeats(false);
+        refreshLockTimer();
     }
 
     private void initTable() {
@@ -1569,6 +1569,8 @@ public class MainForm extends JFrame {
 
     public void disposeFrame() {
         setEdited(false);
+        FrameUtils.setFrameLocation(getClass().getEnclosingClass().getName(), getLocation());
+        FrameUtils.setFrameSize(getClass().getEnclosingClass().getName(), getSize());
         super.dispose();
         FrameUtils.unRegisterWindow(this);
         Core.setIsExitCanceled(false);
