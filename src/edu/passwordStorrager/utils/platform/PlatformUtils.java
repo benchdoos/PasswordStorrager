@@ -35,8 +35,8 @@ public class PlatformUtils {
         sb.append(" ");
         sb.append("Core: ").append(hal.getProcessors()[0]);
         sb.append(" ");
-        sb.append("Memory: ").append(hal.getMemory().getAvailable())
-                .append(" (total:").append(hal.getMemory().getTotal()).append(")");
+        sb.append("Memory: ").append(hal.getMemory().getAvailable()/(1024 * 1024))
+                .append(" (total:").append(hal.getMemory().getTotal()/(1024*1024)).append(")");
         sb.append("; ");
         sb.append("Java v").append(JAVA_VERSION).append("; Program v" + Application.APPLICATION_VERSION);
 
