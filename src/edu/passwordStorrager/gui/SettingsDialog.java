@@ -57,6 +57,7 @@ public abstract class SettingsDialog extends JDialog {
         if (!isCreated) {
             init();
             isCreated = true;
+            MainForm.stopLockTimer();
             setVisible(true);
         }
     }
@@ -313,6 +314,12 @@ public abstract class SettingsDialog extends JDialog {
     private void onCancel() {
         isCreated = false;
         dispose();
+    }
+    
+    @Override
+    public void dispose() {
+        MainForm.refreshLockTimer();
+        super.dispose();
     }
 
 }

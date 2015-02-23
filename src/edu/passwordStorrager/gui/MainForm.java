@@ -1625,6 +1625,10 @@ public class MainForm extends JFrame {
         lockTimer.restart();
     }
 
+    public static void stopLockTimer() {
+        lockTimer.stop();
+    }
+
     public static void scrollToVisible(JTable table, int rowIndex, int vColIndex) {
         if (!(table.getParent() instanceof JViewport)) return;
         JViewport viewport = (JViewport) table.getParent();
