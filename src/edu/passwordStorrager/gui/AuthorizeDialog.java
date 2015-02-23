@@ -56,9 +56,12 @@ public class AuthorizeDialog extends JDialog {
 
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                passwordField.setEnabled(false);
                 buttonOK.setVisible(false);
                 progressBar.setVisible(true);
+                
+                passwordField.setEnabled(false);
+                buttonCancel.setEnabled(false);
+                
                 isBlocked = true;
                 new Thread(new Runnable() {
                     @Override
@@ -193,7 +196,8 @@ public class AuthorizeDialog extends JDialog {
         if (exists(propertiesFilePath)) {
             propertiesApplication = loadProperties(propertiesFilePath);
             if (isCorrect()) {
-
+                buttonCancel.setEnabled(true);
+                buttonCancel.requestFocus();
                 System.out.println("Password is correct");
                 setModal(false);
                 if (FrameUtils.getWindows(MainForm.class).size() > 0) {
