@@ -760,6 +760,7 @@ public class MainForm extends JFrame {
                                     PASSWORD_COLUMN_INDEX);
                             copyToClipboard(copy);
                         }
+                        MainForm.refreshLockTimer();
                     }
                 }
             }
@@ -1619,7 +1620,7 @@ public class MainForm extends JFrame {
         table.setValueAt(record.getPassword(), index, PASSWORD_COLUMN_INDEX);
     }
 
-    public void refreshLockTimer() {
+    public static void refreshLockTimer() {
         lockTimer.restart();
     }
 
@@ -1930,6 +1931,7 @@ class MainFormTableHeader extends JPanel implements TableCellRenderer {
                 label.setFont(new Font("Helvetica", Font.PLAIN, 11));
                 remove(sortedIcon);
             }
+            MainForm.refreshLockTimer();
         } else {
             label.setFont(new Font("Helvetica", Font.PLAIN, 11));
         }
