@@ -36,6 +36,7 @@ public class AuthorizeDialog extends JDialog {
     private JPasswordField passwordField;
     private JProgressBar progressBar;
     private JLabel languageLabel;
+    private JPanel languagePanel;
     private Timer timer;
     public static boolean isBlocked = false;
 
@@ -152,7 +153,14 @@ public class AuthorizeDialog extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 Window w = FrameUtils.getWindows(AuthorizeDialog.class).get(0);
                 Locale locale = w.getInputContext().getLocale();
-                languageLabel.setText(locale.getLanguage().toUpperCase());
+                String name = locale.getLanguage().toUpperCase();
+                if(!name.isEmpty()) {
+                    languageLabel.setText(name);
+                    languagePanel.setToolTipText(locale.getDisplayLanguage());
+                } else {
+                    languageLabel.setText("*");
+                    languagePanel.setToolTipText("Незнакомая раскладка");
+                }
             }
         });
         timer1.setRepeats(true);
