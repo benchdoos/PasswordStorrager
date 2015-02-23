@@ -53,9 +53,9 @@ public class MainForm extends JFrame {
     static final String SITE_COLUMN_NAME = "Сайт",
             LOGIN_COLUMN_NAME = "Логин", PASSWORD_COLUMN_NAME = "Пароль";
 
-    static int SITE_COLUMN_INDEX = 1;
-    static int LOGIN_COLUMN_INDEX = 2;
-    static int PASSWORD_COLUMN_INDEX = 3;
+    static int SITE_COLUMN_INDEX = 0;
+    static int LOGIN_COLUMN_INDEX = 1;
+    static int PASSWORD_COLUMN_INDEX = 2;
 
 
     private History history;
