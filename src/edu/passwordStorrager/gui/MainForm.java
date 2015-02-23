@@ -26,10 +26,7 @@ import javax.swing.Timer;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
+import javax.swing.table.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.*;
@@ -1569,8 +1566,8 @@ public class MainForm extends JFrame {
 
     public void disposeFrame() {
         setEdited(false);
-        FrameUtils.setFrameLocation(getClass().getEnclosingClass().getName(), getLocation());
-        FrameUtils.setFrameSize(getClass().getEnclosingClass().getName(), getSize());
+        FrameUtils.setFrameLocation(MainForm.class.getName(), getLocation());
+        FrameUtils.setFrameSize(MainForm.class.getName(), getSize());
         super.dispose();
         FrameUtils.unRegisterWindow(this);
         Core.setIsExitCanceled(false);
