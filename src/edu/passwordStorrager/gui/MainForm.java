@@ -220,25 +220,21 @@ public class MainForm extends JFrame {
             }
         });
 
-        addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                super.componentResized(e);
-                if (searchField.isFocusOwner()) {
-                    updateSearchFieldSize();
-                }
-            }
-        });
-
         addWindowFocusListener(new WindowFocusListener() {
             @Override
             public void windowGainedFocus(WindowEvent e) {
                 refreshLockTimer();
+                scrollPane.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, new Color(149, 149, 149)));
+                scrollPane.invalidate();
+                getContentPane().validate();
             }
 
             @Override
             public void windowLostFocus(WindowEvent e) {
                 refreshLockTimer();
+                scrollPane.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, new Color(177,177,177)));
+                scrollPane.invalidate();
+                getContentPane().validate();
             }
         });
 
@@ -246,8 +242,13 @@ public class MainForm extends JFrame {
 
             @Override
             public void componentResized(ComponentEvent e) {
-                table.setBorder(BorderFactory.createEmptyBorder());
                 super.componentResized(e);
+                scrollPane.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, new Color(149,149,149)));
+                scrollPane.invalidate();
+                getContentPane().validate();
+                if (searchField.isFocusOwner()) {
+                    updateSearchFieldSize();
+                }
             }
         });
 
@@ -1349,7 +1350,7 @@ public class MainForm extends JFrame {
         //Record[] recordsList = recordArrayList.toArray(new Record[recordArrayList.size()]);
 //        setStatus(bar.getText(), STATUS_MESSAGE);
         table.setBorder(BorderFactory.createEmptyBorder());
-        table.setModel(createTableModel(recordArrayList));
+        table.setModel(createTableModel(recordArrayList)); //not to draw focus for table 
         table.setRowHeight(20);
         table.setFont(new Font("LucidaGrande", Font.PLAIN, 12));
 
