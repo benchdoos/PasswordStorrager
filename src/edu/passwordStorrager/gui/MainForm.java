@@ -396,7 +396,9 @@ public class MainForm extends JFrame {
         normal.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                currentSearchMode = SEARCH_MODE_NORMAL; refreshLockTimer();
+                currentSearchMode = SEARCH_MODE_NORMAL; 
+                refreshLockTimer();
+                searchTimer.restart();
             }
         });
         JMenuItem all = new JRadioButtonMenuItem("по всему");
@@ -405,6 +407,7 @@ public class MainForm extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 currentSearchMode = SEARCH_MODE_ALL;
                 refreshLockTimer();
+                searchTimer.restart();
             }
         });
         JMenuItem site = new JRadioButtonMenuItem("по сайтам");
@@ -413,6 +416,7 @@ public class MainForm extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 currentSearchMode = SEARCH_MODE_SITE;
                 refreshLockTimer();
+                searchTimer.restart();
             }
         });
         JMenuItem login = new JRadioButtonMenuItem("по логинам");
@@ -421,6 +425,7 @@ public class MainForm extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 currentSearchMode = SEARCH_MODE_LOGIN;
                 refreshLockTimer();
+                searchTimer.restart();
             }
         });
         JMenuItem password = new JRadioButtonMenuItem("по паролям");
@@ -429,6 +434,7 @@ public class MainForm extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 currentSearchMode = SEARCH_MODE_PASSWORD;
                 refreshLockTimer();
+                searchTimer.restart();
             }
         });
 
