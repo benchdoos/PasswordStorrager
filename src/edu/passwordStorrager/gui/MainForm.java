@@ -1480,7 +1480,7 @@ public class MainForm extends JFrame {
 
             Record[] rec2 = new Record[count];
             for (int i = 0; i < count; i++) {
-                rec2[i] = new Record("site", "login", "password");
+                rec2[i] = new Record();
             }
             Record[] rec3 = Arrays.copyOfRange(tmp, index, tmp.length);
             Record[] rec;
