@@ -317,7 +317,7 @@ public class MainForm extends JFrame {
         searchField.getDocument().addDocumentListener(new DocumentListener() {
             void search() {
                 if (!searchField.getText().isEmpty()) {
-                    initSearchTimer(searchField.getText());
+                    startSearchTimer(searchField.getText());
                 } else {
                     searchTimer.stop();
                     loadList(recordArrayList);
@@ -380,6 +380,8 @@ public class MainForm extends JFrame {
             }
         };
 
+        initSearchTimer("");
+        
         searchField.registerKeyboardAction(clearSearchFieldAction, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_FOCUSED);
         if (IS_MAC) {
             searchField.registerKeyboardAction(clearSearchFieldAction, KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE,
@@ -437,7 +439,7 @@ public class MainForm extends JFrame {
                 searchTimer.restart();
             }
         });
-
+        
         popup.add(normal);
         group.add(normal);
         popup.add(all);
@@ -482,10 +484,16 @@ public class MainForm extends JFrame {
         controlPanel.validate();
     }
 
-    private void initSearchTimer(final String text) {
+    private void startSearchTimer(final String text) {
         if (searchTimer != null) {
             searchTimer.stop();
         }
+        initSearchTimer(text);
+        searchTimer.setRepeats(false);
+        searchTimer.start();
+    }
+
+    private void initSearchTimer(final String text) {
         searchTimer = new Timer(500, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -504,8 +512,6 @@ public class MainForm extends JFrame {
 
             }
         });
-        searchTimer.setRepeats(false);
-        searchTimer.start();
     }
 
 
@@ -620,24 +626,6 @@ public class MainForm extends JFrame {
                     }
                     break;
             }
-            
-            /*if (currentSearchMode == SEARCH_MODE_NORMAL) {
-                if (record.getSite().contains(text) || record.getLogin().contains(text)) {
-                    foundRecords.add(record);
-                }
-            } else if (currentSearchMode == SEARCH_MODE_SITE) {
-                if (record.getSite().contains(text)) {
-                    foundRecords.add(record);
-                }
-            } else if (currentSearchMode == SEARCH_MODE_LOGIN) {
-                if (record.getLogin().contains(text)) {
-                    foundRecords.add(record);
-                }
-            } else if (currentSearchMode == SEARCH_MODE_PASSWORD) {
-                if (record.getPassword().contains(text)) {
-                    foundRecords.add(record);
-                }
-            }*/
             progressBar.setValue((int) ((double) current / total) * 100);
         }
         return foundRecords;
@@ -1192,7 +1180,7 @@ public class MainForm extends JFrame {
                                 count = Integer.parseInt(this.value.getText());
                             } catch (NumberFormatException ignored) {/*NOP*/}
 
-                            if (count > 0 && count <= 1000) {
+                            if (count > 0 && count <= 1_000_000_000) {
                                 if (table.getRowCount() < 1) {
                                     addNewRecord(0, count);
                                 } else {
@@ -1457,7 +1445,7 @@ public class MainForm extends JFrame {
 
     public void saveStorage() {
         int rows = table.getRowCount();
-        System.out.println("rows to save:" + rows);
+        System.out.println("Save. To save: " + rows);
 
         editModeJRadioButtonMenuItem.setSelected(false);
 
@@ -1472,6 +1460,7 @@ public class MainForm extends JFrame {
         new XmlParser().saveRecords(recordArrayList);
         loadList(recordArrayList);
         setEdited(false);
+        System.out.println("Save. Successfully saved: " + rows);
         history.save();
         setStatus("Сохранено", STATUS_SUCCESS);
     }
@@ -1491,7 +1480,7 @@ public class MainForm extends JFrame {
 
             Record[] rec2 = new Record[count];
             for (int i = 0; i < count; i++) {
-                rec2[i] = new Record();
+                rec2[i] = new Record("site","login","password");
             }
             Record[] rec3 = Arrays.copyOfRange(tmp, index, tmp.length);
             Record[] rec;
