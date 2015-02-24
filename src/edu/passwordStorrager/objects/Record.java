@@ -8,13 +8,13 @@ public class Record {
     public Record() {
     }
 
-    public Record(String login, String password, String site) {
+    public Record(String site, String login, String password) {
         this.login = login;
         this.password = password;
         this.site = site;
     }
 
-    public Record(Object login, Object password, Object site) {
+    public Record(Object site, Object login, Object password) {
         this.login = (String) login;
         this.password = (String) password;
         this.site = (String) site;
