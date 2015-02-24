@@ -1180,7 +1180,7 @@ public class MainForm extends JFrame {
                                 count = Integer.parseInt(this.value.getText());
                             } catch (NumberFormatException ignored) {/*NOP*/}
 
-                            if (count > 0 && count <= 1_000_000_000) {
+                            if (count > 0 && count <= 1000) {
                                 if (table.getRowCount() < 1) {
                                     addNewRecord(0, count);
                                 } else {
