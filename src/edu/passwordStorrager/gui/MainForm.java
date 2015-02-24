@@ -26,7 +26,10 @@ import javax.swing.Timer;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
-import javax.swing.table.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.*;
@@ -44,7 +47,6 @@ public class MainForm extends JFrame {
     private static final Logger log = Logger.getLogger(getCurrentClassName());
 
     public static final int STATUS_MESSAGE = 1, STATUS_ERROR = -1, STATUS_SUCCESS = 2;
-    protected JRadioButtonMenuItem editModeJRadioButtonMenuItem; //if checked - can edit existing
     static Timer timer;
 
     private static final int COLUMN_MINIMUM_WIDTH = 120;
@@ -68,7 +70,6 @@ public class MainForm extends JFrame {
     private JPopupMenu popupMenu;
     public static boolean isFirstLaunch = true;
     public JMenuBar jMenuBar1 = new JMenuBar();
-    ;
     private JMenu fileJMenu = new JMenu("Файл");
     private JMenuItem openItem = new JMenuItem("Открыть");
     private JMenuItem saveItem = new JMenuItem("Сохранить");
@@ -79,6 +80,8 @@ public class MainForm extends JFrame {
     public JMenuItem undoItem = new JMenuItem("Отменить");
     public JMenuItem redoItem = new JMenuItem("Повторить");
 
+    protected JRadioButtonMenuItem editModeJRadioButtonMenuItem;
+    
     private JMenuItem addItem = new JMenuItem("Добавить");
     private JMenuItem addSomeItem = new JMenuItem("Добавить несколько...");
     private JMenuItem deleteItem = new JMenuItem("Удалить");
@@ -122,6 +125,15 @@ public class MainForm extends JFrame {
     private static Timer lockTimer; //for multiple windows
     private static TableModelListener tableModelListener;
     private boolean isSearchMode = false;
+
+    private static final int SEARCH_MODE_NORMAL = 0;
+    private static final int SEARCH_MODE_ALL = 1;
+    private static final int SEARCH_MODE_SITE = 2;
+    private static final int SEARCH_MODE_LOGIN = 3;
+    private static final int SEARCH_MODE_PASSWORD = 4;
+
+    private int currentSearchMode = SEARCH_MODE_NORMAL;
+
     private int disposeCounter = 0;
 
     SaveOnExitDialog saveOnExitDialog;
@@ -136,7 +148,7 @@ public class MainForm extends JFrame {
         table.requestFocus();
 
         initHistory();
-        
+
         resetStatus();
 
         FrameUtils.registerWindow(this);
@@ -376,6 +388,65 @@ public class MainForm extends JFrame {
             searchField.registerKeyboardAction(clearSearchFieldAction, KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE,
                     InputEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
         }
+
+        ButtonGroup group = new ButtonGroup();
+        JPopupMenu popup = new JPopupMenu("Режим поиска:");
+
+        JMenuItem normal = new JRadioButtonMenuItem("обычный");
+        normal.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currentSearchMode = SEARCH_MODE_NORMAL; refreshLockTimer();
+            }
+        });
+        JMenuItem all = new JRadioButtonMenuItem("по всему");
+        all.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currentSearchMode = SEARCH_MODE_ALL;
+                refreshLockTimer();
+            }
+        });
+        JMenuItem site = new JRadioButtonMenuItem("по сайтам");
+        site.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currentSearchMode = SEARCH_MODE_SITE;
+                refreshLockTimer();
+            }
+        });
+        JMenuItem login = new JRadioButtonMenuItem("по логинам");
+        login.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currentSearchMode = SEARCH_MODE_LOGIN;
+                refreshLockTimer();
+            }
+        });
+        JMenuItem password = new JRadioButtonMenuItem("по паролям");
+        password.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currentSearchMode = SEARCH_MODE_PASSWORD;
+                refreshLockTimer();
+            }
+        });
+
+        popup.add(normal);
+        group.add(normal);
+        popup.add(all);
+        group.add(all);
+        popup.add(new JSeparator());
+        popup.add(site);
+        group.add(site);
+        popup.add(login);
+        group.add(login);
+        popup.add(password);
+        group.add(password);
+        
+        normal.setSelected(true);
+
+        searchField.setComponentPopupMenu(popup);
     }
 
     private void updateSearchFieldSize() {
@@ -419,7 +490,6 @@ public class MainForm extends JFrame {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        //что то тут не так (при добавлении новых элементов - они не ищутся)
                         loadList(searchRecord(text));
                         setStatus("Найдено записей: " + table.getRowCount(), STATUS_MESSAGE);
                     }
@@ -485,7 +555,7 @@ public class MainForm extends JFrame {
         messageInfo.setText("");
         messageStatus.setForeground(new Color(76, 76, 76));
         messageStatus.setText("");
-        
+
 //        showStatusBar(false);
     }
 
@@ -515,9 +585,53 @@ public class MainForm extends JFrame {
 
         for (Record record : recordArrayList) {
             current++;
-            if (record.getSite().contains(text) || record.getLogin().contains(text)) {
-                foundRecords.add(record);
+
+            switch (currentSearchMode) {
+                case SEARCH_MODE_NORMAL:
+                    if (record.getSite().contains(text) || record.getLogin().contains(text)) {
+                        foundRecords.add(record);
+                    }
+                    break;
+                case SEARCH_MODE_ALL:
+                    if (record.getSite().contains(text) || record.getLogin().contains(text)
+                            || record.getPassword().contains(text)) {
+                        foundRecords.add(record);
+                    }
+                    break;
+                case SEARCH_MODE_SITE:
+                    if (record.getSite().contains(text)) {
+                        foundRecords.add(record);
+                    }
+                    break;
+                case SEARCH_MODE_LOGIN:
+                    if (record.getLogin().contains(text)) {
+                        foundRecords.add(record);
+                    }
+                    break;
+                case SEARCH_MODE_PASSWORD:
+                    if (record.getPassword().contains(text)) {
+                        foundRecords.add(record);
+                    }
+                    break;
             }
+            
+            /*if (currentSearchMode == SEARCH_MODE_NORMAL) {
+                if (record.getSite().contains(text) || record.getLogin().contains(text)) {
+                    foundRecords.add(record);
+                }
+            } else if (currentSearchMode == SEARCH_MODE_SITE) {
+                if (record.getSite().contains(text)) {
+                    foundRecords.add(record);
+                }
+            } else if (currentSearchMode == SEARCH_MODE_LOGIN) {
+                if (record.getLogin().contains(text)) {
+                    foundRecords.add(record);
+                }
+            } else if (currentSearchMode == SEARCH_MODE_PASSWORD) {
+                if (record.getPassword().contains(text)) {
+                    foundRecords.add(record);
+                }
+            }*/
             progressBar.setValue((int) ((double) current / total) * 100);
         }
         return foundRecords;
@@ -616,58 +730,18 @@ public class MainForm extends JFrame {
         });
 
         isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/lock.png")));
-        isEditableIcon.addMouseListener(new MouseListener() {
+        isEditableIcon.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 editModeJRadioButtonMenuItem.doClick();
             }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
         });
 
-        controlPanelMouseListener = new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-
-            }
-
+        controlPanelMouseListener = new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 mouse = e.getPoint();
                 getComponentAt(mouse);
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
             }
         };
         controlPanelMouseMotionAdapter = new MouseMotionAdapter() {
@@ -1908,7 +1982,7 @@ class MainFormTableHeader extends JPanel implements TableCellRenderer {
     }
 
     @Override
-    public Component getTableCellRendererComponent(final JTable table, Object value, 
+    public Component getTableCellRendererComponent(final JTable table, Object value,
                                                    boolean isSelected, boolean hasFocus, int row, int column) {
 
         setLayout(new BorderLayout());
