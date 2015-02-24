@@ -81,7 +81,7 @@ public class MainForm extends JFrame {
     public JMenuItem redoItem = new JMenuItem("Повторить");
 
     protected JRadioButtonMenuItem editModeJRadioButtonMenuItem;
-    
+
     private JMenuItem addItem = new JMenuItem("Добавить");
     private JMenuItem addSomeItem = new JMenuItem("Добавить несколько...");
     private JMenuItem deleteItem = new JMenuItem("Удалить");
@@ -381,7 +381,7 @@ public class MainForm extends JFrame {
         };
 
         initSearchTimer("");
-        
+
         searchField.registerKeyboardAction(clearSearchFieldAction, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_FOCUSED);
         if (IS_MAC) {
             searchField.registerKeyboardAction(clearSearchFieldAction, KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE,
@@ -398,7 +398,7 @@ public class MainForm extends JFrame {
         normal.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                currentSearchMode = SEARCH_MODE_NORMAL; 
+                currentSearchMode = SEARCH_MODE_NORMAL;
                 refreshLockTimer();
                 searchTimer.restart();
             }
@@ -439,7 +439,7 @@ public class MainForm extends JFrame {
                 searchTimer.restart();
             }
         });
-        
+
         popup.add(normal);
         group.add(normal);
         popup.add(all);
@@ -451,7 +451,7 @@ public class MainForm extends JFrame {
         group.add(login);
         popup.add(password);
         group.add(password);
-        
+
         normal.setSelected(true);
 
         searchField.setComponentPopupMenu(popup);
@@ -1422,8 +1422,8 @@ public class MainForm extends JFrame {
     public void loadList(ArrayList<Record> recordArrayList) {
         //Record[] recordsList = recordArrayList.toArray(new Record[recordArrayList.size()]);
 //        setStatus(messageInfo.getText(), STATUS_MESSAGE);
-        table.setBorder(BorderFactory.createEmptyBorder());
-        table.setModel(createTableModel(recordArrayList)); //not to draw focus for table 
+        table.setBorder(BorderFactory.createEmptyBorder());//not to draw focus for table
+        table.setModel(createTableModel(recordArrayList));
         table.setRowHeight(20);
         table.setFont(new Font("LucidaGrande", Font.PLAIN, 12));
 
@@ -1480,7 +1480,7 @@ public class MainForm extends JFrame {
 
             Record[] rec2 = new Record[count];
             for (int i = 0; i < count; i++) {
-                rec2[i] = new Record("site","login","password");
+                rec2[i] = new Record("site", "login", "password");
             }
             Record[] rec3 = Arrays.copyOfRange(tmp, index, tmp.length);
             Record[] rec;
