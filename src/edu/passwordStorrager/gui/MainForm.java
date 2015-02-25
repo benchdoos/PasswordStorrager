@@ -533,7 +533,7 @@ public class MainForm extends JFrame {
                 break;
             case STATUS_ERROR:
                 messageStatus.setForeground(Color.red);
-                messageStatus.setText(status + ";");
+                messageStatus.setText(status + "!");
                 break;
         }
 
@@ -1456,10 +1456,10 @@ public class MainForm extends JFrame {
                 FrameUtils.copyToClipboard(copy);
                 setStatus("Скопировано: " + copy, STATUS_SUCCESS);
             } else {
-                setStatus("Нечего копировать!", STATUS_ERROR);
+                setStatus("Нечего копировать", STATUS_ERROR);
             }
         } else {
-            setStatus("Нечего копировать!", STATUS_ERROR);
+            setStatus("Нечего копировать", STATUS_ERROR);
         }
     }
 
