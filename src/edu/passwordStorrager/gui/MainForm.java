@@ -44,44 +44,41 @@ import static edu.passwordStorrager.utils.FrameUtils.*;
 
 public class MainForm extends JFrame {
 
-    private static final Logger log = Logger.getLogger(getCurrentClassName());
-
     public static final int STATUS_MESSAGE = 1, STATUS_ERROR = -1, STATUS_SUCCESS = 2;
-    static Timer timer;
-
-    private static final int COLUMN_MINIMUM_WIDTH = 120;
-    private static final int COLUMN_COUNT = 3;
-
     static final String SITE_COLUMN_NAME = "Сайт",
             LOGIN_COLUMN_NAME = "Логин", PASSWORD_COLUMN_NAME = "Пароль";
-
+    private static final Logger log = Logger.getLogger(getCurrentClassName());
+    private static final int COLUMN_MINIMUM_WIDTH = 120;
+    private static final int COLUMN_COUNT = 3;
+    private static final int SEARCH_MODE_NORMAL = 0;
+    private static final int SEARCH_MODE_ALL = 1;
+    private static final int SEARCH_MODE_SITE = 2;
+    private static final int SEARCH_MODE_LOGIN = 3;
+    private static final int SEARCH_MODE_PASSWORD = 4;
+    public static boolean isFirstLaunch = true;
+    static Timer timer;
     static int SITE_COLUMN_INDEX = 0;
     static int LOGIN_COLUMN_INDEX = 1;
     static int PASSWORD_COLUMN_INDEX = 2;
-
-
-    private History history;
-
-    private boolean isEdited = false;
-
+    private static Timer lockTimer; //for multiple windows
+    private static TableModelListener tableModelListener;
     public ArrayList<Record> recordArrayList = new ArrayList<>();
-
-
-    private JPopupMenu popupMenu;
-    public static boolean isFirstLaunch = true;
     public JMenuBar jMenuBar1 = new JMenuBar();
+    public JMenuItem undoItem = new JMenuItem("Отменить");
+    public JMenuItem redoItem = new JMenuItem("Повторить");
+    public ZebraJTable table;
+    public JPanel controlPanel;
+    protected JRadioButtonMenuItem editModeJRadioButtonMenuItem = new JRadioButtonMenuItem();
+    SaveOnExitDialog saveOnExitDialog;
+    private History history;
+    private boolean isEdited = false;
+    private JPopupMenu popupMenu;
     private JMenu fileJMenu = new JMenu("Файл");
     private JMenuItem openItem = new JMenuItem("Открыть");
     private JMenuItem saveItem = new JMenuItem("Сохранить");
     private JMenuItem blockItem = new JMenuItem("Блокировать");
     private JMenuItem settingsItem = new JMenuItem("Настройки");
     private JMenu editJMenu = new JMenu("Правка");
-
-    public JMenuItem undoItem = new JMenuItem("Отменить");
-    public JMenuItem redoItem = new JMenuItem("Повторить");
-
-    protected JRadioButtonMenuItem editModeJRadioButtonMenuItem;
-
     private JMenuItem addItem = new JMenuItem("Добавить");
     private JMenuItem addSomeItem = new JMenuItem("Добавить несколько...");
     private JMenuItem deleteItem = new JMenuItem("Удалить");
@@ -97,46 +94,27 @@ public class MainForm extends JFrame {
     private JMenuItem copyPasswordItem = new JMenuItem("Копировать пароль");
     private JMenu referenceMenu = new JMenu("Справка");
     private JMenuItem aboutItem = new JMenuItem("О программе");
-
     private JPanel panel1;
     private JScrollPane scrollPane;
-    public ZebraJTable table;
     private JPanel statusPanel;
     private JTextField searchField;
     private JButton moveUpButton;
     private JButton moveDownButton;
     private JButton addUpButton;
     private JButton addDownButton;
-
-    public JPanel controlPanel;
     private Point mouse = new Point(0, 0);
     private MouseListener controlPanelMouseListener;
     private MouseMotionAdapter controlPanelMouseMotionAdapter;
-
     private JProgressBar progressBar;
     private JLabel messageInfo;
     private JLabel messageStatus;
     private JLabel isEditableIcon;
     private JPanel searchPanel;
     private JLabel info;
-
-
     private Timer searchTimer;
-    private static Timer lockTimer; //for multiple windows
-    private static TableModelListener tableModelListener;
     private boolean isSearchMode = false;
-
-    private static final int SEARCH_MODE_NORMAL = 0;
-    private static final int SEARCH_MODE_ALL = 1;
-    private static final int SEARCH_MODE_SITE = 2;
-    private static final int SEARCH_MODE_LOGIN = 3;
-    private static final int SEARCH_MODE_PASSWORD = 4;
-
     private int currentSearchMode = SEARCH_MODE_NORMAL;
-
     private int disposeCounter = 0;
-
-    SaveOnExitDialog saveOnExitDialog;
 
 
     public MainForm(ArrayList<Record> recordArrayList) {
@@ -152,6 +130,35 @@ public class MainForm extends JFrame {
         resetStatus();
 
         FrameUtils.registerWindow(this);
+    }
+
+    static <T> T[] concatenate(T[] a, T[] b) {
+        int aLen = a.length;
+        int bLen = b.length;
+
+        @SuppressWarnings("unchecked")
+        T[] c = (T[]) Array.newInstance(a.getClass().getComponentType(), aLen + bLen);
+        System.arraycopy(a, 0, c, 0, aLen);
+        System.arraycopy(b, 0, c, aLen, bLen);
+
+        return c;
+    }
+
+    public static void refreshLockTimer() {
+        lockTimer.restart();
+    }
+
+    public static void stopLockTimer() {
+        lockTimer.stop();
+    }
+
+    public static void scrollToVisible(JTable table, int rowIndex, int vColIndex) {
+        if (!(table.getParent() instanceof JViewport)) return;
+        JViewport viewport = (JViewport) table.getParent();
+        Rectangle rect = table.getCellRect(rowIndex, vColIndex, true);
+        Point pt = viewport.getViewPosition();
+        rect.setLocation(rect.x - pt.x, rect.y - pt.y);
+        viewport.scrollRectToVisible(rect);
     }
 
     private void initComponents() {
@@ -365,7 +372,7 @@ public class MainForm extends JFrame {
                 if (!searchField.getText().isEmpty()) {
                     searchField.setText("");
                     loadList(recordArrayList);
-                    setControlButtonsEnabled(true);
+                    setControlsEnabled(true);
                     isSearchMode = false;
                     editModeJRadioButtonMenuItem.setEnabled(true);
                 } else {
@@ -508,12 +515,11 @@ public class MainForm extends JFrame {
                         setStatus("Найдено записей: " + table.getRowCount(), STATUS_MESSAGE);
                     }
                 }).start();
-                setControlButtonsEnabled(false);
+                setControlsEnabled(false);
 
             }
         });
     }
-
 
     public void setStatus(String status, int type) {
         switch (type) {
@@ -575,8 +581,17 @@ public class MainForm extends JFrame {
         info.setText("объектов: " + recordArrayList.size());
     }
 
+    private void setControlsEnabled(boolean value) {
+        /*addItem.setEnabled(value);
+        addSomeItem.setEnabled(value);
+        deleteItem.setEnabled(value);
+        deleteSomeItem.setEnabled(value);*/
 
-    private void setControlButtonsEnabled(boolean value) {
+        addUpItem.setEnabled(value);
+        addDownItem.setEnabled(value);
+        moveUpItem.setEnabled(value);
+        moveDownItem.setEnabled(value);
+
         addUpButton.setEnabled(value);
         addDownButton.setEnabled(value);
         moveUpButton.setEnabled(value);
@@ -956,7 +971,7 @@ public class MainForm extends JFrame {
             @Override
             public void focusGained(FocusEvent e) {
                 if (!isSearchMode) {
-                    setControlButtonsEnabled(true);
+                    setControlsEnabled(true);
                     moveUpButton.setEnabled(hasPrevious());
                     moveDownButton.setEnabled(hasNext());
                 }
@@ -964,7 +979,7 @@ public class MainForm extends JFrame {
 
             @Override
             public void focusLost(FocusEvent e) {
-                setControlButtonsEnabled(false);
+                setControlsEnabled(false);
             }
         });
         //TODO add table change listener, fix the caret
@@ -986,7 +1001,6 @@ public class MainForm extends JFrame {
     }
 
     private void initMenu() {
-        editModeJRadioButtonMenuItem = new JRadioButtonMenuItem();
 
         openItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.META_MASK),
                 KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK)));
@@ -1067,68 +1081,165 @@ public class MainForm extends JFrame {
 
         jMenuBar1.add(fileJMenu);
 
-        undoItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.META_MASK),
-                KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK)));
-        undoItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!isSearchMode) {
-                    history.undo();
-                }
-            }
-        });
-        editJMenu.add(undoItem);
+        ////////////////////////////////////////////////////////////
 
-        redoItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.META_DOWN_MASK | InputEvent.SHIFT_MASK),
-                KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK)));
-        redoItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!isSearchMode) {
-                    history.redo();
-                }
-            }
-        });
-        editJMenu.add(redoItem);
+        initHistoryGroupItems();
+
+        ////--------------------------------------------------
 
         editJMenu.add(new JSeparator());
 
-        editModeJRadioButtonMenuItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.META_MASK),
-                KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK)));
+        initEditModeItem();
 
-        editModeJRadioButtonMenuItem.setSelected(false);
-        editModeJRadioButtonMenuItem.setText("Режим редактирования");
-        editModeJRadioButtonMenuItem.addChangeListener(new ChangeListener() {
+        ////--------------------------------------------------
+
+        editJMenu.add(new JSeparator());
+
+        initAddDeleteGroupItems();
+
+        ////--------------------------------------------------
+
+        editJMenu.add(new JSeparator());
+
+        initAddMoveGroupItems();
+
+        ////--------------------------------------------------
+
+        editJMenu.add(new JSeparator());
+
+        initSearchItem();
+
+        ////////////////////////////////////////////////////////////
+
+        initCopyMenuItems();
+
+        aboutItem.addActionListener(new ActionListener() {
             @Override
-            public void stateChanged(ChangeEvent e) {
+            public void actionPerformed(ActionEvent e) {
+                new AboutApplication();
+            }
+        });
+        referenceMenu.add(aboutItem);
 
-                if (!isSearchMode) {
-                    if (!editModeJRadioButtonMenuItem.isSelected()) {
-                        isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/lock.png")));
-                        isEditableIcon.setToolTipText("Режим редактирования выключен");
-                        int index = table.getSelectedRow();
-                        try {
-                            if (table.isEditing()) {
-                                table.getCellEditor().cancelCellEditing();
-                            }
-                        } catch (NullPointerException ignored) {
-                        }
-//                    table.getCellEditor(table.getEditingRow(), table.getEditingColumn()).cancelCellEditing();
-                        if (index > -1) {
-                            table.setRowSelectionInterval(index, index);
-                        }
-                        //table.clearSelection();
-                    } else {
-                        isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/unlock.png")));
-                        isEditableIcon.setToolTipText("Режим редактирования включен");
+        if (IS_WINDOWS) {
+            jMenuBar1.add(referenceMenu);
+        }
+
+        setJMenuBar(jMenuBar1);
+    }
+
+    private void initCopyMenuItems() {
+        copySiteItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.META_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.CTRL_MASK)));
+        copySiteItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                copySelectedCell(SITE_COLUMN_INDEX);
+            }
+        });
+        copyJMenu.add(copySiteItem);
+
+        copyLoginItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.META_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.CTRL_MASK)));
+        copyLoginItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                copySelectedCell(LOGIN_COLUMN_INDEX);
+            }
+        });
+        copyJMenu.add(copyLoginItem);
+
+        copyPasswordItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.META_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.CTRL_MASK)));
+        copyPasswordItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                copySelectedCell(PASSWORD_COLUMN_INDEX);
+            }
+        });
+        copyJMenu.add(copyPasswordItem);
+
+        jMenuBar1.add(copyJMenu);
+    }
+
+    private void initSearchItem() {
+        searchMenuItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.META_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK)));
+        searchMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (editModeJRadioButtonMenuItem.isSelected()) {
+                    editModeJRadioButtonMenuItem.setSelected(false);
+                }
+                searchField.requestFocus();
+            }
+        });
+        editJMenu.add(searchMenuItem);
+
+        jMenuBar1.add(editJMenu);
+    }
+
+    private void initAddMoveGroupItems() {
+        addUpItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.ALT_MASK | InputEvent.SHIFT_MASK));
+        addUpItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int index = table.getSelectedRow();
+                if (index > 0) {
+                    addNewRecord(index, 1);
+                } else {
+                    addNewRecord(0, 1);
+                }
+            }
+        });
+
+        addDownItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.ALT_MASK | InputEvent.SHIFT_MASK));
+        addDownItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int index = table.getSelectedRow();
+                if (index > -1) {
+                    addNewRecord(index + 1, 1);
+                } else {
+                    addNewRecord(table.getRowCount(), 1);
+                }
+            }
+        });
+
+        moveUpItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_MASK | InputEvent.ALT_MASK | InputEvent.SHIFT_MASK));
+        moveUpItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int index = table.getSelectedRow();
+                if (index > 0) {
+                    exchangeRecords(index, index - 1);
+                    table.clearSelection();
+                    table.setRowSelectionInterval(index - 1, index - 1);
+                }
+            }
+        });
+
+        moveDownItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.CTRL_MASK | InputEvent.ALT_MASK | InputEvent.SHIFT_MASK));
+        moveDownItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int index = table.getSelectedRow();
+                if (index > -1) {
+                    if (index + 1 < table.getRowCount()) {
+                        exchangeRecords(index, index + 1);
+                        table.clearSelection();
+                        table.setRowSelectionInterval(index + 1, index + 1);
                     }
                 }
             }
         });
+        editJMenu.add(addUpItem);
+        editJMenu.add(addDownItem);
+        editJMenu.add(moveUpItem);
+        editJMenu.add(moveDownItem);
+    }
 
-        editJMenu.add(editModeJRadioButtonMenuItem);
-        editJMenu.add(new JSeparator());
-
+    private void initAddDeleteGroupItems() {
         addItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.META_MASK),
                 KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK)));
         addItem.addActionListener(new ActionListener() {
@@ -1142,7 +1253,6 @@ public class MainForm extends JFrame {
                 }
             }
         });
-        editJMenu.add(addItem);
 
         addSomeItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.META_MASK | InputEvent.SHIFT_MASK),
                 KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK)));
@@ -1184,7 +1294,6 @@ public class MainForm extends JFrame {
                 }
             }
         });
-        editJMenu.add(addSomeItem);
 
         deleteItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.META_MASK),
                 KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.CTRL_MASK)));
@@ -1196,7 +1305,6 @@ public class MainForm extends JFrame {
                 }
             }
         });
-        editJMenu.add(deleteItem);
 
         deleteSomeItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.META_MASK | InputEvent.SHIFT_MASK),
                 KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK)));
@@ -1237,135 +1345,79 @@ public class MainForm extends JFrame {
                 }
             }
         });
+        editJMenu.add(addItem);
+        editJMenu.add(addSomeItem);
+        editJMenu.add(deleteItem);
         editJMenu.add(deleteSomeItem);
-        editJMenu.add(new JSeparator());
+    }
 
-        addUpItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.ALT_MASK | InputEvent.SHIFT_MASK));
-        addUpItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int index = table.getSelectedRow();
-                if (index > 0) {
-                    addNewRecord(index, 1);
-                } else {
-                    addNewRecord(0, 1);
-                }
-            }
-        });
-        editJMenu.add(addUpItem);
+    private void initEditModeItem() {
+        editModeJRadioButtonMenuItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.META_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK)));
 
-        addDownItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.ALT_MASK | InputEvent.SHIFT_MASK));
-        addDownItem.addActionListener(new ActionListener() {
+        editModeJRadioButtonMenuItem.setSelected(false);
+        editModeJRadioButtonMenuItem.setText("Режим редактирования");
+        editModeJRadioButtonMenuItem.addChangeListener(new ChangeListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                int index = table.getSelectedRow();
-                if (index > -1) {
-                    addNewRecord(index + 1, 1);
-                } else {
-                    addNewRecord(table.getRowCount(), 1);
-                }
-            }
-        });
-        editJMenu.add(addDownItem);
+            public void stateChanged(ChangeEvent e) {
 
-        moveUpItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_MASK | InputEvent.ALT_MASK | InputEvent.SHIFT_MASK));
-        moveUpItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int index = table.getSelectedRow();
-                if (index > 0) {
-                    exchangeRecords(index, index - 1);
-                    table.clearSelection();
-                    table.setRowSelectionInterval(index - 1, index - 1);
-                }
-            }
-        });
-        editJMenu.add(moveUpItem);
-
-        moveDownItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.CTRL_MASK | InputEvent.ALT_MASK | InputEvent.SHIFT_MASK));
-        moveDownItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int index = table.getSelectedRow();
-                if (index > -1) {
-                    if (index + 1 < table.getRowCount()) {
-                        exchangeRecords(index, index + 1);
-                        table.clearSelection();
-                        table.setRowSelectionInterval(index + 1, index + 1);
+                if (!isSearchMode) {
+                    if (!editModeJRadioButtonMenuItem.isSelected()) {
+                        isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/lock.png")));
+                        isEditableIcon.setToolTipText("Режим редактирования выключен");
+                        int index = table.getSelectedRow();
+                        try {
+                            if (table.isEditing()) {
+                                table.getCellEditor().cancelCellEditing();
+                            }
+                        } catch (NullPointerException ignored) {
+                        }
+//                    table.getCellEditor(table.getEditingRow(), table.getEditingColumn()).cancelCellEditing();
+                        if (index > -1) {
+                            table.setRowSelectionInterval(index, index);
+                        }
+                        //table.clearSelection();
+                    } else {
+                        isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/unlock.png")));
+                        isEditableIcon.setToolTipText("Режим редактирования включен");
                     }
                 }
             }
         });
-        editJMenu.add(moveDownItem);
-        editJMenu.add(new JSeparator());
+        editJMenu.add(editModeJRadioButtonMenuItem);
+    }
 
-        searchMenuItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.META_MASK),
-                KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK)));
-        searchMenuItem.addActionListener(new ActionListener() {
+    private void initHistoryGroupItems() {
+        undoItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.META_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK)));
+        undoItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (editModeJRadioButtonMenuItem.isSelected()) {
-                    editModeJRadioButtonMenuItem.setSelected(false);
+                if (!isSearchMode) {
+                    history.undo();
                 }
-                searchField.requestFocus();
             }
         });
-        editJMenu.add(searchMenuItem);
 
-        jMenuBar1.add(editJMenu);
-
-        copySiteItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.META_MASK),
-                KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.CTRL_MASK)));
-        copySiteItem.addActionListener(new ActionListener() {
+        redoItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.META_DOWN_MASK | InputEvent.SHIFT_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK)));
+        redoItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                copySelectedCell(SITE_COLUMN_INDEX);
+                if (!isSearchMode) {
+                    history.redo();
+                }
             }
         });
-        copyJMenu.add(copySiteItem);
 
-        copyLoginItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.META_MASK),
-                KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.CTRL_MASK)));
-        copyLoginItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                copySelectedCell(LOGIN_COLUMN_INDEX);
-            }
-        });
-        copyJMenu.add(copyLoginItem);
-
-        copyPasswordItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.META_MASK),
-                KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.CTRL_MASK)));
-        copyPasswordItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                copySelectedCell(PASSWORD_COLUMN_INDEX);
-            }
-        });
-        copyJMenu.add(copyPasswordItem);
-
-        jMenuBar1.add(copyJMenu);
-
-        aboutItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new AboutApplication();
-            }
-        });
-        referenceMenu.add(aboutItem);
-
-        if (IS_WINDOWS) {
-            jMenuBar1.add(referenceMenu);
-        }
-
-        setJMenuBar(jMenuBar1);
+        editJMenu.add(undoItem);
+        editJMenu.add(redoItem);
     }
 
     private void initHistory() {
         history = new History(this);
         refreshLockTimer();
     }
-
 
     private void initPopUp() {
         popupMenu = new JPopupMenu();
@@ -1400,7 +1452,7 @@ public class MainForm extends JFrame {
 
     private void copyToClipboard(String copy) {
         if (copy != null) {
-            if (!copy.isEmpty()) {
+            if (!copy.isEmpty() && !copy.equals("")) {
                 FrameUtils.copyToClipboard(copy);
                 setStatus("Скопировано: " + copy, STATUS_SUCCESS);
             } else {
@@ -1411,12 +1463,10 @@ public class MainForm extends JFrame {
         }
     }
 
-
     private void copySelectedCell(int column) {
         if (table.getSelectedRow() >= 0) {
-            String copy = (String) table.getModel().getValueAt(table.getSelectedRow(), column);
+            String copy = (String) table.getValueAt(table.getSelectedRow(), column);
             copyToClipboard(copy);
-            setStatus("Скопировано: " + copy, STATUS_SUCCESS);
         }
     }
 
@@ -1648,7 +1698,6 @@ public class MainForm extends JFrame {
         Core.setIsExitCanceled(false);
     }
 
-
     private DefaultTableModel createTableModel(ArrayList<Record> recordArrayList) {
         DefaultTableModel tableModel = new DefaultTableModel();
         String[] number = new String[recordArrayList.size()];
@@ -1671,19 +1720,6 @@ public class MainForm extends JFrame {
         return tableModel;
     }
 
-
-    static <T> T[] concatenate(T[] a, T[] b) {
-        int aLen = a.length;
-        int bLen = b.length;
-
-        @SuppressWarnings("unchecked")
-        T[] c = (T[]) Array.newInstance(a.getClass().getComponentType(), aLen + bLen);
-        System.arraycopy(a, 0, c, 0, aLen);
-        System.arraycopy(b, 0, c, aLen, bLen);
-
-        return c;
-    }
-
     boolean hasNext() {
         return table.getSelectedRow() >= 0 && table.getSelectedRow() < table.getRowCount() - 1;
     }
@@ -1696,23 +1732,6 @@ public class MainForm extends JFrame {
         table.setValueAt(record.getSite(), index, SITE_COLUMN_INDEX);
         table.setValueAt(record.getLogin(), index, LOGIN_COLUMN_INDEX);
         table.setValueAt(record.getPassword(), index, PASSWORD_COLUMN_INDEX);
-    }
-
-    public static void refreshLockTimer() {
-        lockTimer.restart();
-    }
-
-    public static void stopLockTimer() {
-        lockTimer.stop();
-    }
-
-    public static void scrollToVisible(JTable table, int rowIndex, int vColIndex) {
-        if (!(table.getParent() instanceof JViewport)) return;
-        JViewport viewport = (JViewport) table.getParent();
-        Rectangle rect = table.getCellRect(rowIndex, vColIndex, true);
-        Point pt = viewport.getViewPosition();
-        rect.setLocation(rect.x - pt.x, rect.y - pt.y);
-        viewport.scrollRectToVisible(rect);
     }
 
     private void createUIComponents() {
@@ -1838,8 +1857,8 @@ class TableEditor extends DefaultCellEditor {
         final String text = textField.getText();
         final int start = text.length();
 
-        if (col == mainForm.SITE_COLUMN_INDEX ||
-                col == mainForm.LOGIN_COLUMN_INDEX) {
+        if (col == MainForm.SITE_COLUMN_INDEX ||
+                col == MainForm.LOGIN_COLUMN_INDEX) {
             ArrayList<String> sites = new ArrayList<>(records.size());
             ArrayList<String> logins = new ArrayList<>(records.size());
             for (Record record : records) {
@@ -2031,9 +2050,9 @@ class MainFormTableHeader extends JPanel implements TableCellRenderer {
 }
 
 class TableHeaderBorder implements Border {
-    Dimension dimension;
     final Color topColor = new Color(172, 172, 172);
     final Color bottomColor = new Color(196, 196, 196);
+    Dimension dimension;
     Color separatorColor = new Color(220, 220, 220);
 
 
