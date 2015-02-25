@@ -664,49 +664,28 @@ public class MainForm extends JFrame {
         addUpButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int index = table.getSelectedRow();
-                if (index > 0) {
-                    addNewRecord(index, 1);
-                } else {
-                    addNewRecord(0, 1);
-                }
+                addUpItem.getActionListeners()[0].actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
             }
         });
         addDownButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int index = table.getSelectedRow();
-                if (index > -1) {
-                    addNewRecord(index + 1, 1);
-                } else {
-                    addNewRecord(table.getRowCount(), 1);
-                }
+                addDownItem.getActionListeners()[0].actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+
             }
         });
 
         moveUpButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int index = table.getSelectedRow();
-                if (index > 0) {
-                    exchangeRecords(index, index - 1);
-                    table.clearSelection();
-                    table.setRowSelectionInterval(index - 1, index - 1);
-                }
+                moveDownItem.getActionListeners()[0].actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
             }
         });
 
         moveDownButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int index = table.getSelectedRow();
-                if (index > -1) {
-                    if (index + 1 < table.getRowCount()) {
-                        exchangeRecords(index, index + 1);
-                        table.clearSelection();
-                        table.setRowSelectionInterval(index + 1, index + 1);
-                    }
-                }
+                moveDownItem.getActionListeners()[0].actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
             }
         });
 
@@ -1265,7 +1244,12 @@ public class MainForm extends JFrame {
         addUpItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                addUpButton.getActionListeners()[0].actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+                int index = table.getSelectedRow();
+                if (index > 0) {
+                    addNewRecord(index, 1);
+                } else {
+                    addNewRecord(0, 1);
+                }
             }
         });
         editJMenu.add(addUpItem);
@@ -1274,7 +1258,12 @@ public class MainForm extends JFrame {
         addDownItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                addDownButton.getActionListeners()[0].actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+                int index = table.getSelectedRow();
+                if (index > -1) {
+                    addNewRecord(index + 1, 1);
+                } else {
+                    addNewRecord(table.getRowCount(), 1);
+                }
             }
         });
         editJMenu.add(addDownItem);
@@ -1283,7 +1272,12 @@ public class MainForm extends JFrame {
         moveUpItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                moveUpButton.getActionListeners()[0].actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+                int index = table.getSelectedRow();
+                if (index > 0) {
+                    exchangeRecords(index, index - 1);
+                    table.clearSelection();
+                    table.setRowSelectionInterval(index - 1, index - 1);
+                }
             }
         });
         editJMenu.add(moveUpItem);
@@ -1292,7 +1286,14 @@ public class MainForm extends JFrame {
         moveDownItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                moveDownButton.getActionListeners()[0].actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+                int index = table.getSelectedRow();
+                if (index > -1) {
+                    if (index + 1 < table.getRowCount()) {
+                        exchangeRecords(index, index + 1);
+                        table.clearSelection();
+                        table.setRowSelectionInterval(index + 1, index + 1);
+                    }
+                }
             }
         });
         editJMenu.add(moveDownItem);
