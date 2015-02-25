@@ -465,22 +465,22 @@ public class MainForm extends JFrame {
     }
 
     private void updateSearchFieldSize() {
-        final int windowThreshold_600 = 580;
+        final int windowThreshold = 580;
         int windowWidth = getSize().width;
 
         int width;
 
         if (searchField.isFocusOwner()) {
-            if (windowWidth > windowThreshold_600) {
+            if (windowWidth > windowThreshold) {
                 width = 300;
             } else {
-                width = 10;
+                width = 300-(windowThreshold-windowWidth);
             }
         } else {
-            if (windowWidth > windowThreshold_600) {
+            if (windowWidth > windowThreshold) {
                 width = 150;
             } else {
-                width = 10;
+                width = 150 - (windowThreshold - windowWidth);
             }
         }
 
