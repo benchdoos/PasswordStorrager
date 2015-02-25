@@ -1,6 +1,7 @@
 package edu.passwordStorrager.gui;
 
 import edu.passwordStorrager.core.Core;
+import edu.passwordStorrager.gui.elements.SimpleDialogSheet;
 import edu.passwordStorrager.utils.FrameUtils;
 import edu.passwordStorrager.utils.platform.MacOsXUtils;
 import edu.passwordStorrager.utils.platform.PlatformUtils;
@@ -11,13 +12,12 @@ import java.awt.event.*;
 
 import static edu.passwordStorrager.core.Application.IS_MAC;
 
-public class SaveOnExitDialog extends JDialog {
+public class SaveOnExitDialog extends SimpleDialogSheet {
     private JPanel contentPane;
     private JLabel icon;
     private JButton buttonSave;
     private JButton buttonCancel;
     private JButton buttonDiscard;
-    MainForm window;
 //    MainForm window = (MainForm) MainForm.getFrames()[1];
 
     public SaveOnExitDialog(MainForm window) {
@@ -81,14 +81,6 @@ public class SaveOnExitDialog extends JDialog {
         buttonDiscard.requestFocus();
     }
 
-    private void updateLocation(MainForm window, Dimension size) {
-        Point location = window.getLocation();
-        Dimension dim = window.getSize();
-        int centerWidth = location.x + dim.width / 2;
-        centerWidth = centerWidth - size.width / 2;
-        int height = location.y + window.getInsets().top + window.controlPanel.getHeight() + 1;
-        setLocation(centerWidth, height);
-    }
 
     private void onDiscard() {
         setVisible(false);
@@ -112,43 +104,5 @@ public class SaveOnExitDialog extends JDialog {
         }
         Core.setIsExitCanceled(true);
         dispose();
-    }
-
-    @Override
-    public void setVisible(boolean value) {
-        updateLocation(window, getSize());
-        /*requestFocusInWindow();
-        getRootPane().setDefaultButton(buttonSave);
-        buttonDiscard.requestFocus();*/
-        super.setVisible(value);
-    }
-
-    class MovingTogether extends ComponentAdapter {
-        private MainForm window;
-        private Window dialog;
-
-        public MovingTogether(MainForm window, JDialog dialog) {
-            this.window = window;
-            this.dialog = dialog;
-            if (window.getComponentListeners().length > 1) {
-                window.removeComponentListener(this);
-            }
-            window.addComponentListener(this);
-        }
-
-        public void componentMoved(ComponentEvent e) {
-            MainForm win = (MainForm) e.getComponent();
-            Dimension size = dialog.getSize();
-            if (win == window && dialog.isVisible()) {
-                Point location = window.getLocation();
-                Dimension dim = window.getSize();
-                int centerWidth = location.x + dim.width / 2;
-                centerWidth = centerWidth - size.width / 2;
-                int height = location.y + window.getInsets().top + window.controlPanel.getHeight() + 1;
-                dialog.setLocation(centerWidth, height);
-
-            }
-        }
-
     }
 }
