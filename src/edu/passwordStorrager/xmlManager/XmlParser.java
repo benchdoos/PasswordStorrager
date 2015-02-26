@@ -73,7 +73,7 @@ public class XmlParser {
 
     public void saveRecords(final ArrayList<Record> records, final MainForm mainForm) throws SavingRecordsException {
         final SavingStatusSheet sheet = mainForm.savingStatusSheet;
-        
+
         final Thread m = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -139,7 +139,6 @@ public class XmlParser {
                 } catch (ParserConfigurationException e) {
                     throw new SavingRecordsException("Error in parser configuration while saving", e);
                 } catch (TransformerConfigurationException e) {
-//            log.warn("Error in transforming while saving", e);
                     throw new SavingRecordsException("Error in transforming while saving", e);
                 } catch (TransformerException e) {
                     throw new SavingRecordsException("Error in transformer while saving", e);
@@ -152,18 +151,19 @@ public class XmlParser {
                 }
             }
         });
-        
-        
+
         if (sheet != null) {
             sheet.progressBar.setValue(0);
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     m.start();
-                    sheet.setVisible(true);
                 }
             }).start();
 
+            sheet.setVisible(true);
+        } else {
+            m.start();
         }
 
     }
