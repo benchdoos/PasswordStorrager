@@ -696,7 +696,7 @@ public class MainForm extends JFrame {
         moveUpButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                moveDownItem.getActionListeners()[0].actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+                moveUpItem.getActionListeners()[0].actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
             }
         });
 
@@ -819,7 +819,7 @@ public class MainForm extends JFrame {
                 Point p = me.getPoint();
                 int row = table.rowAtPoint(p);
                 if (count >= 2 && me.getButton() == MouseEvent.BUTTON1) {
-                    if (table.getSelectedRow() >= 0) {
+                    if (row >= 0) {
                         if (table.getSelectedColumn() == SITE_COLUMN_INDEX) {
                             String site = (String) table.getValueAt(row, SITE_COLUMN_INDEX);
                             StringUtils.openWebPage(site);
@@ -912,7 +912,10 @@ public class MainForm extends JFrame {
                 refreshLockTimer();
                 if (row > -1) {
                     if (!isSearchMode) {
+                        moveUpItem.setEnabled(hasPrevious());
                         moveUpButton.setEnabled(hasPrevious());
+                        
+                        moveDownItem.setEnabled(hasNext());
                         moveDownButton.setEnabled(hasNext());
                     }
                 }
@@ -1319,14 +1322,16 @@ public class MainForm extends JFrame {
                         @Override
                         void onOK() {
                             try {
-                                int index1;
-                                int index2;
+                                /*int index1;
+                                int index2;*/
                                 if (value.getText().length() == 1 && value.getText().contains("*")) {
                                     deleteSelectedRecords(0, recordArrayList.size());
-                                    /*recordArrayList = new ArrayList<>();
-                                    loadList(recordArrayList);*/
                                 } else {
-                                    String[] values = value.getText().split("-");
+                                    int i = Integer.parseInt(value.getText());
+                                    System.out.println(i+" " + table.getSelectedRow());
+                                    deleteSelectedRecords(table.getSelectedRow(), table.getSelectedRow()+(i-1));
+                                    
+                                    /*String[] values = value.getText().split("-");
                                     index1 = Integer.parseInt(values[0]);
                                     index1--;
                                     try {
@@ -1335,8 +1340,7 @@ public class MainForm extends JFrame {
                                     } catch (ArrayIndexOutOfBoundsException e) {
                                         index2 = table.getSelectedRow() + index1;
                                         index1 = table.getSelectedRow();
-                                    }
-                                    deleteSelectedRecords(index1, index2);
+                                    }*/
                                 }
                                 dispose();
                             } catch (NumberFormatException e) {
@@ -1542,6 +1546,7 @@ public class MainForm extends JFrame {
             Record[] rec2 = new Record[count];
             for (int i = 0; i < count; i++) {
                 rec2[i] = new Record();
+//                rec2[i] = new Record("site"+i,"login"+i,"password"+i);
             }
             Record[] rec3 = Arrays.copyOfRange(tmp, index, tmp.length);
             Record[] rec;
@@ -1597,6 +1602,10 @@ public class MainForm extends JFrame {
         if (index1 < 0) {
             index1 = 0;
         }
+        if (index2 < 0) {
+            index2 = 0;
+        }
+        
         if (index2 > table.getRowCount() - 1) {
             index2 = table.getRowCount() - 1;
         }
