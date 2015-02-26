@@ -14,7 +14,6 @@ public class RemoveRowAction implements HistoryAction {
     public RemoveRowAction(int index, ArrayList<Record> records) {
         this.index = index;
         this.records = records;
-        System.out.println(records);
     }
 
     @Override
