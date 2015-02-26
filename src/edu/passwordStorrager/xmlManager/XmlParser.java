@@ -1,6 +1,8 @@
 package edu.passwordStorrager.xmlManager;
 
 import edu.passwordStorrager.core.PasswordStorrager;
+import edu.passwordStorrager.gui.MainForm;
+import edu.passwordStorrager.gui.SavingStatusSheet;
 import edu.passwordStorrager.objects.Record;
 import edu.passwordStorrager.protector.Protector;
 import edu.passwordStorrager.protector.Values;
@@ -69,61 +71,103 @@ public class XmlParser {
         return records;
     }
 
-    public void saveRecords(ArrayList<Record> records) {
-        try {
-            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder docBuilder = null;
-            docBuilder = docFactory.newDocumentBuilder();
+    public void saveRecords(final ArrayList<Record> records, final MainForm mainForm) throws SavingRecordsException {
+        final SavingStatusSheet sheet = mainForm.savingStatusSheet;
+        
+        final Thread m = new Thread(new Runnable() {
+            @Override
+            public void run() {
 
-            Document document = docBuilder.newDocument();
-            Element passwordStorage = document.createElement("PasswordStorage");
-            document.appendChild(passwordStorage);
+                try {
+                    DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+                    DocumentBuilder docBuilder = null;
+                    docBuilder = docFactory.newDocumentBuilder();
 
-            for (Record record : records) {
-                Element rec = document.createElement("Record");
-                rec.setAttribute("login", record.getLogin());
-                rec.setAttribute("password", record.getPassword());
-                rec.setAttribute("site", record.getSite());
-                passwordStorage.appendChild(rec);
+                    Document document = docBuilder.newDocument();
+                    Element passwordStorage = document.createElement("PasswordStorage");
+                    document.appendChild(passwordStorage);
+
+                    for (int i = 0; i < records.size(); i++) {
+                        int k = (int) ((i * 100.0f) / (records.size() - 1));
+                        if (sheet != null) {
+//                            System.out.println(">D< +" + k + " " + i + " " + records.size());
+                            sheet.progressBar.setValue(k);
+                        }
+
+                        Record record = records.get(i);
+                        Element rec = document.createElement("Record");
+                        rec.setAttribute("login", record.getLogin());
+                        rec.setAttribute("password", record.getPassword());
+                        rec.setAttribute("site", record.getSite());
+                        passwordStorage.appendChild(rec);
+                    }
+                    TransformerFactory transformerFactory = TransformerFactory.newInstance();
+                    Transformer transformer = transformerFactory.newTransformer();
+                    transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+
+                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+                    DOMSource source = new DOMSource(document);
+                    StreamResult result = new StreamResult(byteArrayOutputStream);
+
+                    transformer.transform(source, result);
+
+                    byte[] data = byteArrayOutputStream.toByteArray();
+
+                    File file = new File(pathStorageFile);
+                    File file2 = new File(pathStorageFile + "_");
+                    if (file.exists()) {
+                        Path path = file.toPath();
+                        Path path2 = file.toPath();
+
+                        Files.copy(path, path2);
+                        file.delete();
+                    }
+
+                    if (sheet != null) {
+                        sheet.progressBar.setIndeterminate(true);
+                    }
+
+                    Protector.encrypt(new ByteArrayInputStream(data), new FileOutputStream(file));
+                    file2.delete();
+                    FileUtils.setFileHidden(pathStorageFile);
+
+                    if (sheet != null) {
+                        sheet.setVisible(false);
+                        sheet.dispose();
+                    }
+                } catch (ParserConfigurationException e) {
+                    throw new SavingRecordsException("Error in parser configuration while saving", e);
+                } catch (TransformerConfigurationException e) {
+//            log.warn("Error in transforming while saving", e);
+                    throw new SavingRecordsException("Error in transforming while saving", e);
+                } catch (TransformerException e) {
+                    throw new SavingRecordsException("Error in transformer while saving", e);
+                } catch (FileNotFoundException e) {
+                    throw new SavingRecordsException("File not found : " + pathStorageFile, e);
+                } catch (IOException e) {
+                    throw new SavingRecordsException("Can not copy file", e);
+                } catch (Throwable e) {
+                    throw new SavingRecordsException("Can not encrypt (save) to file: " + pathStorageFile, e);
+                }
             }
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        });
+        
+        
+        if (sheet != null) {
+            sheet.progressBar.setValue(0);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    m.start();
+                    sheet.setVisible(true);
+                }
+            }).start();
 
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-
-            DOMSource source = new DOMSource(document);
-            StreamResult result = new StreamResult(byteArrayOutputStream);
-
-            transformer.transform(source, result);
-
-            byte[] data = byteArrayOutputStream.toByteArray();
-
-            File file = new File(pathStorageFile);
-            File file2 = new File(pathStorageFile + "_");
-            if (file.exists()) {
-                Path path = file.toPath();
-                Path path2 = file.toPath();
-
-                Files.copy(path, path2);
-                file.delete();
-            }
-
-            Protector.encrypt(new ByteArrayInputStream(data), new FileOutputStream(file));
-            file2.delete();
-            FileUtils.setFileHidden(pathStorageFile);
-
-        } catch (ParserConfigurationException e) {
-            log.warn("Error in parser configuration while saving", e);
-        } catch (TransformerConfigurationException e) {
-            log.warn("Error in transforming while saving", e);
-        } catch (TransformerException e) {
-            log.warn("Error in transformer while saving", e);
-        } catch (FileNotFoundException e) {
-            log.warn("File not found : " + pathStorageFile, e);
-        } catch (Throwable e) {
-            log.warn("Can not encrypt (save) to file: " + pathStorageFile, e);
         }
+
     }
 
 }
+
+

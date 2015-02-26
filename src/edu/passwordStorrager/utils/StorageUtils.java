@@ -12,7 +12,7 @@ public class StorageUtils {
         File file = new File(StringUtils.fixFolder(folder) + "storage");
         if (!file.exists()) {
             if (file.createNewFile()) {
-                new XmlParser().saveRecords(new ArrayList<Record>());
+                new XmlParser().saveRecords(new ArrayList<Record>(),null);
             } else {
                 throw new IOException("Can not create file: " + file.getAbsolutePath());
             }

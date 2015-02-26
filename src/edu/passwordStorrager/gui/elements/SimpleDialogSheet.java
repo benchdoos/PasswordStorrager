@@ -7,9 +7,15 @@ import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
+import static edu.passwordStorrager.core.Application.IS_MAC;
+
 public class SimpleDialogSheet extends JDialog {
 
     public MainForm window;
+    
+    public SimpleDialogSheet() {
+        this.setResizable(false);
+    }
     
     public void updateLocation(MainForm window, Dimension size) {
         Point location = window.getLocation();
@@ -18,6 +24,15 @@ public class SimpleDialogSheet extends JDialog {
         centerWidth = centerWidth - size.width / 2;
         int height = location.y + window.getInsets().top + window.controlPanel.getHeight() + 1;
         setLocation(centerWidth, height);
+    }
+
+    public void initLocation(MainForm window, Dimension size) {
+        updateLocation(window, size);
+
+        if (IS_MAC) {
+            setUndecorated(true);
+            new MovingTogether(window, this);
+        }
     }
     
     @Override

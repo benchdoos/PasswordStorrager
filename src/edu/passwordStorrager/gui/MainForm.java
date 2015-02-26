@@ -17,6 +17,7 @@ import edu.passwordStorrager.utils.history.actions.ExchangedRowsAction;
 import edu.passwordStorrager.utils.history.actions.RemoveRowAction;
 import edu.passwordStorrager.utils.platform.MacOsXUtils;
 import edu.passwordStorrager.utils.platform.PlatformUtils;
+import edu.passwordStorrager.xmlManager.SavingRecordsException;
 import edu.passwordStorrager.xmlManager.XmlParser;
 import org.apache.log4j.Logger;
 
@@ -70,6 +71,7 @@ public class MainForm extends JFrame {
     public JPanel controlPanel;
     protected JRadioButtonMenuItem editModeJRadioButtonMenuItem = new JRadioButtonMenuItem();
     SaveOnExitDialog saveOnExitDialog;
+    public SavingStatusSheet savingStatusSheet;
     private History history;
     private boolean isEdited = false;
     private JPopupMenu popupMenu;
@@ -197,6 +199,7 @@ public class MainForm extends JFrame {
         isFirstLaunch = false; //to fix isEdited on start
 
         saveOnExitDialog = new SaveOnExitDialog(this);
+        savingStatusSheet = new SavingStatusSheet(this);
     }
 
     private void initWindow() {
@@ -1319,8 +1322,9 @@ public class MainForm extends JFrame {
                                 int index1;
                                 int index2;
                                 if (value.getText().length() == 1 && value.getText().contains("*")) {
-                                    recordArrayList = new ArrayList<>();
-                                    loadList(recordArrayList);
+                                    deleteSelectedRecords(0, recordArrayList.size());
+                                    /*recordArrayList = new ArrayList<>();
+                                    loadList(recordArrayList);*/
                                 } else {
                                     String[] values = value.getText().split("-");
                                     index1 = Integer.parseInt(values[0]);
@@ -1508,12 +1512,18 @@ public class MainForm extends JFrame {
             record.setPassword((String) table.getModel().getValueAt(i, PASSWORD_COLUMN_INDEX));
             recordArrayList.add(record);
         }
-        new XmlParser().saveRecords(recordArrayList);
-        loadList(recordArrayList);
-        setEdited(false);
-        System.out.println("Save. Successfully saved: " + rows);
-        history.save();
-        setStatus("Сохранено", STATUS_SUCCESS);
+        try {
+            savingStatusSheet = new SavingStatusSheet(this);
+            new XmlParser().saveRecords(recordArrayList, this);
+            loadList(recordArrayList);
+            setEdited(false);
+            System.out.println("Save. Successfully saved: " + rows);
+            history.save();
+            setStatus("Сохранено", STATUS_SUCCESS);
+        } catch (SavingRecordsException e) {
+            setStatus("Ошибка при сохранении", STATUS_ERROR);
+        }
+
     }
 
     public void addNewRecord(int index, int count) {
@@ -1599,7 +1609,13 @@ public class MainForm extends JFrame {
             recordArrayList.remove(index1);
             for (int i = 0; i < diff; i++) {
                 removedRecords.add(recordArrayList.get(index1));
-                recordArrayList.remove(index1);
+                if(index1 != 0 && index2 != recordArrayList.size()) {
+                    recordArrayList.remove(index1);
+                }
+            }
+            
+            if(index1 == 0 && index2 == recordArrayList.size()) {
+                recordArrayList = new ArrayList<>();
             }
             loadList(recordArrayList);
             table.clearSelection();

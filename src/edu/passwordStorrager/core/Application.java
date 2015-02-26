@@ -29,5 +29,5 @@ public interface Application {
     String APPLICATION_TMP_FOLDER = SYSTEM.getProperty("java.io.tmpdir");
     String APPLICATION_LOG_FOLDER_PROPERTY = "PasswordStorrager.log.folder";
     String APPLICATION_LOG_FOLDER = APPLICATION_TMP_FOLDER + Application.APPLICATION_FOLDER_NAME + "/Logs/";
-    boolean IS_APPLICATION_DEV_MODE = true;
+    boolean IS_APPLICATION_DEV_MODE = false;
 }

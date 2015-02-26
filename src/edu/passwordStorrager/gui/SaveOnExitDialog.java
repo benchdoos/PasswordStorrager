@@ -10,8 +10,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-import static edu.passwordStorrager.core.Application.IS_MAC;
-
 public class SaveOnExitDialog extends SimpleDialogSheet {
     private JPanel contentPane;
     private JLabel icon;
@@ -38,12 +36,7 @@ public class SaveOnExitDialog extends SimpleDialogSheet {
         icon.setSize(new Dimension(80, 80));
         icon.setIcon(FrameUtils.resizeIcon(PlatformUtils.appIcon, icon.getSize()));
 
-        updateLocation(window, size);
-
-        if (IS_MAC) {
-            setUndecorated(true);
-            new MovingTogether(window, this);
-        }
+        initLocation(window, size);
 
         buttonDiscard.addActionListener(new ActionListener() {
             @Override
