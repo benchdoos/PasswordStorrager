@@ -1328,7 +1328,6 @@ public class MainForm extends JFrame {
                                     deleteSelectedRecords(0, recordArrayList.size());
                                 } else {
                                     int i = Integer.parseInt(value.getText());
-                                    System.out.println(i+" " + table.getSelectedRow());
                                     deleteSelectedRecords(table.getSelectedRow(), table.getSelectedRow()+(i-1));
                                     
                                     /*String[] values = value.getText().split("-");
