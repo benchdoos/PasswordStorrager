@@ -44,11 +44,13 @@ import static edu.passwordStorrager.core.Application.*;
 import static edu.passwordStorrager.utils.FrameUtils.*;
 
 public class MainForm extends JFrame {
+    private static final Logger log = Logger.getLogger(getCurrentClassName());
+
+    private static final int RECORDS_LIMIT = 10000;
 
     public static final int STATUS_MESSAGE = 1, STATUS_ERROR = -1, STATUS_SUCCESS = 2;
     static final String SITE_COLUMN_NAME = "Сайт",
             LOGIN_COLUMN_NAME = "Логин", PASSWORD_COLUMN_NAME = "Пароль";
-    private static final Logger log = Logger.getLogger(getCurrentClassName());
     private static final int COLUMN_MINIMUM_WIDTH = 120;
     private static final int COLUMN_COUNT = 3;
     private static final int SEARCH_MODE_NORMAL = 0;
@@ -56,6 +58,7 @@ public class MainForm extends JFrame {
     private static final int SEARCH_MODE_SITE = 2;
     private static final int SEARCH_MODE_LOGIN = 3;
     private static final int SEARCH_MODE_PASSWORD = 4;
+
     public static boolean isFirstLaunch = true;
     static Timer timer;
     static int SITE_COLUMN_INDEX = 0;
@@ -477,7 +480,7 @@ public class MainForm extends JFrame {
             if (windowWidth > windowThreshold) {
                 width = 300;
             } else {
-                width = 300-(windowThreshold-windowWidth);
+                width = 300 - (windowThreshold - windowWidth);
             }
         } else {
             if (windowWidth > windowThreshold) {
@@ -581,7 +584,16 @@ public class MainForm extends JFrame {
     }
 
     public void updateInfo() {
-        info.setText("объектов: " + recordArrayList.size());
+        if (recordArrayList.size() < RECORDS_LIMIT - 500) {
+            info.setForeground(new Color(76,76,76));
+            info.setText("объектов: " + recordArrayList.size());
+        } else if (recordArrayList.size() >= RECORDS_LIMIT - 500 && recordArrayList.size() < RECORDS_LIMIT - 100) {
+            info.setForeground(new Color(223, 80, 0));
+            info.setText("объектов: " + recordArrayList.size() + " из 10000");
+        } else {
+            info.setForeground(new Color(255, 0, 0));
+            info.setText("объектов: " + recordArrayList.size() + " из 10000");
+        }
     }
 
     private void setControlsEnabled(boolean value) {
@@ -914,7 +926,7 @@ public class MainForm extends JFrame {
                     if (!isSearchMode) {
                         moveUpItem.setEnabled(hasPrevious());
                         moveUpButton.setEnabled(hasPrevious());
-                        
+
                         moveDownItem.setEnabled(hasNext());
                         moveDownButton.setEnabled(hasNext());
                     }
@@ -1191,10 +1203,12 @@ public class MainForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int index = table.getSelectedRow();
-                if (index > 0) {
-                    addNewRecord(index, 1);
-                } else {
-                    addNewRecord(0, 1);
+                if (recordArrayList.size() < RECORDS_LIMIT) {
+                    if (index > 0) {
+                        addNewRecord(index, 1);
+                    } else {
+                        addNewRecord(0, 1);
+                    }
                 }
             }
         });
@@ -1204,10 +1218,12 @@ public class MainForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int index = table.getSelectedRow();
-                if (index > -1) {
-                    addNewRecord(index + 1, 1);
-                } else {
-                    addNewRecord(table.getRowCount(), 1);
+                if (recordArrayList.size() < RECORDS_LIMIT) {
+                    if (index > -1) {
+                        addNewRecord(index + 1, 1);
+                    } else {
+                        addNewRecord(table.getRowCount(), 1);
+                    }
                 }
             }
         });
@@ -1252,9 +1268,11 @@ public class MainForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!isSearchMode) {
-                    addNewRecord(recordArrayList.size(), 1);
-                    if (!editModeJRadioButtonMenuItem.isSelected()) {
-                        editModeJRadioButtonMenuItem.doClick();
+                    if (recordArrayList.size() < RECORDS_LIMIT) {
+                        addNewRecord(recordArrayList.size(), 1);
+                        if (!editModeJRadioButtonMenuItem.isSelected()) {
+                            editModeJRadioButtonMenuItem.doClick();
+                        }
                     }
                 }
             }
@@ -1266,37 +1284,39 @@ public class MainForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!isSearchMode) {
-                    new InputForm("Добавить") {
-                        @Override
-                        void onOK() {
-                            int row = table.getSelectedRow();
-                            int count = 0;
-                            try {
-                                count = Integer.parseInt(this.value.getText());
-                            } catch (NumberFormatException ignored) {/*NOP*/}
+                    if (recordArrayList.size() < RECORDS_LIMIT) {
+                        new InputForm("Добавить") {
+                            @Override
+                            void onOK() {
+                                int row = table.getSelectedRow();
+                                int count = 0;
+                                try {
+                                    count = Integer.parseInt(this.value.getText());
+                                } catch (NumberFormatException ignored) {/*NOP*/}
 
-                            if (count > 0 && count <= 1_000) {
-                                if (table.getRowCount() < 1) {
-                                    addNewRecord(0, count);
-                                } else {
-                                    if (row >= 0) {
-                                        addNewRecord(row + 1, count); //after selection //row = before
+                                if (count > 0 && count <= 1_000) {
+                                    if (table.getRowCount() < 1) {
+                                        addNewRecord(0, count);
                                     } else {
-                                        addNewRecord(table.getRowCount(), count); //after selection //row = before
+                                        if (row >= 0) {
+                                            addNewRecord(row + 1, count); //after selection //row = before
+                                        } else {
+                                            addNewRecord(table.getRowCount(), count); //after selection //row = before
+                                        }
                                     }
+                                    if (!editModeJRadioButtonMenuItem.isSelected()) {
+                                        editModeJRadioButtonMenuItem.doClick();
+                                    }
+                                    dispose();
+                                } else {
+                                    shakeFrame(this);
+                                    restore();
                                 }
-                                if (!editModeJRadioButtonMenuItem.isSelected()) {
-                                    editModeJRadioButtonMenuItem.doClick();
-                                }
-                                dispose();
-                            } else {
-                                shakeFrame(this);
-                                restore();
+
                             }
+                        }.setVisible(true);
 
-                        }
-                    }.setVisible(true);
-
+                    }
                 }
             }
         });
@@ -1328,7 +1348,7 @@ public class MainForm extends JFrame {
                                     deleteSelectedRecords(0, recordArrayList.size());
                                 } else {
                                     int i = Integer.parseInt(value.getText());
-                                    deleteSelectedRecords(table.getSelectedRow(), table.getSelectedRow()+(i-1));
+                                    deleteSelectedRecords(table.getSelectedRow(), table.getSelectedRow() + (i - 1));
                                     
                                     /*String[] values = value.getText().split("-");
                                     index1 = Integer.parseInt(values[0]);
@@ -1603,7 +1623,7 @@ public class MainForm extends JFrame {
         if (index2 < 0) {
             index2 = 0;
         }
-        
+
         if (index2 > table.getRowCount() - 1) {
             index2 = table.getRowCount() - 1;
         }
@@ -1616,12 +1636,12 @@ public class MainForm extends JFrame {
             recordArrayList.remove(index1);
             for (int i = 0; i < diff; i++) {
                 removedRecords.add(recordArrayList.get(index1));
-                if(index1 != 0 && index2 != recordArrayList.size()) {
+                if (index1 != 0 && index2 != recordArrayList.size()) {
                     recordArrayList.remove(index1);
                 }
             }
-            
-            if(index1 == 0 && index2 == recordArrayList.size()) {
+
+            if (index1 == 0 && index2 == recordArrayList.size()) {
                 recordArrayList = new ArrayList<>();
             }
             loadList(recordArrayList);
