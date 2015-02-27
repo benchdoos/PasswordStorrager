@@ -77,7 +77,7 @@ public class MainForm extends JFrame {
     private JPopupMenu popupMenu;
     private JMenu fileJMenu = new JMenu("Файл");
     private JMenuItem openItem = new JMenuItem("Открыть");
-    private JMenuItem saveItem = new JMenuItem("Сохранить");
+    public JMenuItem saveItem = new JMenuItem("Сохранить");
     private JMenuItem blockItem = new JMenuItem("Блокировать");
     private JMenuItem settingsItem = new JMenuItem("Настройки");
     private JMenu editJMenu = new JMenu("Правка");
@@ -1275,7 +1275,7 @@ public class MainForm extends JFrame {
                                 count = Integer.parseInt(this.value.getText());
                             } catch (NumberFormatException ignored) {/*NOP*/}
 
-                            if (count > 0 && count <= 1000) {
+                            if (count > 0 && count <= 1_000) {
                                 if (table.getRowCount() < 1) {
                                     addNewRecord(0, count);
                                 } else {
@@ -1516,9 +1516,8 @@ public class MainForm extends JFrame {
             recordArrayList.add(record);
         }
         try {
-            savingStatusSheet = new SavingStatusSheet(this);
             new XmlParser().saveRecords(recordArrayList, this);
-            loadList(recordArrayList);
+//            loadList(recordArrayList);
             setEdited(false);
             System.out.println("Save. Successfully saved: " + rows);
             history.save();

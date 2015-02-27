@@ -91,6 +91,7 @@ public class XmlParser {
                         int k = (int) ((i * 100.0f) / (records.size() - 1));
                         if (sheet != null) {
 //                            System.out.println(">D< +" + k + " " + i + " " + records.size());
+                            sheet.setModal(true);
                             sheet.progressBar.setValue(k);
                         }
 
@@ -101,6 +102,7 @@ public class XmlParser {
                         rec.setAttribute("site", record.getSite());
                         passwordStorage.appendChild(rec);
                     }
+
                     TransformerFactory transformerFactory = TransformerFactory.newInstance();
                     Transformer transformer = transformerFactory.newTransformer();
                     transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -109,6 +111,10 @@ public class XmlParser {
 
                     DOMSource source = new DOMSource(document);
                     StreamResult result = new StreamResult(byteArrayOutputStream);
+
+                    if (sheet != null) {
+                        sheet.progressBar.setIndeterminate(true);
+                    }
 
                     transformer.transform(source, result);
 
@@ -124,17 +130,14 @@ public class XmlParser {
                         file.delete();
                     }
 
-                    if (sheet != null) {
-                        sheet.progressBar.setIndeterminate(true);
-                    }
-
                     Protector.encrypt(new ByteArrayInputStream(data), new FileOutputStream(file));
                     file2.delete();
                     FileUtils.setFileHidden(pathStorageFile);
 
                     if (sheet != null) {
+                        sheet.setModal(false);
+                        sheet.progressBar.setIndeterminate(false);
                         sheet.setVisible(false);
-                        sheet.dispose();
                     }
                 } catch (ParserConfigurationException e) {
                     throw new SavingRecordsException("Error in parser configuration while saving", e);
@@ -154,6 +157,7 @@ public class XmlParser {
 
         if (sheet != null) {
             sheet.progressBar.setValue(0);
+            sheet.setModal(true);
             new Thread(new Runnable() {
                 @Override
                 public void run() {
