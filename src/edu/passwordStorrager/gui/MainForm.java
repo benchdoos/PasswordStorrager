@@ -584,6 +584,7 @@ public class MainForm extends JFrame {
     }
 
     public void updateInfo() {
+        info.setToolTipText(recordArrayList.size() + " записей из " + RECORDS_LIMIT + " возможных");
         if (recordArrayList.size() < RECORDS_LIMIT - 500) {
             info.setForeground(new Color(76,76,76));
             info.setText("объектов: " + recordArrayList.size());
