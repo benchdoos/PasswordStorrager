@@ -1,18 +1,24 @@
 package edu.passwordStorrager.utils.history;
 
 import edu.passwordStorrager.gui.MainForm;
+import edu.passwordStorrager.objects.Record;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class History {
     private LinkedList<Object> windowHistory = new LinkedList<Object>();
-    private int current = -1;
     MainForm mainForm;
+    ArrayList<Record> records = new ArrayList<>();
+
+    private int current = -1;
     private int saved = -1;
     private boolean isHistoryCall = false;
 
     public History(MainForm mf) {
         mainForm = mf;
+        records = mf.recordArrayList;
+        System.out.println("><>" + mainForm.recordArrayList.equals(records));
         mainForm.undoItem.setEnabled(false);
         mainForm.redoItem.setEnabled(false);
     }
@@ -36,7 +42,7 @@ public class History {
     }
 
     private void refreshTimer() {
-        mainForm.refreshLockTimer();
+        MainForm.refreshLockTimer();
     }
 
     public void undo() {
@@ -96,5 +102,26 @@ public class History {
 
     private static boolean implementsInterface(Object object) {
         return HistoryAction.class.isInstance(object);
+    }
+
+    public boolean equalRecordList(ArrayList<Record> one, ArrayList<Record> two) {
+        if (one == null || two == null) {
+            return false;
+        }
+        if (one.size() != two.size()) {
+            return false;
+        }
+        for (int i = 0; i < one.size(); i++) {
+            if (!one.get(i).getSite().equals(two.get(i).getSite())) {
+                return false;
+            }
+            if (!one.get(i).getLogin().equals(two.get(i).getLogin())) {
+                return false;
+            }
+            if (!one.get(i).getPassword().equals(two.get(i).getPassword())) {
+                return false;
+            }
+        }
+        return true;
     }
 }
