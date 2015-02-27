@@ -1545,7 +1545,7 @@ public class MainForm extends JFrame {
         } catch (SavingRecordsException e) {
             setStatus("Ошибка при сохранении", STATUS_ERROR);
         }
-
+        table.requestFocus();
     }
 
     public void addNewRecord(int index, int count) {
