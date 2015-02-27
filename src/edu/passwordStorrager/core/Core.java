@@ -22,7 +22,7 @@ public class Core implements Application {
 
     public Core() {
         log.debug("Launch");
-
+        System.setProperty("apple.laf.useScreenMenuBar", "true");
         initSystem();
 
         if (exists(PropertiesManager.framePropertiesFilePath)) {

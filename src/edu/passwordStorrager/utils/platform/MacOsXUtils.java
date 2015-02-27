@@ -114,7 +114,7 @@ public class MacOsXUtils {
     }
 
     private static void setProperties() {
-        System.setProperty("apple.laf.useScreenMenuBar", "true");
+//        System.setProperty("apple.laf.useScreenMenuBar", "true");
         System.setProperty("com.apple.mrj.application.apple.menu.about.name", edu.passwordStorrager.core.Application.APPLICATION_NAME);
         System.setProperty("com.apple.laf.AquaLookAndFeel", "true");
         System.setProperty("apple.awt.fileDialogForDirectories", "true");
