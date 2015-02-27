@@ -32,6 +32,12 @@ public class SavingStatusSheet extends SimpleDialogSheet {
         progressBar.setValue(0);
 //        setModal(value);
 
+        if (value) {
+            MainForm.stopLockTimer();
+        } else {
+            MainForm.refreshLockTimer();
+        }
+        
         super.setVisible(value);
     }
 }
