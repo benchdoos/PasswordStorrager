@@ -18,7 +18,6 @@ public class History {
     public History(MainForm mf) {
         mainForm = mf;
         records = mf.recordArrayList;
-        System.out.println("><>" + mainForm.recordArrayList.equals(records));
         mainForm.undoItem.setEnabled(false);
         mainForm.redoItem.setEnabled(false);
     }
