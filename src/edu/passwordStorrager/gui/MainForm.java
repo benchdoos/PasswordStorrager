@@ -238,7 +238,7 @@ public class MainForm extends JFrame {
             @Override
             public void windowGainedFocus(WindowEvent e) {
                 refreshLockTimer();
-                scrollPane.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, new Color(149, 149, 149)));
+                scrollPane.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 0, new Color(149, 149, 149)));
                 scrollPane.invalidate();
                 getContentPane().validate();
             }
@@ -246,7 +246,7 @@ public class MainForm extends JFrame {
             @Override
             public void windowLostFocus(WindowEvent e) {
                 refreshLockTimer();
-                scrollPane.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, new Color(177, 177, 177)));
+                scrollPane.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 0, new Color(177, 177, 177)));
                 scrollPane.invalidate();
                 getContentPane().validate();
             }
@@ -257,7 +257,7 @@ public class MainForm extends JFrame {
             @Override
             public void componentResized(ComponentEvent e) {
                 super.componentResized(e);
-                scrollPane.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, new Color(149, 149, 149)));
+                scrollPane.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 0, new Color(149, 149, 149)));
                 scrollPane.invalidate();
                 getContentPane().validate();
                 if (searchField.isFocusOwner()) {
