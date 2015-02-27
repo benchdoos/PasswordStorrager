@@ -932,9 +932,9 @@ public class MainForm extends JFrame {
                         moveDownButton.setEnabled(hasNext());
                     }
                 }
-                if (col == 0 && row >= 0) {
+                if (col == -1 && row >= 0) {
                     table.setRowSelectionInterval(row, row);
-                    table.setColumnSelectionInterval(col + 1, col + 1);
+                    table.setColumnSelectionInterval(SITE_COLUMN_INDEX, SITE_COLUMN_INDEX);
                 }
             }
         });
