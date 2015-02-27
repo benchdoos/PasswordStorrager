@@ -126,6 +126,7 @@ public class MainForm extends JFrame {
         this.recordArrayList = recordArrayList;
 
         initComponents();
+        initMenuAccelerators();
 
         requestFocus();
         table.requestFocus();
@@ -135,6 +136,56 @@ public class MainForm extends JFrame {
         resetStatus();
 
         FrameUtils.registerWindow(this);
+    }
+
+    private void initMenuAccelerators() {
+        openItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.META_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK)));
+        saveItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.META_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK)));
+        blockItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.META_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_MASK)));
+        settingsItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, InputEvent.META_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, InputEvent.CTRL_MASK)));
+
+        undoItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.META_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK)));
+        redoItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.META_DOWN_MASK |
+                        InputEvent.SHIFT_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK)));
+        editModeJRadioButtonMenuItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_E,
+                        InputEvent.META_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK)));
+
+        addItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.META_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK)));
+        addSomeItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_N,
+                        InputEvent.META_MASK | InputEvent.SHIFT_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK)));
+        deleteItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.META_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.CTRL_MASK)));
+        deleteSomeItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE,
+                        InputEvent.META_MASK | InputEvent.SHIFT_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK)));
+
+        addUpItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP,
+                InputEvent.ALT_MASK | InputEvent.SHIFT_MASK));
+        addDownItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN,
+                InputEvent.ALT_MASK | InputEvent.SHIFT_MASK));
+        moveUpItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP,
+                InputEvent.CTRL_MASK | InputEvent.ALT_MASK | InputEvent.SHIFT_MASK));
+        moveDownItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN,
+                InputEvent.CTRL_MASK | InputEvent.ALT_MASK | InputEvent.SHIFT_MASK));
+
+        searchMenuItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.META_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK)));
+
+        copySiteItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.META_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.CTRL_MASK)));
+        copyLoginItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.META_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.CTRL_MASK)));
+        copyPasswordItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.META_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.CTRL_MASK)));
     }
 
     static <T> T[] concatenate(T[] a, T[] b) {
@@ -586,7 +637,7 @@ public class MainForm extends JFrame {
     public void updateInfo() {
         info.setToolTipText(recordArrayList.size() + " записей из " + RECORDS_LIMIT + " возможных");
         if (recordArrayList.size() < RECORDS_LIMIT - 500) {
-            info.setForeground(new Color(76,76,76));
+            info.setForeground(new Color(76, 76, 76));
             info.setText("объектов: " + recordArrayList.size());
         } else if (recordArrayList.size() >= RECORDS_LIMIT - 500 && recordArrayList.size() < RECORDS_LIMIT - 100) {
             info.setForeground(new Color(223, 80, 0));
@@ -1021,9 +1072,6 @@ public class MainForm extends JFrame {
 
     private void initMenu() {
 
-        openItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.META_MASK),
-                KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK)));
-
         openItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -1044,8 +1092,6 @@ public class MainForm extends JFrame {
         });
         fileJMenu.add(openItem);
 
-        saveItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.META_MASK),
-                KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK)));
         saveItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -1056,8 +1102,6 @@ public class MainForm extends JFrame {
         });
         fileJMenu.add(saveItem);
 
-        blockItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.META_MASK),
-                KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_MASK)));
         blockItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -1075,9 +1119,6 @@ public class MainForm extends JFrame {
         });
 
         fileJMenu.add(blockItem);
-
-        settingsItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, InputEvent.META_MASK),
-                KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, InputEvent.CTRL_MASK)));
 
         settingsItem.addActionListener(new ActionListener() {
             @Override
@@ -1148,8 +1189,6 @@ public class MainForm extends JFrame {
     }
 
     private void initCopyMenuItems() {
-        copySiteItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.META_MASK),
-                KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.CTRL_MASK)));
         copySiteItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -1158,8 +1197,6 @@ public class MainForm extends JFrame {
         });
         copyJMenu.add(copySiteItem);
 
-        copyLoginItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.META_MASK),
-                KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.CTRL_MASK)));
         copyLoginItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -1168,8 +1205,6 @@ public class MainForm extends JFrame {
         });
         copyJMenu.add(copyLoginItem);
 
-        copyPasswordItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.META_MASK),
-                KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.CTRL_MASK)));
         copyPasswordItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -1182,8 +1217,6 @@ public class MainForm extends JFrame {
     }
 
     private void initSearchItem() {
-        searchMenuItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.META_MASK),
-                KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK)));
         searchMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -1199,7 +1232,7 @@ public class MainForm extends JFrame {
     }
 
     private void initAddMoveGroupItems() {
-        addUpItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.ALT_MASK | InputEvent.SHIFT_MASK));
+
         addUpItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -1214,7 +1247,6 @@ public class MainForm extends JFrame {
             }
         });
 
-        addDownItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.ALT_MASK | InputEvent.SHIFT_MASK));
         addDownItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -1229,7 +1261,6 @@ public class MainForm extends JFrame {
             }
         });
 
-        moveUpItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_MASK | InputEvent.ALT_MASK | InputEvent.SHIFT_MASK));
         moveUpItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -1242,7 +1273,6 @@ public class MainForm extends JFrame {
             }
         });
 
-        moveDownItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.CTRL_MASK | InputEvent.ALT_MASK | InputEvent.SHIFT_MASK));
         moveDownItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -1263,8 +1293,7 @@ public class MainForm extends JFrame {
     }
 
     private void initAddDeleteGroupItems() {
-        addItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.META_MASK),
-                KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK)));
+
         addItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -1279,8 +1308,6 @@ public class MainForm extends JFrame {
             }
         });
 
-        addSomeItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.META_MASK | InputEvent.SHIFT_MASK),
-                KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK)));
         addSomeItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -1322,8 +1349,6 @@ public class MainForm extends JFrame {
             }
         });
 
-        deleteItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.META_MASK),
-                KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.CTRL_MASK)));
         deleteItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -1333,8 +1358,6 @@ public class MainForm extends JFrame {
             }
         });
 
-        deleteSomeItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.META_MASK | InputEvent.SHIFT_MASK),
-                KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK)));
         deleteSomeItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -1380,9 +1403,6 @@ public class MainForm extends JFrame {
     }
 
     private void initEditModeItem() {
-        editModeJRadioButtonMenuItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.META_MASK),
-                KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK)));
-
         editModeJRadioButtonMenuItem.setSelected(false);
         editModeJRadioButtonMenuItem.setText("Режим редактирования");
         editModeJRadioButtonMenuItem.addChangeListener(new ChangeListener() {
@@ -1416,8 +1436,7 @@ public class MainForm extends JFrame {
     }
 
     private void initHistoryGroupItems() {
-        undoItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.META_MASK),
-                KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK)));
+
         undoItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -1426,9 +1445,6 @@ public class MainForm extends JFrame {
                 }
             }
         });
-
-        redoItem.setAccelerator(getKeyStrokeForOS(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.META_DOWN_MASK | InputEvent.SHIFT_MASK),
-                KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK)));
         redoItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
