@@ -12,11 +12,11 @@ import static edu.passwordStorrager.core.Application.IS_MAC;
 public class SimpleDialogSheet extends JDialog {
 
     public MainForm window;
-    
+
     public SimpleDialogSheet() {
         this.setResizable(false);
     }
-    
+
     public void updateLocation(MainForm window, Dimension size) {
         Point location = window.getLocation();
         Dimension dim = window.getSize();
@@ -34,9 +34,28 @@ public class SimpleDialogSheet extends JDialog {
             new MovingTogether(window, this);
         }
     }
-    
+
     @Override
     public void setVisible(boolean value) {
+        if (value) {
+            int windowLoc = window.getLocation().x;
+            int windowWidth = window.getWidth();
+
+            int sheetLoc = getLocation().x;
+            int sheetWidth = getWidth();
+
+            if (sheetWidth > windowWidth) {
+                if (sheetLoc < 0) {
+                    sheetLoc *= -1;
+                    window.setLocation(windowLoc + sheetLoc, window.getLocation().y);
+                } else if (sheetLoc + sheetWidth > Toolkit.getDefaultToolkit().getScreenSize().width) {
+                    int diff = (sheetLoc + sheetWidth) - Toolkit.getDefaultToolkit().getScreenSize().width;
+                    window.setLocation(windowLoc - diff, window.getLocation().y);
+                }
+            }
+
+        }
+
         updateLocation(window, getSize());
         /*requestFocusInWindow();
         getRootPane().setDefaultButton(buttonSave);
@@ -44,7 +63,7 @@ public class SimpleDialogSheet extends JDialog {
         super.setVisible(value);
     }
 
-   public class MovingTogether extends ComponentAdapter {
+    public class MovingTogether extends ComponentAdapter {
         private MainForm window;
         private Window dialog;
 
