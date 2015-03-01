@@ -1572,6 +1572,10 @@ public class MainForm extends JFrame {
 
         isEditableIcon.setIcon(new ImageIcon(getClass().getResource("/icons/controls/unlock.png")));
 
+        if (count + recordArrayList.size() > RECORDS_LIMIT) {
+            count = count - (count + recordArrayList.size() - RECORDS_LIMIT);
+        }
+
         if (count > 100) {
             Record[] tmp = new Record[recordArrayList.size()];
             tmp = recordArrayList.toArray(tmp);
