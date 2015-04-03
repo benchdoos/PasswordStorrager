@@ -40,6 +40,8 @@ public class StringUtils {
                 || value.contains("org")
                 || value.contains("ua")
                 || value.contains("net")
+                || value.contains("su")
+                || value.contains("fy")
                 || value.contains("info");
     }
 
