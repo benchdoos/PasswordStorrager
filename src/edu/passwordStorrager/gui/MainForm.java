@@ -1,5 +1,6 @@
 package edu.passwordStorrager.gui;
 
+import com.apple.eawt.FullScreenUtilities;
 import edu.passwordStorrager.core.Application;
 import edu.passwordStorrager.core.Core;
 import edu.passwordStorrager.core.PasswordStorrager;
@@ -135,6 +136,7 @@ public class MainForm extends JFrame {
 
         resetStatus();
 
+        FullScreenUtilities.setWindowCanFullScreen(this, true);
         FrameUtils.registerWindow(this);
     }
 

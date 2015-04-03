@@ -130,7 +130,7 @@ public class MacOsXUtils {
         System.setProperty("com.apple.laf.AquaLookAndFeel", "true");
         System.setProperty("apple.awt.fileDialogForDirectories", "true");
         System.setProperty("apple.awt.UIElement", "true");
-        System.setProperty("apple.awt.fakefullscreen", "true"); //TODO remove when fullScreen ready
+//        System.setProperty("apple.awt.fakefullscreen", "true"); //TODO remove when fullScreen ready //doesn't work?
     }
 
     private static void setIcon(Application application) {
