@@ -49,10 +49,17 @@ public class MacOsXUtils {
 
             //application.setDockIconBadge("mac os");
 
-            /*PopupMenu p = new PopupMenu("lala");
-            p.add(new MenuItem("1"));
-            p.add(new MenuItem("2"));
-            com.apple.eawt.Application.getApplication().setDockMenu(p);*/
+            PopupMenu appDockMenu = new PopupMenu();
+            MenuItem lockApp = new MenuItem("Заблокировать");
+            lockApp.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    MainForm.blockItem.getActionListeners()[0].actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+                    MainForm.stopLockTimer();
+                }
+            });
+            appDockMenu.add(lockApp);
+            application.setDockMenu(appDockMenu);
         }
     }
 
@@ -115,18 +122,6 @@ public class MacOsXUtils {
                 //?when file tried to open by app? in bundle??
             }
         });
-
-        PopupMenu appDockMenu = new PopupMenu();
-        MenuItem lockApp = new MenuItem("Заблокировать");
-        lockApp.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                MainForm.blockItem.getActionListeners()[0].actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
-                MainForm.stopLockTimer();
-            }
-        });
-        appDockMenu.add(lockApp);
-        application.setDockMenu(appDockMenu);
     }
 
     private static void setProperties() {
