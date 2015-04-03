@@ -24,7 +24,7 @@ public interface Application {
 
 //    APPLICATION
     String APPLICATION_NAME = "Password Storrager";
-    String APPLICATION_VERSION = "0.1-beta.5";
+    String APPLICATION_VERSION = "0.1-beta.6";
     String APPLICATION_FOLDER_NAME = "PasswordStorrager";
     String APPLICATION_TMP_FOLDER = SYSTEM.getProperty("java.io.tmpdir");
     String APPLICATION_LOG_FOLDER_PROPERTY = "PasswordStorrager.log.folder";
