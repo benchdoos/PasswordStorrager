@@ -1,4 +1,4 @@
-# PasswordStorrager
+# Password Storrager
 Store your passwords in secure
 
 ## Introduction:
@@ -17,10 +17,11 @@ Remember only one password to access all your secret data.
 Mac OS X / Windows:
 
 
-[Latest](https://github.com/benchdoos/PasswordStorrager/releases/tag/v0.1-beta.4) 0.1-beta.4
+[Latest](https://github.com/benchdoos/PasswordStorrager/releases/tag/v0.1-beta.5) 0.1-beta.5
 
 Old releases:
 Mac OS X / Windows:
+- [0.1-beta.4](https://github.com/benchdoos/PasswordStorrager/releases/tag/v0.1-beta.4) 
 - [0.1-beta.3](https://github.com/benchdoos/PasswordStorrager/releases/tag/v0.1-beta.3) 
 - [0.1-beta.2](https://github.com/benchdoos/PasswordStorrager/releases/tag/v0.1-beta.2) 
 - [0.1-beta.1](https://github.com/benchdoos/PasswordStorrager/releases/tag/v0.1-beta.1) (**Mac OS X only**)
