@@ -227,11 +227,12 @@ public class AuthorizeDialog extends JDialog {
         if (exists(propertiesFilePath)) {
             propertiesApplication = loadProperties(propertiesFilePath);
             if (isCorrect()) {
-                NsUserNotificationsBridge.instance.sendNotification("Доступ разрешен", "", "", 0);
-
                 buttonCancel.setEnabled(true);
                 buttonCancel.requestFocus();
+
                 System.out.println("Password is correct");
+                NsUserNotificationsBridge.instance.sendNotification("Доступ разрешен", "", "", 0);
+
                 setModal(false);
                 ArrayList<Window> mainForms = FrameUtils.getWindows(MainForm.class);
                 if (mainForms.size() > 0) {
@@ -239,11 +240,9 @@ public class AuthorizeDialog extends JDialog {
                         w.setVisible(true);
                     }
                 } else {
-
                     showProperties(propertiesApplication);
                     Encryption.extractKey(new File(propertiesApplication.getProperty(KEY_NAME) + Values.DEFAULT_KEY_FILE_NAME));
 
-                    //TODO send notification here.
                     new CloudManager().synchronize();
 
                     MainForm mf = new MainForm(new XmlParser().parseRecords());
@@ -255,13 +254,14 @@ public class AuthorizeDialog extends JDialog {
             } else {
                 //TODO send notification here.
                 System.out.println("Password is not correct");
-                NsUserNotificationsBridge.instance.sendNotification("Доступ запрещен", "Неверный пароль", "", 0);
                 isUnlocked = false;
 
                 buttonOK.setEnabled(false);
                 buttonOK.setVisible(true);
                 buttonCancel.setEnabled(false);
                 progressBar.setVisible(false);
+
+                NsUserNotificationsBridge.instance.sendNotification("Доступ запрещен", "Неверный пароль", "", 0);
 
                 initTimer();
                 blockTimer.restart();
