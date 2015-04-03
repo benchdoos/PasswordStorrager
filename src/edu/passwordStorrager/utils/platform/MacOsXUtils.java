@@ -7,6 +7,10 @@ import edu.passwordStorrager.gui.*;
 import edu.passwordStorrager.xmlManager.XmlParser;
 import org.apache.log4j.Logger;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import static edu.passwordStorrager.core.Application.IS_MAC;
 import static edu.passwordStorrager.core.Core.onQuit;
 import static edu.passwordStorrager.core.PasswordStorrager.framesMainForm;
@@ -111,6 +115,18 @@ public class MacOsXUtils {
                 //?when file tried to open by app? in bundle??
             }
         });
+
+        PopupMenu appDockMenu = new PopupMenu();
+        MenuItem lockApp = new MenuItem("Заблокировать");
+        lockApp.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MainForm.blockItem.getActionListeners()[0].actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+                MainForm.stopLockTimer();
+            }
+        });
+        appDockMenu.add(lockApp);
+        application.setDockMenu(appDockMenu);
     }
 
     private static void setProperties() {

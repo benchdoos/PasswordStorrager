@@ -81,7 +81,7 @@ public class MainForm extends JFrame {
     private JMenu fileJMenu = new JMenu("Файл");
     private JMenuItem openItem = new JMenuItem("Открыть");
     public JMenuItem saveItem = new JMenuItem("Сохранить");
-    private JMenuItem blockItem = new JMenuItem("Блокировать");
+    public static JMenuItem blockItem = new JMenuItem("Блокировать");
     private JMenuItem settingsItem = new JMenuItem("Настройки");
     private JMenu editJMenu = new JMenu("Правка");
     private JMenuItem addItem = new JMenuItem("Добавить");
