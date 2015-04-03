@@ -41,6 +41,7 @@ public class StringUtils {
                 || value.contains("ua")
                 || value.contains("net")
                 || value.contains("su")
+                || value.contains("fm")
                 || value.contains("fy")
                 || value.contains("info");
     }
