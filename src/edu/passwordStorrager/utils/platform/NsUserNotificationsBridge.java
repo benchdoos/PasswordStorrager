@@ -1,4 +1,4 @@
-package edu.passwordStorrager.utils;
+package edu.passwordStorrager.utils.platform;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;

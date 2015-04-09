@@ -7,7 +7,7 @@ import edu.passwordStorrager.protector.Encryption;
 import edu.passwordStorrager.protector.Protector;
 import edu.passwordStorrager.protector.Values;
 import edu.passwordStorrager.utils.FrameUtils;
-import edu.passwordStorrager.utils.NsUserNotificationsBridge;
+import edu.passwordStorrager.utils.platform.NsUserNotificationsBridge;
 import edu.passwordStorrager.utils.platform.MacOsXUtils;
 import edu.passwordStorrager.utils.platform.PlatformUtils;
 import edu.passwordStorrager.xmlManager.XmlParser;
