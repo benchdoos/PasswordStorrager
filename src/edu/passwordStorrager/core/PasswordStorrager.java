@@ -45,7 +45,7 @@ public class PasswordStorrager {
         String tmp = Application.APPLICATION_TMP_FOLDER;
         System.setProperty(Application.APPLICATION_LOG_FOLDER_PROPERTY, Application.APPLICATION_LOG_FOLDER);
 
-        String PS = tmp + Application.APPLICATION_FOLDER_NAME + File.separator;
+        String PS = tmp + File.separator;
         boolean status = false;
         if (!new File(PS).exists()) {
             new File(PS).mkdir();
