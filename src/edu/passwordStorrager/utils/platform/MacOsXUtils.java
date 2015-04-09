@@ -5,11 +5,16 @@ import com.apple.eawt.*;
 import edu.passwordStorrager.core.PasswordStorrager;
 import edu.passwordStorrager.gui.*;
 import edu.passwordStorrager.xmlManager.XmlParser;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import static edu.passwordStorrager.core.Application.IS_MAC;
 import static edu.passwordStorrager.core.Core.onQuit;
@@ -31,6 +36,8 @@ public class MacOsXUtils {
 
             setHandlers(application);
 
+            addNotificationSupport();
+
             application.addAppEventListener(new SystemSleepListener() {
                 @Override
                 public void systemAboutToSleep(AppEvent.SystemSleepEvent systemSleepEvent) {
@@ -45,8 +52,6 @@ public class MacOsXUtils {
                 }
             });
 
-            
-
             //application.setDockIconBadge("mac os");
 
             PopupMenu appDockMenu = new PopupMenu();
@@ -60,6 +65,32 @@ public class MacOsXUtils {
             });
             appDockMenu.add(lockApp);
             application.setDockMenu(appDockMenu);
+        }
+    }
+
+    private static void addNotificationSupport() {
+        if (IS_MAC) {
+            File libFolder = new File(edu.passwordStorrager.core.Application.APPLICATION_LIB_FOLDER);
+            File NSBridge = new File(edu.passwordStorrager.core.Application.APPLICATION_LIB_FOLDER
+                    + edu.passwordStorrager.core.Application.NS_USER_NOTIFICATIONS_BRIDGE_NAME);
+            if (!NSBridge.exists()) {
+                try {
+                    if (!libFolder.exists()) {
+                        libFolder.mkdir();
+                    } else if (libFolder.isFile()) {
+                        libFolder.renameTo(new File(libFolder.getAbsolutePath() + "_"));
+                    }
+
+                    InputStream inputStream = MacOsXUtils.class.getResourceAsStream("/resources/NsUserNotificationsBridge.dylib");
+                    FileOutputStream fileOutputStream = new FileOutputStream(
+                            edu.passwordStorrager.core.Application.APPLICATION_LIB_FOLDER
+                                    + edu.passwordStorrager.core.Application.NS_USER_NOTIFICATIONS_BRIDGE_NAME);
+
+                    IOUtils.copy(inputStream, fileOutputStream);
+                } catch (IOException e) {
+                    log.warn("Can not save NsUserNotificationsBridge.dylib to /usr/local", e);
+                }
+            }
         }
     }
 
@@ -122,6 +153,40 @@ public class MacOsXUtils {
                 //?when file tried to open by app? in bundle??
             }
         });
+
+        ScreenSleepListener screenSleepListener = new ScreenSleepListener() {
+            @Override
+            public void screenAboutToSleep(AppEvent.ScreenSleepEvent screenSleepEvent) {
+                System.out.println("screenAboutToSleep");
+                MainForm.blockItem.getActionListeners()[0].actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+                MainForm.stopLockTimer();
+                //TODO save to tmp file
+            }
+
+            @Override
+            public void screenAwoke(AppEvent.ScreenSleepEvent screenSleepEvent) {
+                System.out.println("screenAwoke");
+                //TODO synch here
+            }
+        };
+        application.addAppEventListener(screenSleepListener);
+
+        UserSessionListener userSessionListener = new UserSessionListener() {
+            @Override
+            public void userSessionDeactivated(AppEvent.UserSessionEvent userSessionEvent) {
+                System.out.println("userSessionDeactivated");
+                MainForm.blockItem.getActionListeners()[0].actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+                MainForm.stopLockTimer();
+                //TODO save to tmp file
+            }
+
+            @Override
+            public void userSessionActivated(AppEvent.UserSessionEvent userSessionEvent) {
+                System.out.println("userSessionActivated");
+                //TODO synch here
+            }
+        };
+        application.addAppEventListener(userSessionListener);
     }
 
     private static void setProperties() {
@@ -140,6 +205,6 @@ public class MacOsXUtils {
     }
 
     public static boolean isBundled() {
-        return PasswordStorrager.JAR_FILE.getAbsolutePath().contains(".app/") && IS_MAC;
+        return PasswordStorrager.JAR_FILE.getAbsolutePath().contains(".app/Contents/Java/") && IS_MAC;
     }
 }

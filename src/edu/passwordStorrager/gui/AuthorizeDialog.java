@@ -1,7 +1,5 @@
 package edu.passwordStorrager.gui;
 
-import com.sun.jna.Library;
-import com.sun.jna.Native;
 import edu.passwordStorrager.cloud.CloudManager;
 import edu.passwordStorrager.core.Core;
 import edu.passwordStorrager.core.PasswordStorrager;
@@ -9,6 +7,7 @@ import edu.passwordStorrager.protector.Encryption;
 import edu.passwordStorrager.protector.Protector;
 import edu.passwordStorrager.protector.Values;
 import edu.passwordStorrager.utils.FrameUtils;
+import edu.passwordStorrager.utils.NsUserNotificationsBridge;
 import edu.passwordStorrager.utils.platform.MacOsXUtils;
 import edu.passwordStorrager.utils.platform.PlatformUtils;
 import edu.passwordStorrager.xmlManager.XmlParser;
@@ -45,14 +44,6 @@ public class AuthorizeDialog extends JDialog {
     private Timer blockTimer;
     private Timer languageTimer;
     public static boolean isBlocked = false;
-
-    interface NsUserNotificationsBridge extends Library {
-        NsUserNotificationsBridge instance = (NsUserNotificationsBridge)
-                Native.loadLibrary("/usr/local/NsUserNotificationsBridge.dylib", NsUserNotificationsBridge.class);
-
-        public int sendNotification(String title, String subtitle, String text, int timeOffset);
-
-    }
 
     public AuthorizeDialog(boolean isModal) {
         isBlocked = false;

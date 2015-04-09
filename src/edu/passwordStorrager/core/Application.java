@@ -21,6 +21,8 @@ public interface Application {
             || OS_NAME.toLowerCase().contains("nux") 
             || OS_NAME.toLowerCase().contains("aix");
 
+//    MAC
+    String NS_USER_NOTIFICATIONS_BRIDGE_NAME = "NsUserNotificationsBridge.dylib";
 
 //    APPLICATION
     String APPLICATION_NAME = "Password Storrager";
@@ -29,5 +31,6 @@ public interface Application {
     String APPLICATION_TMP_FOLDER = SYSTEM.getProperty("java.io.tmpdir");
     String APPLICATION_LOG_FOLDER_PROPERTY = "PasswordStorrager.log.folder";
     String APPLICATION_LOG_FOLDER = APPLICATION_TMP_FOLDER + Application.APPLICATION_FOLDER_NAME + "/Logs/";
+    String APPLICATION_LIB_FOLDER = APPLICATION_TMP_FOLDER + Application.APPLICATION_FOLDER_NAME + "/lib/";
     boolean IS_APPLICATION_DEV_MODE = true;
 }
