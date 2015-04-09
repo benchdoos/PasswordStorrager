@@ -1,7 +1,6 @@
 package edu.passwordStorrager.utils.platform;
 
 import edu.passwordStorrager.core.Application;
-import edu.passwordStorrager.utils.UnsupportedOsException;
 import org.apache.log4j.Logger;
 import oshi.SystemInfo;
 import oshi.hardware.HardwareAbstractionLayer;

@@ -1,4 +1,4 @@
-package edu.passwordStorrager.utils;
+package edu.passwordStorrager.utils.platform;
 
 
 import edu.passwordStorrager.core.Application;
