@@ -88,7 +88,8 @@ public class MacOsXUtils {
 
                     IOUtils.copy(inputStream, fileOutputStream);
                 } catch (IOException e) {
-                    log.warn("Can not save NsUserNotificationsBridge.dylib to /usr/local", e);
+                    log.warn("Can not save NsUserNotificationsBridge.dylib to" +
+                            edu.passwordStorrager.core.Application.APPLICATION_LIB_FOLDER, e);
                 }
             }
         }
