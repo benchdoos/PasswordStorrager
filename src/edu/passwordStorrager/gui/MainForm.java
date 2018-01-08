@@ -1150,6 +1150,8 @@ public class MainForm extends JFrame {
             }
         });
 
+        fileJMenu.add(settingsItem);
+
         if (IS_WINDOWS) {
             fileJMenu.add(settingsItem);
         }
