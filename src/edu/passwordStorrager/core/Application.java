@@ -1,5 +1,6 @@
 package edu.passwordStorrager.core;
 
+import java.io.File;
 import java.util.Properties;
 
 public interface Application {
@@ -8,6 +9,7 @@ public interface Application {
     Properties SYSTEM = System.getProperties();
     String OS_NAME = SYSTEM.getProperty("os.name");
     String OS_VERSION = SYSTEM.getProperty("os.version");
+
     String OS_ARCH = SYSTEM.getProperty("os.arch");
     String JAVA_VERSION = SYSTEM.getProperty("java.version");
 
@@ -26,9 +28,9 @@ public interface Application {
 
     //    APPLICATION
     String APPLICATION_NAME = "Password Storrager";
-    String APPLICATION_VERSION = "0.1-beta.6";
+    String APPLICATION_VERSION = "0.1-beta.8";
     String APPLICATION_FOLDER_NAME = "PasswordStorrager";
-    String APPLICATION_TMP_FOLDER = SYSTEM.getProperty("java.io.tmpdir") + Application.APPLICATION_FOLDER_NAME;
+    String APPLICATION_TMP_FOLDER = SYSTEM.getProperty("java.io.tmpdir") + File.separator + Application.APPLICATION_FOLDER_NAME;
     String APPLICATION_LOG_FOLDER_PROPERTY = "PasswordStorrager.log.folder";
     String APPLICATION_LOG_FOLDER = APPLICATION_TMP_FOLDER + "/Logs/";
     String APPLICATION_LIB_FOLDER = APPLICATION_TMP_FOLDER + "/lib/";

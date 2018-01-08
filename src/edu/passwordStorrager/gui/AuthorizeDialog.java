@@ -20,9 +20,12 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.im.InputContext;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
 
+import static edu.passwordStorrager.core.Application.APPLICATION_NAME;
 import static edu.passwordStorrager.core.Application.IS_MAC;
 import static edu.passwordStorrager.core.PasswordStorrager.isUnlocked;
 import static edu.passwordStorrager.core.PasswordStorrager.propertiesApplication;
@@ -31,7 +34,7 @@ import static edu.passwordStorrager.utils.FileUtils.exists;
 import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
 import static edu.passwordStorrager.utils.FrameUtils.getKeyStrokeForOS;
 
-public class AuthorizeDialog extends JDialog {
+public class AuthorizeDialog extends JFrame {
     private static final Logger log = Logger.getLogger(getCurrentClassName());
 
     private JPanel contentPane;
@@ -54,7 +57,7 @@ public class AuthorizeDialog extends JDialog {
             setIconImage(PlatformUtils.appIcon);
         }
         setTitle("Вход");
-        setModal(isModal);
+//        setModal(isModal);
         setResizable(false);
         progressBar.setIndeterminate(true);
         progressBar.putClientProperty("JProgressBar.style", "circular");
@@ -159,7 +162,7 @@ public class AuthorizeDialog extends JDialog {
             }
         });
 
-        languageTimer = new Timer(1000, new ActionListener() {
+        languageTimer = new Timer(250, new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -168,6 +171,9 @@ public class AuthorizeDialog extends JDialog {
 
                 Locale locale = context.getLocale();
                 String name = locale.getLanguage().toUpperCase();
+                /*System.out.println(locale + "] " + locale.getVariant() + "] " + locale.getISO3Language());
+                System.out.println(locale.getCountry());*/
+
                 if (!name.isEmpty()) {
                     languageLabel.setText(name);
                     languagePanel.setToolTipText(locale.getDisplayLanguage());
@@ -218,46 +224,84 @@ public class AuthorizeDialog extends JDialog {
         if (exists(propertiesFilePath)) {
             propertiesApplication = loadProperties(propertiesFilePath);
             if (isCorrect()) {
-                buttonCancel.setEnabled(true);
-                buttonCancel.requestFocus();
-
-                System.out.println("Password is correct");
-                NsUserNotificationsBridge.instance.sendNotification("Доступ разрешен", "", "", 0);
-
-                setModal(false);
-                ArrayList<Window> mainForms = FrameUtils.getWindows(MainForm.class);
-                if (mainForms.size() > 0) {
-                    for (Window w : mainForms) {
-                        w.setVisible(true);
-                    }
-                } else {
-                    showProperties(propertiesApplication);
-                    Encryption.extractKey(new File(propertiesApplication.getProperty(KEY_NAME) + Values.DEFAULT_KEY_FILE_NAME));
-
-                    new CloudManager().synchronize();
-
-                    MainForm mf = new MainForm(new XmlParser().parseRecords());
-                    setVisible(false);
-                    mf.setVisible(true);
-                }
-                isUnlocked = true;
-                dispose();
+                onCorrectPasswordEnter();
             } else {
-                //TODO send notification here.
-                System.out.println("Password is not correct");
-                isUnlocked = false;
+                onIncorrectPasswordEnter();
 
-                buttonOK.setEnabled(false);
-                buttonOK.setVisible(true);
-                buttonCancel.setEnabled(false);
-                progressBar.setVisible(false);
-
-                NsUserNotificationsBridge.instance.sendNotification("Доступ запрещен", "Неверный пароль", "", 0);
-
-                initTimer();
-                blockTimer.restart();
-                FrameUtils.shakeFrame(this);
             }
+        }
+    }
+
+    private void onCorrectPasswordEnter() {
+        buttonCancel.setEnabled(true);
+        buttonCancel.requestFocus();
+
+        System.out.println("Password is correct");
+        if (IS_MAC) {
+            try {
+                NsUserNotificationsBridge.instance.sendNotification("Доступ разрешен", "", "", 0);
+            } catch (UnsatisfiedLinkError error) {
+                log.warn("Can not create notification on MAC OS X \n" + error);
+                displayAlternativeMacNotification("Неверный пароль", APPLICATION_NAME, "Доступ запрещен");
+            }
+        }
+//                setModal(false);
+        ArrayList<Window> mainForms = FrameUtils.getWindows(MainForm.class);
+        if (mainForms.size() > 0) {
+            for (Window w : mainForms) {
+                w.setVisible(true);
+            }
+        } else {
+            showProperties(propertiesApplication);
+            Encryption.extractKey(new File(propertiesApplication.getProperty(KEY_NAME) + Values.DEFAULT_KEY_FILE_NAME));
+
+            new CloudManager().synchronize();
+
+            MainForm mf = new MainForm(new XmlParser().parseRecords());
+            setVisible(false);
+            mf.setVisible(true);
+        }
+        isUnlocked = true;
+        dispose();
+    }
+
+    private void onIncorrectPasswordEnter() {
+        //TODO send notification here.
+        System.out.println("Password is not correct");
+        isUnlocked = false;
+
+        buttonOK.setEnabled(false);
+        buttonOK.setVisible(true);
+        buttonCancel.setEnabled(false);
+        progressBar.setVisible(false);
+        if (IS_MAC) {
+            sendMacNotification();
+
+        }
+        initTimer();
+        blockTimer.restart();
+        FrameUtils.shakeFrame(this);
+    }
+
+    private void sendMacNotification() {
+        try {
+            NsUserNotificationsBridge.instance.sendNotification("Доступ запрещен", "Неверный пароль", "", 0);
+        } catch (UnsatisfiedLinkError error) {
+            log.warn("Can not create notification on MAC OS X \n" + error);
+            displayAlternativeMacNotification("Неверный пароль", APPLICATION_NAME, "Доступ запрещен");
+        }
+    }
+
+    private void displayAlternativeMacNotification(String notification, String title, String subtitle) {
+        String mess = "display notification \"" + notification + "\" with title \"" + title
+                + "\" subtitle \"" + subtitle + "\"";
+        String[] args = {"osascript", "-e", mess};
+        Runtime runtime = Runtime.getRuntime();
+        try {
+            runtime.exec(args);
+        } catch (IOException e) {
+            log.warn("Can not create alternative AppleScript notification on MAC OS X \n" + e);
+            e.printStackTrace();
         }
     }
 
@@ -275,7 +319,7 @@ public class AuthorizeDialog extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 counter++;
-                if (counter == 10) {
+                if (counter == 3) {//todo make this parameter in preferences??
                     buttonOK.setText("OK");
                     buttonOK.setEnabled(true);
                     buttonCancel.setEnabled(true);

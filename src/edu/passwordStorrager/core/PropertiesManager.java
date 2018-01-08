@@ -15,19 +15,25 @@ public class PropertiesManager {
 
     public static final String STORAGE_NAME = "Storage";
     public static final String KEY_NAME = "Key";
+    public static final String LOCK_DELAY = "LockDelay";
 
     public static String folder;
     public static String propertiesFilePath;
     public static String framePropertiesFilePath;
+    private static int delay = Values.DEFAULT_LOCK_DELAY;
 
     public PropertiesManager() {
         if (Application.IS_MAC) {
             folder = Values.DEFAULT_MAC_PROPERTIES_FILE_FOLDER;
         } else if (Application.IS_WINDOWS) {
             folder = Values.DEFAULT_WINDOWS_PROPERTIES_FILE_FOLDER;
+        } else if (Application.IS_UNIX) {
+            folder = Values.DEFAULT_UNIX_PROPERTIES_FILE_FOLDER;
         } else {
             throw new UnsupportedOperationException("This OS is not supported yet");
         }
+
+
         propertiesFilePath = folder + Values.DEFAULT_PROPERTIES_FILE_NAME;
         framePropertiesFilePath = folder + Values.DEFAULT_FRAME_PROPERTIES_FILE_NAME;
         System.setProperty("PropertiesFolder", folder);
@@ -38,6 +44,7 @@ public class PropertiesManager {
         try {
             PasswordStorrager.propertiesApplication.setProperty(STORAGE_NAME, storagePath);
             PasswordStorrager.propertiesApplication.setProperty(KEY_NAME, keyPath);
+            PasswordStorrager.propertiesApplication.setProperty(LOCK_DELAY, delay + "");
 
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             PasswordStorrager.propertiesApplication.store(byteArrayOutputStream, "");
@@ -77,7 +84,7 @@ public class PropertiesManager {
             String dev = PasswordStorrager.JAR_FILE + "/edu/passwordStorrager/core/storage.properties";
             if (new File(dev).exists()) {
                 System.err.println("DEV_MODE:" + dev);
-                propertiesPath = dev;
+                //propertiesPath = dev; //TODO fix on windows
             }
         }
         try {
@@ -102,6 +109,12 @@ public class PropertiesManager {
 
     }
 
+
+    public static void changeLockDelay(int delay) {
+        PropertiesManager.delay = delay;
+        changeProperties(PasswordStorrager.propertiesApplication.getProperty(STORAGE_NAME),
+                PasswordStorrager.propertiesApplication.getProperty(KEY_NAME));
+    }
 
     public static boolean isCorrect() {
         return PasswordStorrager.propertiesApplication.containsKey(KEY_NAME);

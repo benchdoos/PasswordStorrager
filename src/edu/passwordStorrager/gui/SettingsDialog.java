@@ -51,11 +51,17 @@ public abstract class SettingsDialog extends JDialog {
     private JButton browseKeyButton;
     private JTextField storageField;
     private JButton changeKey;
+    private JTextField delayField;
     private static boolean isCreated = false;
 
     public SettingsDialog() {
         if (!isCreated) {
             init();
+            pack();
+// todo delete this block, cause it do not needed
+            setFrameSize(getCurrentClassName(),getSize());
+            setPreferredSize(getFrameSize(getCurrentClassName()));
+//
             isCreated = true;
             MainForm.stopLockTimer();
             setVisible(true);
@@ -64,14 +70,14 @@ public abstract class SettingsDialog extends JDialog {
 
     private void init() {
         setResizable(false);
-        setMinimumSize(new Dimension(380, 320));
+//        setMinimumSize(new Dimension(380, 320));
         if (!MacOsXUtils.isBundled()) {
             setIconImage(PlatformUtils.appIcon);
         }
 
         setTitle("Настройки " + APPLICATION_NAME);
 
-        setPreferredSize(getFrameSize(getCurrentClassName()));
+//        setPreferredSize(getFrameSize(getCurrentClassName()));
         setLocation(getFrameLocation(getCurrentClassName()));
 
         addWindowListener(new WindowAdapter() {
@@ -81,8 +87,9 @@ public abstract class SettingsDialog extends JDialog {
             }
         });
 
-        storageField.setText(PasswordStorrager.propertiesApplication.getProperty("Storage"));
-        keyField.setText(PasswordStorrager.propertiesApplication.getProperty("Key"));
+        storageField.setText(PasswordStorrager.propertiesApplication.getProperty(PropertiesManager.STORAGE_NAME));
+        keyField.setText(PasswordStorrager.propertiesApplication.getProperty(PropertiesManager.KEY_NAME));
+        delayField.setText((Integer.parseInt(PasswordStorrager.propertiesApplication.getProperty(PropertiesManager.LOCK_DELAY))/1000)+"");
 
         setContentPane(contentPane);
         setModal(true);
@@ -251,8 +258,6 @@ public abstract class SettingsDialog extends JDialog {
                 };
             }
         });
-
-        pack();
     }
 
     abstract public void onOK();
@@ -287,6 +292,13 @@ public abstract class SettingsDialog extends JDialog {
             PasswordStorrager.propertiesApplication = PropertiesManager.loadProperties(PropertiesManager.propertiesFilePath);
         }
 
+        try {
+            int delay = Integer.parseInt(delayField.getText()) * 1000;
+            if (delay < 60 * 60 * 1000) { //todo change to max delay
+                PropertiesManager.changeLockDelay(delay);
+            }
+        } catch (NumberFormatException ex) {}
+
         if (isICloudChanged) {
             key.setICloud(Protector.encrypt(iCloudLogin), Protector.encrypt(iCloudPassword));
         } else {
@@ -312,13 +324,13 @@ public abstract class SettingsDialog extends JDialog {
     }
 
     private void onCancel() {
-        isCreated = false;
         dispose();
     }
     
     @Override
     public void dispose() {
         MainForm.refreshLockTimer();
+        isCreated = false;
         super.dispose();
     }
 

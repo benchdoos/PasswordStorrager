@@ -32,15 +32,15 @@ public class PlatformUtils {
         sb.append("System: ");
         sb.append(os).append(" arch: ").append(OS_ARCH);
         sb.append(" ");
-        sb.append("Core: ").append(hal.getProcessors()[0]);
+        sb.append("Core: ").append(hal.getProcessor().getName());
         sb.append(" ");
-        sb.append("Memory: ").append(hal.getMemory().getAvailable()/(1024 * 1024))
-                .append("MB (total:").append(hal.getMemory().getTotal()/(1024*1024)).append(" MB)");
+        sb.append("Memory: ").append(hal.getMemory().getAvailable() / (1024 * 1024))
+                .append("MB (total:").append(hal.getMemory().getTotal() / (1024 * 1024)).append(" MB)");
         sb.append("; ");
         sb.append("Java v").append(JAVA_VERSION).append("; Program v" + Application.APPLICATION_VERSION);
 
         log.info(sb.toString());
-        
+
         if (!PlatformUtils.isOsSupported()) {
             throw new UnsupportedOsException();
         }
@@ -52,6 +52,7 @@ public class PlatformUtils {
         }
 
         if (IS_MAC) {
+            //TODO fix in windows
             MacOsXUtils.initializeMacOSX();
         } else if (IS_WINDOWS) {
             //osHandler here
@@ -60,7 +61,7 @@ public class PlatformUtils {
 
     public static boolean isOsSupported() {
         System.out.println("supported: " + (IS_MAC || IS_WINDOWS));
-        return IS_MAC || IS_WINDOWS;
+        return IS_MAC || IS_WINDOWS || IS_UNIX;
     }
 
 
@@ -71,7 +72,7 @@ public class PlatformUtils {
         int mb = 1024 * 1024;
 
         StringBuilder sb = new StringBuilder();
-        
+
         sb.append("==========================System=========================").append("\n");
         sb.append("System:").append("\n");
         sb.append("\tOS: ").append(os.getManufacturer()).append(" ").append(os.getFamily()).append("\n");
@@ -79,7 +80,7 @@ public class PlatformUtils {
         sb.append("\tArch: ").append(OS_ARCH).append("\n");
 
         sb.append("Hardware:").append("\n");
-        sb.append("\tCore: ").append(hal.getProcessors()[0]).append(" (total:").append(hal.getProcessors().length).append(")").append("\n");
+        sb.append("\tCore: ").append(hal.getProcessor()).append(" (total:").append(hal.getProcessor()).append(")").append("\n");
         sb.append("\tMemory: ").append(hal.getMemory().getAvailable() / mb).append(" (total:").append(hal.getMemory().getTotal() / mb).append(") MB").append("\n");
 
         sb.append("Java:").append("\n");

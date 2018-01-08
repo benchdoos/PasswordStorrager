@@ -1,6 +1,6 @@
 package edu.passwordStorrager.gui;
 
-import com.apple.eawt.FullScreenUtilities;
+//import com.apple.eawt.FullScreenUtilities; //TODO fix on windows
 import edu.passwordStorrager.core.Application;
 import edu.passwordStorrager.core.Core;
 import edu.passwordStorrager.core.PasswordStorrager;
@@ -20,6 +20,7 @@ import edu.passwordStorrager.utils.platform.MacOsXUtils;
 import edu.passwordStorrager.utils.platform.PlatformUtils;
 import edu.passwordStorrager.xmlManager.SavingRecordsException;
 import edu.passwordStorrager.xmlManager.XmlParser;
+//import jdk.internal.org.objectweb.asm.tree.analysis.Value;
 import org.apache.log4j.Logger;
 
 import javax.imageio.ImageIO;
@@ -136,7 +137,7 @@ public class MainForm extends JFrame {
 
         resetStatus();
 
-        FullScreenUtilities.setWindowCanFullScreen(this, true);
+        //FullScreenUtilities.setWindowCanFullScreen(this, true); //TODO fix on windows
         FrameUtils.registerWindow(this);
     }
 
@@ -203,11 +204,15 @@ public class MainForm extends JFrame {
     }
 
     public static void refreshLockTimer() {
-        lockTimer.restart();
+        if (lockTimer != null) {
+            lockTimer.restart();
+        }
     }
 
     public static void stopLockTimer() {
-        lockTimer.stop();
+        if (lockTimer != null) {
+            lockTimer.stop();
+        }
     }
 
     public static void scrollToVisible(JTable table, int rowIndex, int vColIndex) {
@@ -337,8 +342,16 @@ public class MainForm extends JFrame {
                 blockItem.getActionListeners()[0].actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
             }
         };
-        lockTimer = new Timer(60 * 1000, actionListener);
-        lockTimer.setRepeats(false);
+        int delay  = Values.DEFAULT_LOCK_DELAY;
+        try {
+            delay = Integer.parseInt(PasswordStorrager.propertiesApplication.getProperty(PropertiesManager.LOCK_DELAY));
+        } catch (NumberFormatException ex) {
+            PropertiesManager.changeLockDelay(Values.DEFAULT_LOCK_DELAY);
+        }
+        if (delay >= 10 * 1000) { //todo change to minimumdelay value
+            lockTimer = new Timer(delay, actionListener);
+            lockTimer.setRepeats(false);
+        }
         refreshLockTimer();
     }
 
@@ -674,7 +687,7 @@ public class MainForm extends JFrame {
 
         progressBar.setValue(0);
 
-        ArrayList<Record> foundRecords = new ArrayList<>(recordArrayList.size());
+        ArrayList<Record> foundRecords = new ArrayList<>(recordArrayList.size());//doos
 
         int total = recordArrayList.size();
         int current = 0;
@@ -1727,6 +1740,7 @@ public class MainForm extends JFrame {
         if (called == 23
                 || called == 29
                 || called == 30
+                || called == 32
                 || called == 43
                 || called == 83
                 || called == 86

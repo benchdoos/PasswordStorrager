@@ -37,8 +37,8 @@ public class MacOsXUtils {
             setHandlers(application);
 
             addNotificationSupport();
-
-            application.addAppEventListener(new SystemSleepListener() {
+//TODO fix on windows
+            /*application.addAppEventListener(new SystemSleepListener() {
                 @Override
                 public void systemAboutToSleep(AppEvent.SystemSleepEvent systemSleepEvent) {
                     //TODO sync here
@@ -50,7 +50,7 @@ public class MacOsXUtils {
                     //TODO sync here
                     log.info("System woke up");
                 }
-            });
+            });*/
 
             //application.setDockIconBadge("mac os");
 
@@ -73,6 +73,7 @@ public class MacOsXUtils {
             File libFolder = new File(edu.passwordStorrager.core.Application.APPLICATION_LIB_FOLDER);
             File NSBridge = new File(edu.passwordStorrager.core.Application.APPLICATION_LIB_FOLDER
                     + edu.passwordStorrager.core.Application.NS_USER_NOTIFICATIONS_BRIDGE_NAME);
+            System.out.println("PATH:: " + NSBridge.getAbsolutePath());
             if (!NSBridge.exists()) {
                 try {
                     if (!libFolder.exists()) {
