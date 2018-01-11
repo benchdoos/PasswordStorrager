@@ -4,8 +4,9 @@
  */
 package edu.passwordStorrager.protector;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+import java.nio.charset.StandardCharsets;
+import  java.util.Base64;
+import  java.util.Base64;
 
 import javax.crypto.*;
 import javax.crypto.spec.DESKeySpec;
@@ -40,7 +41,8 @@ public class Protector {
 
     private static String base64Encode(byte[] bytes) {
         // NB: This class is internal, and you probably should use another impl
-        return new BASE64Encoder().encode(bytes);
+        //return new BASE64Encoder().encode(bytes); // java 8 --
+        return new String(Base64.getEncoder().encode(bytes), StandardCharsets.UTF_8);
     }
 
     public static String decrypt(String password) throws GeneralSecurityException, IOException {
@@ -53,7 +55,8 @@ public class Protector {
 
     private static byte[] base64Decode(String property) throws IOException {
         // NB: This class is internal, and you probably should use another impl
-        return new BASE64Decoder().decodeBuffer(property);
+//        return new BASE64Decoder().decodeBuffer(property);
+        return Base64.getDecoder().decode(property);
     }
 
     public static void encrypt(InputStream is, OutputStream os) throws Throwable {

@@ -1,6 +1,7 @@
 package edu.passwordStorrager.gui.elements;
 
 import java.awt.*;
+import java.util.Vector;
 
 public class ZebraJTable extends javax.swing.JTable {
     private java.awt.Color rowColors[] = new java.awt.Color[2];
@@ -34,7 +35,7 @@ public class ZebraJTable extends javax.swing.JTable {
 
     public ZebraJTable(java.util.Vector<?> rowData,
                        java.util.Vector<?> columnNames) {
-        super(rowData, columnNames);
+        super((Vector<? extends Vector>) rowData, columnNames);
     }
 
     /**

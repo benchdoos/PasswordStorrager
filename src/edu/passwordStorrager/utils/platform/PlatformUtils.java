@@ -14,7 +14,7 @@ import static edu.passwordStorrager.utils.FrameUtils.getCurrentClassName;
 
 public class PlatformUtils {
     public static Image appIcon = Toolkit.getDefaultToolkit()
-            .getImage(getCurrentClassName().getClass().getResource("/resources/icons/icon_black_256.png"));
+            .getImage(PlatformUtils.class.getResource("/resources/icons/icon_black_256.png"));
     private static final Logger log = Logger.getLogger(getCurrentClassName());
 
     public static void initializeOS() {
